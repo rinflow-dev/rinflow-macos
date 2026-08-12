@@ -23,6 +23,8 @@ struct ContentView: View {
 
                     ConnectedControlCard(
                         peer: model.connectionState.connectedPeer,
+                        placement: model.connectionState.connectedPeer
+                            .map(model.placement(for:)) ?? .disabled,
                         isControlling: model.isControlling,
                         start: model.startControlling,
                         stop: model.stopControlling
@@ -77,7 +79,7 @@ struct ContentView: View {
                 ContentUnavailableView(
                     "正在发现设备",
                     systemImage: "network",
-                    description: Text("请在另一台 Mac 上启动 LinkCursor，并保持在同一局域网。")
+                    description: Text("请在另一台设备上启动 LinkCursor，并保持在同一局域网。")
                 )
                 .frame(maxWidth: .infinity, minHeight: 150)
             } else {
@@ -86,6 +88,8 @@ struct ContentView: View {
                         peer: peer,
                         isConnected: model.connectionState.connectedPeer?.id == peer.id,
                         isConnecting: isConnecting(peer),
+                        placement: model.placement(for: peer),
+                        setPlacement: { model.setPlacement($0, for: peer) },
                         connect: { model.connect(to: peer) },
                         disconnect: model.disconnect
                     )
@@ -176,7 +180,7 @@ private struct PermissionCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(isGranted ? "辅助功能权限已就绪" : "需要辅助功能权限")
                     .bold()
-                Text("用于捕获本机输入，并在被控 Mac 上注入键鼠事件。")
+                Text("用于捕获本机输入，并发送给当前控制设备。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -197,6 +201,7 @@ private struct PermissionCard: View {
 
 private struct ConnectedControlCard: View {
     let peer: Peer?
+    let placement: PeerPlacement
     let isControlling: Bool
     let start: () -> Void
     let stop: () -> Void
@@ -210,7 +215,7 @@ private struct ConnectedControlCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(peer.map { "输入目标：\($0.name)" } ?? "尚未连接控制目标")
                     .bold()
-                Text(isControlling ? "键鼠输入正在转发，按 ⌃⌥⎋ 释放" : "连接后可手动开始转发输入")
+                Text(detailText)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -223,5 +228,15 @@ private struct ConnectedControlCard: View {
         }
         .padding(16)
         .background(.background.secondary, in: .rect(cornerRadius: 14))
+    }
+
+    private var detailText: String {
+        if isControlling {
+            return "键鼠输入正在转发，按 ⌃⌥⎋ 释放"
+        }
+        if peer != nil, placement.isEnabled {
+            return "将鼠标越过\(placement.edgeDescription)即可开始控制"
+        }
+        return "连接后可手动开始转发输入，或为设备配置位置"
     }
 }

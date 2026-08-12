@@ -13,6 +13,7 @@ final class AppModel: RustCoreDelegate {
     private(set) var sentEventCount = 0
     private(set) var receivedEventCount = 0
     private(set) var lastError: String?
+    private(set) var peerPlacements: [String: PeerPlacement]
 
     let deviceName: String
 
@@ -22,6 +23,7 @@ final class AppModel: RustCoreDelegate {
 
     init() {
         deviceName = Host.current().localizedName ?? "Mac"
+        peerPlacements = Self.loadPeerPlacements()
         core.delegate = self
         inputBridge.send = { [weak self] input in
             guard let self else { return }
@@ -33,6 +35,9 @@ final class AppModel: RustCoreDelegate {
         }
         inputBridge.didRequestRelease = { [weak self] in
             self?.stopControlling()
+        }
+        inputBridge.didEnterRemoteControl = { [weak self] in
+            self?.didEnterRemoteControl()
         }
         startCore()
         refreshPermission()
@@ -49,6 +54,7 @@ final class AppModel: RustCoreDelegate {
 
     func connect(to peer: Peer) {
         stopControlling()
+        inputBridge.stopMonitoring()
         connectionState = .connecting(peer.id)
         if !core.connect(to: peer.id) {
             connectionState = .disconnected
@@ -58,6 +64,7 @@ final class AppModel: RustCoreDelegate {
 
     func disconnect() {
         stopControlling()
+        inputBridge.stopMonitoring()
         core.disconnect()
         connectionState = .disconnected
     }
@@ -73,10 +80,7 @@ final class AppModel: RustCoreDelegate {
             lastError = "无法创建系统输入监听，请检查辅助功能权限"
             return
         }
-        isControlling = true
-        hud.show(peerName: peer.name) { [weak self] in
-            self?.stopControlling()
-        }
+        showRemoteControl(for: peer)
     }
 
     func stopControlling() {
@@ -88,6 +92,24 @@ final class AppModel: RustCoreDelegate {
         isControlling = false
     }
 
+    func placement(for peer: Peer) -> PeerPlacement {
+        peerPlacements[peer.id] ?? .disabled
+    }
+
+    func setPlacement(_ placement: PeerPlacement, for peer: Peer) {
+        peerPlacements[peer.id] = placement
+        Self.savePeerPlacements(peerPlacements)
+
+        if connectionState.connectedPeer?.id == peer.id {
+            if isControlling {
+                stopControlling()
+            }
+            configureEdgeMonitoring(for: peer)
+        } else if placement.isEnabled {
+            connect(to: peer)
+        }
+    }
+
     func requestPermission() {
         inputBridge.requestAccessibilityPermission()
         refreshPermission()
@@ -95,6 +117,12 @@ final class AppModel: RustCoreDelegate {
 
     func refreshPermission() {
         hasAccessibilityPermission = inputBridge.hasAccessibilityPermission
+        if hasAccessibilityPermission, let peer = connectionState.connectedPeer {
+            configureEdgeMonitoring(for: peer)
+            if lastError?.hasPrefix("设备位置已保存；") == true {
+                lastError = nil
+            }
+        }
     }
 
     func rustCore(_ core: RustCore, received event: CoreEventEnvelope) {
@@ -107,6 +135,9 @@ final class AppModel: RustCoreDelegate {
             if let peer = event.peer, !peers.contains(where: { $0.id == peer.id }) {
                 peers.append(peer)
                 peers.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+                if connectionState == .disconnected, placement(for: peer).isEnabled {
+                    connect(to: peer)
+                }
             }
         case "peer_down":
             if let peerID = event.peerID {
@@ -119,9 +150,11 @@ final class AppModel: RustCoreDelegate {
         case "connected":
             if let peer = event.peer {
                 connectionState = .connected(peer)
+                configureEdgeMonitoring(for: peer)
             }
         case "disconnected":
             stopControlling()
+            inputBridge.stopMonitoring()
             connectionState = .disconnected
             if event.reason != "local request" {
                 lastError = event.reason
@@ -138,6 +171,31 @@ final class AppModel: RustCoreDelegate {
         receivedEventCount += 1
     }
 
+    private func configureEdgeMonitoring(for peer: Peer) {
+        let placement = placement(for: peer)
+        guard inputBridge.configureEdgeMonitoring(for: placement) else {
+            if placement.isEnabled {
+                lastError = "设备位置已保存；授予辅助功能权限后即可从\(placement.edgeDescription)切换"
+            }
+            return
+        }
+    }
+
+    private func didEnterRemoteControl() {
+        guard let peer = connectionState.connectedPeer else {
+            inputBridge.stopCapturing()
+            return
+        }
+        showRemoteControl(for: peer)
+    }
+
+    private func showRemoteControl(for peer: Peer) {
+        isControlling = true
+        hud.show(peerName: peer.name) { [weak self] in
+            self?.stopControlling()
+        }
+    }
+
     private static var deviceID: String {
         let key = "linkcursor.device-id"
         if let stored = UserDefaults.standard.string(forKey: key) {
@@ -146,5 +204,27 @@ final class AppModel: RustCoreDelegate {
         let id = UUID().uuidString.lowercased()
         UserDefaults.standard.set(id, forKey: key)
         return id
+    }
+
+    private static let peerPlacementsKey = "linkcursor.peer-placements"
+
+    private static func loadPeerPlacements() -> [String: PeerPlacement] {
+        guard let stored = UserDefaults.standard.dictionary(forKey: peerPlacementsKey)
+            as? [String: String]
+        else {
+            return [:]
+        }
+        return stored.reduce(into: [:]) { result, item in
+            if let placement = PeerPlacement(rawValue: item.value) {
+                result[item.key] = placement
+            }
+        }
+    }
+
+    private static func savePeerPlacements(_ placements: [String: PeerPlacement]) {
+        UserDefaults.standard.set(
+            placements.mapValues(\.rawValue),
+            forKey: peerPlacementsKey
+        )
     }
 }

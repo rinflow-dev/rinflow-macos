@@ -4,12 +4,14 @@ struct PeerRow: View {
     let peer: Peer
     let isConnected: Bool
     let isConnecting: Bool
+    let placement: PeerPlacement
+    let setPlacement: (PeerPlacement) -> Void
     let connect: () -> Void
     let disconnect: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "desktopcomputer")
+            Image(systemName: peer.platform == "android" ? "iphone" : "desktopcomputer")
                 .font(.title2)
                 .frame(width: 34, height: 34)
                 .background(.quaternary, in: .rect(cornerRadius: 8))
@@ -25,18 +27,35 @@ struct PeerRow: View {
 
             Spacer()
 
-            if isConnecting {
-                ProgressView()
-                    .controlSize(.small)
-            } else if isConnected {
-                Button("断开", action: disconnect)
-                    .buttonStyle(.bordered)
-            } else {
-                Button("连接", systemImage: "link", action: connect)
-                    .buttonStyle(.borderedProminent)
+            VStack(alignment: .trailing, spacing: 6) {
+                Picker(
+                    "位置",
+                    selection: Binding(
+                        get: { placement },
+                        set: { newValue in setPlacement(newValue) }
+                    )
+                ) {
+                    ForEach(PeerPlacement.allCases) { placement in
+                        Label(placement.label, systemImage: placement.systemImage)
+                            .tag(placement)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .frame(width: 140)
+
+                if isConnecting {
+                    ProgressView()
+                        .controlSize(.small)
+                } else if isConnected {
+                    Button("断开", action: disconnect)
+                        .buttonStyle(.bordered)
+                } else {
+                    Button("连接", systemImage: "link", action: connect)
+                        .buttonStyle(.borderedProminent)
+                }
             }
         }
         .padding(.vertical, 6)
     }
 }
-

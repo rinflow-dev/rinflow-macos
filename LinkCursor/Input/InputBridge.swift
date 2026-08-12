@@ -5,6 +5,7 @@ import AppKit
 @MainActor
 final class InputBridge {
     var send: ((LcInputEvent) -> Void)?
+    var didEnterRemoteControl: (() -> Void)?
     var didRequestRelease: (() -> Void)?
 
     private static let syntheticMarker: Int64 = 0x4C_49_4E_4B_43_55_52
@@ -13,6 +14,7 @@ final class InputBridge {
     private var runLoopSource: CFRunLoopSource?
     private var pressedButtons: UInt32 = 0
     private var pressedModifierUsages: Set<UInt32> = []
+    private var placement: PeerPlacement = .disabled
     private(set) var isCapturing = false
 
     var hasAccessibilityPermission: Bool {
@@ -28,8 +30,51 @@ final class InputBridge {
 
     func startCapturing() -> Bool {
         guard !isCapturing else { return true }
+        guard installEventTapIfNeeded(promptForPermission: true) else { return false }
+
+        beginCapturing()
+        return true
+    }
+
+    func configureEdgeMonitoring(for placement: PeerPlacement) -> Bool {
+        self.placement = placement
+        if !placement.isEnabled {
+            if !isCapturing {
+                removeEventTap()
+            }
+            return true
+        }
+        return installEventTapIfNeeded(promptForPermission: false)
+    }
+
+    func stopCapturing() {
+        guard isCapturing else { return }
+        isCapturing = false
+        pressedButtons = 0
+        pressedModifierUsages.removeAll(keepingCapacity: true)
+        moveCursorInsideLocalScreen()
+        if !placement.isEnabled {
+            removeEventTap()
+        }
+    }
+
+    func stopMonitoring() {
+        isCapturing = false
+        placement = .disabled
+        pressedButtons = 0
+        pressedModifierUsages.removeAll(keepingCapacity: true)
+        removeEventTap()
+    }
+
+    private func installEventTapIfNeeded(promptForPermission: Bool) -> Bool {
+        if let eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: true)
+            return true
+        }
         guard hasAccessibilityPermission else {
-            requestAccessibilityPermission()
+            if promptForPermission {
+                requestAccessibilityPermission()
+            }
             return false
         }
 
@@ -61,12 +106,10 @@ final class InputBridge {
         CGEvent.tapEnable(tap: tap, enable: true)
         eventTap = tap
         runLoopSource = source
-        isCapturing = true
         return true
     }
 
-    func stopCapturing() {
-        isCapturing = false
+    private func removeEventTap() {
         if let eventTap {
             CGEvent.tapEnable(tap: eventTap, enable: false)
         }
@@ -75,8 +118,12 @@ final class InputBridge {
         }
         runLoopSource = nil
         eventTap = nil
+    }
+
+    private func beginCapturing() {
         pressedButtons = 0
-        pressedModifierUsages.removeAll(keepingCapacity: true)
+        synchronizeModifierState()
+        isCapturing = true
     }
 
     func inject(_ input: LcInputEvent) {
@@ -144,13 +191,22 @@ final class InputBridge {
         if event.getIntegerValueField(.eventSourceUserData) == Self.syntheticMarker {
             return Unmanaged.passUnretained(event)
         }
-        guard isCapturing else { return Unmanaged.passUnretained(event) }
 
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             if let eventTap {
                 CGEvent.tapEnable(tap: eventTap, enable: true)
             }
             return Unmanaged.passUnretained(event)
+        }
+
+        if !isCapturing {
+            guard shouldEnterRemoteControl(type: type, event: event) else {
+                return Unmanaged.passUnretained(event)
+            }
+            beginCapturing()
+            DispatchQueue.main.async { [weak self] in
+                self?.didEnterRemoteControl?()
+            }
         }
 
         if type == .keyDown,
@@ -168,6 +224,65 @@ final class InputBridge {
             send?(input)
         }
         return nil
+    }
+
+    private func shouldEnterRemoteControl(type: CGEventType, event: CGEvent) -> Bool {
+        let isMovement = type == .mouseMoved || type == .leftMouseDragged ||
+            type == .rightMouseDragged || type == .otherMouseDragged
+        guard placement.isEnabled, isMovement, let desktopBounds = desktopDisplayBounds() else {
+            return false
+        }
+
+        let location = event.location
+        let deltaX = event.getIntegerValueField(.mouseEventDeltaX)
+        let deltaY = event.getIntegerValueField(.mouseEventDeltaY)
+        let tolerance = 1.5
+
+        switch placement {
+        case .left:
+            return location.x <= desktopBounds.minX + tolerance && deltaX < 0
+        case .right:
+            return location.x >= desktopBounds.maxX - tolerance && deltaX > 0
+        case .top:
+            return location.y <= desktopBounds.minY + tolerance && deltaY < 0
+        case .bottom:
+            return location.y >= desktopBounds.maxY - tolerance && deltaY > 0
+        case .disabled:
+            return false
+        }
+    }
+
+    private func desktopDisplayBounds() -> CGRect? {
+        let bounds = NSScreen.screens.compactMap { screen -> CGRect? in
+            guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")]
+                as? NSNumber
+            else {
+                return nil
+            }
+            return CGDisplayBounds(CGDirectDisplayID(number.uint32Value))
+        }
+        return bounds.dropFirst().reduce(bounds.first) { partial, next in
+            partial?.union(next)
+        }
+    }
+
+    private func moveCursorInsideLocalScreen() {
+        guard placement.isEnabled,
+              let bounds = desktopDisplayBounds(),
+              var location = CGEvent(source: nil)?.location
+        else {
+            return
+        }
+
+        let inset = 8.0
+        switch placement {
+        case .left: location.x = bounds.minX + inset
+        case .right: location.x = bounds.maxX - inset
+        case .top: location.y = bounds.minY + inset
+        case .bottom: location.y = bounds.maxY - inset
+        case .disabled: return
+        }
+        CGWarpMouseCursorPosition(location)
     }
 
     private func makeInputs(type: CGEventType, event: CGEvent) -> [LcInputEvent] {

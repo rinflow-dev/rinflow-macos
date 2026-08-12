@@ -25,6 +25,7 @@ final class RustCore {
         let configuration: [String: Any] = [
             "device_id": deviceID,
             "device_name": deviceName,
+            "platform": "macos",
             "control_port": 42_421,
             "discovery_port": 42_420,
         ]
