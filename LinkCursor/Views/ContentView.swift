@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @Bindable var model: AppModel
 
     var body: some View {
@@ -25,8 +26,8 @@ struct ContentView: View {
                         peer: model.connectionState.connectedPeer,
                         placement: model.connectionState.connectedPeer
                             .map(model.placement(for:)) ?? .disabled,
+                        hasAccessibilityPermission: model.hasAccessibilityPermission,
                         isControlling: model.isControlling,
-                        start: model.startControlling,
                         stop: model.stopControlling
                     )
 
@@ -61,6 +62,11 @@ struct ContentView: View {
         }
         .frame(minWidth: 620, minHeight: 580)
         .onAppear(perform: model.refreshPermission)
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                model.refreshPermission()
+            }
+        }
     }
 
     private var peerSection: some View {
@@ -202,8 +208,8 @@ private struct PermissionCard: View {
 private struct ConnectedControlCard: View {
     let peer: Peer?
     let placement: PeerPlacement
+    let hasAccessibilityPermission: Bool
     let isControlling: Bool
-    let start: () -> Void
     let stop: () -> Void
 
     var body: some View {
@@ -222,9 +228,14 @@ private struct ConnectedControlCard: View {
 
             Spacer()
 
-            Button(isControlling ? "停止控制" : "开始控制", action: isControlling ? stop : start)
-                .buttonStyle(.borderedProminent)
-                .disabled(peer == nil)
+            if isControlling {
+                Button("释放控制", action: stop)
+                    .buttonStyle(.borderedProminent)
+            } else if peer != nil, placement.isEnabled, hasAccessibilityPermission {
+                Label("自动切换已启用", systemImage: "arrow.right.to.line.compact")
+                    .font(.caption)
+                    .foregroundStyle(.green)
+            }
         }
         .padding(16)
         .background(.background.secondary, in: .rect(cornerRadius: 14))
@@ -234,9 +245,15 @@ private struct ConnectedControlCard: View {
         if isControlling {
             return "键鼠输入正在转发，按 ⌃⌥⎋ 释放"
         }
-        if peer != nil, placement.isEnabled {
-            return "将鼠标越过\(placement.edgeDescription)即可开始控制"
+        if peer != nil, !placement.isEnabled {
+            return "请在下方设备列表选择位置；位置决定从哪条边缘自动切换"
         }
-        return "连接后可手动开始转发输入，或为设备配置位置"
+        if peer != nil, placement.isEnabled, !hasAccessibilityPermission {
+            return "授予辅助功能权限后，越过\(placement.edgeDescription)即可自动切换"
+        }
+        if peer != nil, placement.isEnabled {
+            return "将鼠标越过\(placement.edgeDescription)，输入会自动切换到该设备"
+        }
+        return "连接设备并配置相对位置后，将自动启用边缘切换"
     }
 }

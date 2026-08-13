@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 struct Peer: Codable, Identifiable, Equatable, Sendable {
@@ -48,6 +49,28 @@ enum PeerPlacement: String, CaseIterable, Identifiable, Sendable {
     }
 
     var isEnabled: Bool { self != .disabled }
+}
+
+struct EdgeSwitchPolicy {
+    static func shouldEnter(
+        placement: PeerPlacement,
+        location: CGPoint,
+        desktopBounds: CGRect,
+        jumpZoneSize: CGFloat = 1
+    ) -> Bool {
+        switch placement {
+        case .left:
+            location.x < desktopBounds.minX + jumpZoneSize
+        case .right:
+            location.x >= desktopBounds.maxX - jumpZoneSize
+        case .top:
+            location.y < desktopBounds.minY + jumpZoneSize
+        case .bottom:
+            location.y >= desktopBounds.maxY - jumpZoneSize
+        case .disabled:
+            false
+        }
+    }
 }
 
 enum CoreRunState: Equatable, Sendable {

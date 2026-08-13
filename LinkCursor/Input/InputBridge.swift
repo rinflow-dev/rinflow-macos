@@ -15,6 +15,7 @@ final class InputBridge {
     private var pressedButtons: UInt32 = 0
     private var pressedModifierUsages: Set<UInt32> = []
     private var placement: PeerPlacement = .disabled
+    private var hasRequestedAccessibilityPrompt = false
     private(set) var isCapturing = false
 
     var hasAccessibilityPermission: Bool {
@@ -22,18 +23,21 @@ final class InputBridge {
     }
 
     func requestAccessibilityPermission() {
+        guard !hasAccessibilityPermission else { return }
+        guard !hasRequestedAccessibilityPrompt else {
+            if let settingsURL = URL(
+                string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+            ) {
+                NSWorkspace.shared.open(settingsURL)
+            }
+            return
+        }
+
+        hasRequestedAccessibilityPrompt = true
         let options = [
             kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true,
         ] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
-    }
-
-    func startCapturing() -> Bool {
-        guard !isCapturing else { return true }
-        guard installEventTapIfNeeded(promptForPermission: true) else { return false }
-
-        beginCapturing()
-        return true
     }
 
     func configureEdgeMonitoring(for placement: PeerPlacement) -> Bool {
@@ -233,23 +237,14 @@ final class InputBridge {
             return false
         }
 
-        let location = event.location
-        let deltaX = event.getIntegerValueField(.mouseEventDeltaX)
-        let deltaY = event.getIntegerValueField(.mouseEventDeltaY)
-        let tolerance = 1.5
-
-        switch placement {
-        case .left:
-            return location.x <= desktopBounds.minX + tolerance && deltaX < 0
-        case .right:
-            return location.x >= desktopBounds.maxX - tolerance && deltaX > 0
-        case .top:
-            return location.y <= desktopBounds.minY + tolerance && deltaY < 0
-        case .bottom:
-            return location.y >= desktopBounds.maxY - tolerance && deltaY > 0
-        case .disabled:
-            return false
-        }
+        // Mouse events can sit in the queue briefly. Deskflow uses the live
+        // cursor position for the local screen for the same reason.
+        let location = CGEvent(source: nil)?.location ?? event.location
+        return EdgeSwitchPolicy.shouldEnter(
+            placement: placement,
+            location: location,
+            desktopBounds: desktopBounds
+        )
     }
 
     private func desktopDisplayBounds() -> CGRect? {

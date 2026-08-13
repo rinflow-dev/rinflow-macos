@@ -69,20 +69,6 @@ final class AppModel: RustCoreDelegate {
         connectionState = .disconnected
     }
 
-    func startControlling() {
-        guard let peer = connectionState.connectedPeer else { return }
-        refreshPermission()
-        guard hasAccessibilityPermission else {
-            requestPermission()
-            return
-        }
-        guard inputBridge.startCapturing() else {
-            lastError = "无法创建系统输入监听，请检查辅助功能权限"
-            return
-        }
-        showRemoteControl(for: peer)
-    }
-
     func stopControlling() {
         if isControlling {
             _ = core.resetInput()

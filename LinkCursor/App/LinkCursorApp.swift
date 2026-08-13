@@ -16,18 +16,22 @@ struct LinkCursorApp: App {
     }
 }
 
+
 private struct MenuBarContent: View {
     let model: AppModel
 
     var body: some View {
         if let peer = model.connectionState.connectedPeer {
             Text("已连接：\(peer.name)")
-            Button(model.isControlling ? "停止控制" : "开始控制") {
-                if model.isControlling {
-                    model.stopControlling()
-                } else {
-                    model.startControlling()
-                }
+            if model.isControlling {
+                Button("释放控制", action: model.stopControlling)
+            } else {
+                let placement = model.placement(for: peer)
+                Text(
+                    placement.isEnabled
+                        ? "自动切换：\(placement.edgeDescription)"
+                        : "请选择设备位置以启用自动切换"
+                )
             }
             Button("断开连接", action: model.disconnect)
         } else {
@@ -41,4 +45,3 @@ private struct MenuBarContent: View {
         }
     }
 }
-
