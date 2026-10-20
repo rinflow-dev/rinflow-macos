@@ -115,6 +115,13 @@ struct CoreEventEnvelope: Decodable, Sendable {
     let updatedMs: UInt64?
     /// `clipboard`
     let formats: [ClipboardFormat]?
+    /// `files_*`
+    let transfer: UInt32?
+    let count: Int?
+    let totalSize: UInt64?
+    let received: UInt64?
+    let total: UInt64?
+    let paths: [String]?
 
     struct ClipboardFormat: Decodable, Sendable {
         let mime: String
@@ -132,5 +139,11 @@ struct CoreEventEnvelope: Decodable, Sendable {
         case offset
         case updatedMs = "updated_ms"
         case formats
+        case transfer
+        case count
+        case totalSize = "total_size"
+        case received
+        case total
+        case paths
     }
 }

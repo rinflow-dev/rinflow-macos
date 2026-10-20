@@ -6,6 +6,8 @@ struct ClipboardItem: Sendable {
     static let text = "text/plain;charset=utf-8"
     static let html = "text/html;charset=utf-8"
     static let png = "image/png"
+    /// Copied files, as `file://` URLs (one per line).
+    static let uriList = "text/uri-list"
 
     let mime: String
     let data: Data
@@ -30,15 +32,17 @@ final class ClipboardBridge {
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "clipboard")
 
     private let pasteboard = NSPasteboard.general
-    private var changeCount: Int
+    /// The change count last reported (or written by this bridge).
+    private var reportedCount: Int
+    private var pendingRead: DispatchWorkItem?
     private var timer: Timer?
 
     init() {
-        changeCount = pasteboard.changeCount
+        reportedCount = pasteboard.changeCount
     }
 
     func start() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.poll() }
         }
         // What is on the pasteboard already counts as this Mac's clipboard.
@@ -48,6 +52,17 @@ final class ClipboardBridge {
     /// Writes a peer's clipboard. The change this makes is not reported back.
     func write(_ items: [ClipboardItem]) {
         pasteboard.clearContents()
+        // Received files: written as files, so Finder pastes them.
+        if let list = items.first(where: { $0.mime == ClipboardItem.uriList }) {
+            let urls = String(decoding: list.data, as: UTF8.self)
+                .split(whereSeparator: \.isNewline)
+                .compactMap { URL(string: String($0)) }
+                .filter(\.isFileURL)
+            pasteboard.writeObjects(urls as [NSURL])
+            reportedCount = pasteboard.changeCount
+            Self.log.info("wrote peer files: \(urls.count) items")
+            return
+        }
         for item in items {
             switch item.mime {
             case ClipboardItem.text:
@@ -66,17 +81,35 @@ final class ClipboardBridge {
                 break
             }
         }
-        changeCount = pasteboard.changeCount
+        reportedCount = pasteboard.changeCount
         Self.log.info("wrote peer clipboard: \(items.map(\.mime), privacy: .public)")
     }
 
-    private func poll() {
-        guard pasteboard.changeCount != changeCount else { return }
-        changeCount = pasteboard.changeCount
+    /// Reports a change not reported yet. Called when the pointer leaves for
+    /// a peer, so a copy made just before is not left behind by the polling.
+    func reportIfChanged() {
+        guard pasteboard.changeCount != reportedCount else { return }
+        pendingRead?.cancel()
+        pendingRead = nil
         report()
     }
 
+    private func poll() {
+        guard pasteboard.changeCount != reportedCount, pendingRead == nil else { return }
+        // Writers clear the pasteboard first (that bumps the count) and add
+        // their items after: read once they are done, not halfway.
+        let read = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated {
+                self?.pendingRead = nil
+                self?.reportIfChanged()
+            }
+        }
+        pendingRead = read
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: read)
+    }
+
     private func report() {
+        reportedCount = pasteboard.changeCount
         let items = read()
         Self.log.info(
             "pasteboard changed: \(items.map { "\($0.mime) \($0.data.count)B" }, privacy: .public)"
@@ -90,9 +123,22 @@ final class ClipboardBridge {
         guard types.isDisjoint(with: Self.privateTypes) else { return [] }
 
         var items: [ClipboardItem] = []
-        // Files copied in Finder come with their icon as an image: only
-        // their names (the text) are shared until files themselves can be.
-        if !types.contains(.fileURL), let png = imagePNG() {
+        // Files copied in Finder: the files themselves (the core turns the
+        // URLs into a manifest) and their names, never their icon.
+        if types.contains(.fileURL) {
+            let urls = pasteboard.readObjects(
+                forClasses: [NSURL.self],
+                options: [.urlReadingFileURLsOnly: true]
+            ) as? [URL] ?? []
+            if !urls.isEmpty {
+                let list = urls.map(\.absoluteString).joined(separator: "\r\n")
+                items.append(ClipboardItem(mime: ClipboardItem.uriList, data: Data(list.utf8)))
+                let names = urls.map(\.lastPathComponent).joined(separator: "\n")
+                items.append(ClipboardItem(mime: ClipboardItem.text, data: Data(names.utf8)))
+                return items
+            }
+        }
+        if let png = imagePNG() {
             items.append(ClipboardItem(mime: ClipboardItem.png, data: png))
         }
         if let html = pasteboard.data(forType: .html), let utf8 = Self.utf8(html) {

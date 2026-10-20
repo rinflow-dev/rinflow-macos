@@ -30,6 +30,9 @@ final class RustCore {
         let placements: [PlacementRecord]
         /// This shell reads and writes the pasteboard (ClipboardBridge).
         let clipboard = true
+        /// Copied files travel with the clipboard; received ones land here.
+        let files = true
+        let downloadDirectory: String
 
         enum CodingKeys: String, CodingKey {
             case deviceID = "device_id"
@@ -40,6 +43,8 @@ final class RustCore {
             case displays
             case placements
             case clipboard
+            case files
+            case downloadDirectory = "download_directory"
         }
     }
 
@@ -56,7 +61,8 @@ final class RustCore {
             deviceID: deviceID,
             deviceName: deviceName,
             displays: displays,
-            placements: placements
+            placements: placements,
+            downloadDirectory: Self.downloadDirectory.path
         )
         guard let json = Self.json(configuration) else { return false }
 
@@ -113,6 +119,23 @@ final class RustCore {
             }
             return json.withCString { lc_core_set_placement(handle, peer, $0) }
         }
+    }
+
+    /// Received files go to ~/Downloads/LinkCursor.
+    static var downloadDirectory: URL {
+        let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
+            ?? FileManager.default.homeDirectoryForCurrentUser.appending(path: "Downloads")
+        return downloads.appending(path: "LinkCursor", directoryHint: .isDirectory)
+    }
+
+    func acceptFiles(_ transfer: UInt32) {
+        guard let handle else { return }
+        _ = lc_core_accept_files(handle, transfer)
+    }
+
+    func cancelFiles(_ transfer: UInt32) {
+        guard let handle else { return }
+        _ = lc_core_cancel_files(handle, transfer)
     }
 
     /// The pasteboard after a change; empty when it holds nothing to share.

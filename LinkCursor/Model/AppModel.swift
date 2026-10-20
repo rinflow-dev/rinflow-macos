@@ -16,6 +16,8 @@ final class AppModel: RustCoreDelegate {
     private(set) var sentEventCount = 0
     private(set) var receivedEventCount = 0
     private(set) var lastError: String?
+    /// The files being received, for the window footer.
+    private(set) var fileTransfer: String?
     /// The core's placements, saved as it reports them and handed back to it
     /// at start-up. The core owns them; the Mac never edits one directly.
     private(set) var placements: [String: PlacementRecord]
@@ -68,6 +70,9 @@ final class AppModel: RustCoreDelegate {
         }
         clipboard.didChange = { [weak self] items in
             self?.core.setClipboard(items)
+        }
+        inputBridge.willEnter = { [weak self] in
+            self?.clipboard.reportIfChanged()
         }
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
@@ -235,6 +240,19 @@ final class AppModel: RustCoreDelegate {
                 Data(base64Encoded: format.data).map { ClipboardItem(mime: format.mime, data: $0) }
             }
             clipboard.write(items)
+        case "files_offered":
+            guard let transfer = event.transfer else { break }
+            askToReceiveFiles(transfer, from: event.peerID, count: event.count ?? 0, size: event.totalSize ?? 0)
+        case "files_progress":
+            if let received = event.received, let total = event.total, total > 0 {
+                fileTransfer = "正在接收文件 \(received * 100 / total)%"
+            }
+        case "files_received":
+            fileTransfer = nil
+            Self.log.info("received files: \(event.paths ?? [], privacy: .public)")
+        case "files_failed":
+            fileTransfer = nil
+            lastError = "文件接收失败：\(event.reason ?? "")"
         case "error":
             lastError = event.message
         default:
@@ -256,6 +274,23 @@ final class AppModel: RustCoreDelegate {
         for peer in peers where placements[peer.id]?.offset != nil && sessions[peer.id] == nil {
             Self.log.info("connecting placed peer \(peer.id, privacy: .public)")
             connect(to: peer)
+        }
+    }
+
+    /// Over the automatic limit, the user decides.
+    private func askToReceiveFiles(_ transfer: UInt32, from peerID: String?, count: Int, size: UInt64) {
+        let name = peerID.flatMap { id in peers.first { $0.id == id }?.name } ?? peerID ?? "对方"
+        let alert = NSAlert()
+        alert.messageText = "\(name) 想发送 \(count) 个文件"
+        alert.informativeText = "共 \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))，"
+            + "将保存到“下载/LinkCursor”。"
+        alert.addButton(withTitle: "接收")
+        alert.addButton(withTitle: "取消")
+        NSApp.activate()
+        if alert.runModal() == .alertFirstButtonReturn {
+            core.acceptFiles(transfer)
+        } else {
+            core.cancelFiles(transfer)
         }
     }
 

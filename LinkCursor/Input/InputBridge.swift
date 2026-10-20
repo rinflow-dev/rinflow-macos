@@ -16,6 +16,9 @@ final class InputBridge {
     /// The peer that now receives input, or nil when control came back.
     /// Called synchronously, before the first event for the new target.
     var didChangeTarget: ((String?) -> Void)?
+    /// The pointer is about to leave for a peer: last chance to report what
+    /// it should take along (the clipboard).
+    var willEnter: (() -> Void)?
 
     private static let syntheticMarker: Int64 = 0x4C_49_4E_4B_43_55_52
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "input")
@@ -144,6 +147,7 @@ final class InputBridge {
     }
 
     private func beginCapture(through portal: Portal, at location: CGPoint) {
+        willEnter?()
         let peerPortals = portals.filter { $0.peerID == portal.peerID }
         let remote = RemotePointer(
             entering: portal,

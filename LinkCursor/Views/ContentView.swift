@@ -65,6 +65,10 @@ struct ContentView: View {
             Divider()
 
             HStack {
+                if let fileTransfer = model.fileTransfer {
+                    Text(fileTransfer)
+                    Text("·")
+                }
                 Text("已发送 \(model.sentEventCount) 个事件")
                 Text("·")
                 Text("已接收 \(model.receivedEventCount) 个事件")
