@@ -10,6 +10,7 @@
 		0E2A2781672B2C7E58DC3285 /* LinkCursorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60041A94C75DCE3BDB2581F1 /* LinkCursorApp.swift */; };
 		215DE65FB7D560FD335527BD /* PeerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6507B56012C6A97A2E743A4 /* PeerRow.swift */; };
 		3599F7657914CA2F9ADA5AE5 /* RustCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553594E4FC3C9A668588A0C2 /* RustCore.swift */; };
+		3CAC39BD79B7BC545662136D /* ClipboardBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468C4819D6BA65631C49EDA6 /* ClipboardBridge.swift */; };
 		4E2F3C1006E1D3856B33F9DC /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5652DB9C286C74B8D828D6 /* Layout.swift */; };
 		593A3C7649C7EBE5073DEB3A /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE701D5ACBFC21831EA6D85 /* HIDKeyMap.swift */; };
 		6407B184008E8965E3D619F1 /* ArrangementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D07CD3C84ED70CD72311B26 /* ArrangementView.swift */; };
@@ -27,6 +28,7 @@
 		294447A491B020A82E6FE590 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CC87A6BA69FDE057327D211 /* generate-xcodeproj.rb */ = {isa = PBXFileReference; includeInIndex = 1; path = "generate-xcodeproj.rb"; sourceTree = "<group>"; };
 		414E7EB4FC32659F5F0B23B0 /* LinkCursor-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "LinkCursor-Bridging-Header.h"; sourceTree = "<group>"; };
+		468C4819D6BA65631C49EDA6 /* ClipboardBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardBridge.swift; sourceTree = "<group>"; };
 		553594E4FC3C9A668588A0C2 /* RustCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RustCore.swift; sourceTree = "<group>"; };
 		60041A94C75DCE3BDB2581F1 /* LinkCursorApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCursorApp.swift; sourceTree = "<group>"; };
 		6822CB74F61CD4DCD3EA25A7 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 			children = (
 				7EE701D5ACBFC21831EA6D85 /* HIDKeyMap.swift */,
 				81CAEC06B886306F22AD010A /* InputBridge.swift */,
+				468C4819D6BA65631C49EDA6 /* ClipboardBridge.swift */,
 			);
 			name = Input;
 			path = Input;
@@ -289,6 +292,7 @@
 				215DE65FB7D560FD335527BD /* PeerRow.swift in Sources */,
 				4E2F3C1006E1D3856B33F9DC /* Layout.swift in Sources */,
 				6407B184008E8965E3D619F1 /* ArrangementView.swift in Sources */,
+				3CAC39BD79B7BC545662136D /* ClipboardBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -113,6 +113,14 @@ struct CoreEventEnvelope: Decodable, Sendable {
     /// `placement_changed`; null when the placement was removed.
     let offset: Offset?
     let updatedMs: UInt64?
+    /// `clipboard`
+    let formats: [ClipboardFormat]?
+
+    struct ClipboardFormat: Decodable, Sendable {
+        let mime: String
+        /// Base64.
+        let data: String
+    }
 
     enum CodingKeys: String, CodingKey {
         case event
@@ -123,5 +131,6 @@ struct CoreEventEnvelope: Decodable, Sendable {
         case displays
         case offset
         case updatedMs = "updated_ms"
+        case formats
     }
 }

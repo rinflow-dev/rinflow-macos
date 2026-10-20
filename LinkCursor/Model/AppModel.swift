@@ -29,6 +29,7 @@ final class AppModel: RustCoreDelegate {
     private let core = RustCore()
     private let inputBridge = InputBridge()
     private let hud = ControlHUDController()
+    private let clipboard = ClipboardBridge()
     private var reconnectTimer: Timer?
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "model")
 
@@ -65,6 +66,9 @@ final class AppModel: RustCoreDelegate {
         inputBridge.didChangeTarget = { [weak self] peerID in
             self?.controlTargetChanged(peerID)
         }
+        clipboard.didChange = { [weak self] items in
+            self?.core.setClipboard(items)
+        }
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil,
@@ -92,6 +96,7 @@ final class AppModel: RustCoreDelegate {
             return
         }
         migrateLegacyPlacements()
+        clipboard.start()
     }
 
     func connect(to peer: Peer) {
@@ -224,6 +229,12 @@ final class AppModel: RustCoreDelegate {
             Self.savePlacements(placements)
             refreshPortals()
             connectPlacedPeers()
+        case "clipboard":
+            // A peer's clipboard, handed over with the control.
+            let items = (event.formats ?? []).compactMap { format in
+                Data(base64Encoded: format.data).map { ClipboardItem(mime: format.mime, data: $0) }
+            }
+            clipboard.write(items)
         case "error":
             lastError = event.message
         default:

@@ -28,6 +28,8 @@ final class RustCore {
         let discoveryPort = 42_420
         let displays: [Display]
         let placements: [PlacementRecord]
+        /// This shell reads and writes the pasteboard (ClipboardBridge).
+        let clipboard = true
 
         enum CodingKeys: String, CodingKey {
             case deviceID = "device_id"
@@ -37,6 +39,7 @@ final class RustCore {
             case discoveryPort = "discovery_port"
             case displays
             case placements
+            case clipboard
         }
     }
 
@@ -112,6 +115,19 @@ final class RustCore {
         }
     }
 
+    /// The pasteboard after a change; empty when it holds nothing to share.
+    func setClipboard(_ items: [ClipboardItem]) {
+        guard let handle else { return }
+        let formats = items.map { ["mime": $0.mime, "data": $0.data.base64EncodedString()] }
+        guard
+            let data = try? JSONSerialization.data(withJSONObject: ["formats": formats]),
+            let json = String(data: data, encoding: .utf8)
+        else {
+            return
+        }
+        _ = json.withCString { lc_core_set_clipboard(handle, $0) }
+    }
+
     private static func json(_ value: some Encodable) -> String? {
         guard let data = try? JSONEncoder().encode(value) else { return nil }
         return String(data: data, encoding: .utf8)
@@ -131,7 +147,8 @@ final class RustCore {
     }
 
     fileprivate func receive(eventJSON: String) {
-        Self.log.info("\(eventJSON, privacy: .public)")
+        // A clipboard event carries the contents: keep the log short.
+        Self.log.info("\(eventJSON.prefix(400), privacy: .public)")
         guard
             let data = eventJSON.data(using: .utf8),
             let event = try? JSONDecoder().decode(CoreEventEnvelope.self, from: data)
