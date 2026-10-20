@@ -31,6 +31,22 @@ struct ContentView: View {
                         stop: model.stopControlling
                     )
 
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("排列")
+                            .font(.headline)
+                        Text("拖动设备决定从哪条边缘切换过去；拖出画布即取消放置。两端的排列会自动同步。")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        ArrangementView(
+                            deviceName: model.deviceName,
+                            local: model.localDisplays,
+                            devices: model.arrangedDevices,
+                            place: { model.place($0, at: $1) }
+                        )
+                    }
+                    .padding(16)
+                    .background(.background.secondary, in: .rect(cornerRadius: 14))
+
                     peerSection
 
                     if let lastError = model.lastError {

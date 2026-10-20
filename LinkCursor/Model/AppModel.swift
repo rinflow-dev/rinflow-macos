@@ -19,7 +19,9 @@ final class AppModel: RustCoreDelegate {
     /// The core's placements, saved as it reports them and handed back to it
     /// at start-up. The core owns them; the Mac never edits one directly.
     private(set) var placements: [String: PlacementRecord]
-    private(set) var peerDisplays: [String: [Display]] = [:]
+    /// Every device seen, with its last known name, platform and displays,
+    /// so placed devices keep their place on the canvas while offline.
+    private(set) var knownPeers: [String: Peer]
     private(set) var localDisplays: [Display] = []
 
     let deviceName: String
@@ -27,6 +29,7 @@ final class AppModel: RustCoreDelegate {
     private let core = RustCore()
     private let inputBridge = InputBridge()
     private let hud = ControlHUDController()
+    private var reconnectTimer: Timer?
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "model")
 
     var isControlling: Bool { controlledPeerID != nil }
@@ -49,6 +52,7 @@ final class AppModel: RustCoreDelegate {
     init() {
         deviceName = Host.current().localizedName ?? "Mac"
         placements = Self.loadPlacements()
+        knownPeers = Self.loadKnownPeers()
         core.delegate = self
         inputBridge.send = { [weak self] input in
             guard let self else { return }
@@ -67,6 +71,9 @@ final class AppModel: RustCoreDelegate {
             queue: .main
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.screensChanged() }
+        }
+        reconnectTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.connectPlacedPeers() }
         }
         startCore()
         refreshPermission()
@@ -109,6 +116,32 @@ final class AppModel: RustCoreDelegate {
         PeerPlacement(portals(for: peer.id).first?.side)
     }
 
+    /// What the arrangement canvas draws: discovered devices and placed ones,
+    /// online or not.
+    var arrangedDevices: [ArrangedDevice] {
+        let online = Set(peers.map(\.id))
+        let placed = placements.values.filter { $0.offset != nil }.map(\.peerID)
+        return online.union(placed).sorted().map { id in
+            let peer = peers.first { $0.id == id } ?? knownPeers[id]
+            let state: ArrangedDevice.State =
+                sessions[id]?.peer != nil ? .connected : online.contains(id) ? .online : .offline
+            return ArrangedDevice(
+                id: id,
+                name: peer?.name ?? String(id.prefix(8)),
+                platform: peer?.platform,
+                displays: layout(of: id),
+                offset: placements[id]?.offset,
+                state: state
+            )
+        }
+    }
+
+    /// Proposes a spot for the peer (nil removes its placement). The core
+    /// snaps it, syncs it and reports the result as `placement_changed`.
+    func place(_ peerID: String, at offset: Offset?) {
+        core.place(peerID, at: offset)
+    }
+
     /// Asks the core to place the peer beside an edge (or remove it); the
     /// outcome arrives as `placement_changed`.
     func setPlacement(_ placement: PeerPlacement, for peer: Peer) {
@@ -144,12 +177,8 @@ final class AppModel: RustCoreDelegate {
             peers.removeAll { $0.id == peer.id }
             peers.append(peer)
             peers.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            if peerDisplays[peer.id] == nil, let displays = peer.displays, !displays.isEmpty {
-                peerDisplays[peer.id] = displays
-            }
-            if placements[peer.id]?.offset != nil, sessions[peer.id] == nil {
-                connect(to: peer)
-            }
+            remember(peer)
+            connectPlacedPeers()
         case "peer_down":
             if let peerID = event.peerID {
                 peers.removeAll { $0.id == peerID }
@@ -177,8 +206,13 @@ final class AppModel: RustCoreDelegate {
                 sessions[peerID]?.remoteControl = event.event == "remote_control_started"
             }
         case "peer_displays":
-            guard let peerID = event.peerID, let displays = event.displays else { break }
-            peerDisplays[peerID] = displays
+            guard let peerID = event.peerID, let displays = event.displays,
+                  var peer = knownPeers[peerID] ?? peers.first(where: { $0.id == peerID })
+            else {
+                break
+            }
+            peer.displays = displays
+            remember(peer)
             refreshPortals()
         case "placement_changed":
             guard let peerID = event.peerID, let updatedMs = event.updatedMs else { break }
@@ -189,11 +223,7 @@ final class AppModel: RustCoreDelegate {
             )
             Self.savePlacements(placements)
             refreshPortals()
-            if event.offset != nil, sessions[peerID] == nil,
-               let peer = peers.first(where: { $0.id == peerID })
-            {
-                connect(to: peer)
-            }
+            connectPlacedPeers()
         case "error":
             lastError = event.message
         default:
@@ -204,6 +234,18 @@ final class AppModel: RustCoreDelegate {
     func rustCore(_ core: RustCore, received input: LcInputEvent) {
         inputBridge.inject(input)
         receivedEventCount += 1
+    }
+
+    /// A placed peer is meant to be one push away, so its session is kept
+    /// open: opened when it appears or is placed, and reopened (by the timer)
+    /// when it drops while the peer is still around. Not while this Mac is
+    /// driving a peer: `connect` also moves the input target.
+    private func connectPlacedPeers() {
+        guard controlledPeerID == nil else { return }
+        for peer in peers where placements[peer.id]?.offset != nil && sessions[peer.id] == nil {
+            Self.log.info("connecting placed peer \(peer.id, privacy: .public)")
+            connect(to: peer)
+        }
     }
 
     /// Called synchronously from the event tap, so the target is set before
@@ -239,8 +281,31 @@ final class AppModel: RustCoreDelegate {
 
     /// The peer's displays as last described, or the core's default.
     private func layout(of peerID: String) -> [Display] {
-        let displays = peerDisplays[peerID] ?? []
+        let displays = knownPeers[peerID]?.displays ?? []
         return displays.isEmpty ? [.fallback] : displays
+    }
+
+    private func remember(_ peer: Peer) {
+        var peer = peer
+        if peer.displays?.isEmpty ?? true {
+            peer.displays = knownPeers[peer.id]?.displays
+        }
+        guard knownPeers[peer.id] != peer else { return }
+        knownPeers[peer.id] = peer
+        guard let data = try? JSONEncoder().encode(Array(knownPeers.values)) else { return }
+        UserDefaults.standard.set(data, forKey: Self.knownPeersKey)
+    }
+
+    private static let knownPeersKey = "linkcursor.known-peers"
+
+    private static func loadKnownPeers() -> [String: Peer] {
+        guard
+            let data = UserDefaults.standard.data(forKey: knownPeersKey),
+            let peers = try? JSONDecoder().decode([Peer].self, from: data)
+        else {
+            return [:]
+        }
+        return Dictionary(peers.map { ($0.id, $0) }) { _, latest in latest }
     }
 
     private func portals(for peerID: String) -> [Portal] {

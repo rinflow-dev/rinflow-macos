@@ -29,6 +29,10 @@ final class InputBridge {
     private var pointer: RemotePointer?
     /// Where the Mac cursor is frozen while `pointer` is active.
     private var frozenLocation: CGPoint = .zero
+    /// The jump that a motion shortly after parking the cursor still
+    /// carries (SDL's Cocoa backend compensates the same way). Not every
+    /// first motion carries it, so it is only taken out of one that does.
+    private var pendingWarp: (jump: CGVector, deadline: DispatchTime)?
     /// Sub-unit scroll carried to the next played event.
     private var scrollRest = CGVector.zero
     private var hasRequestedAccessibilityPrompt = false
@@ -105,8 +109,12 @@ final class InputBridge {
             partial | (CGEventMask(1) << type.rawValue)
         }
         let context = Unmanaged.passUnretained(self).toOpaque()
+        // At the HID level, where Deskflow taps too: a motion swallowed here
+        // never reaches the window server, which would otherwise show the
+        // hidden cursor again while it is frozen on a peer. A session tap
+        // only sees events the window server has already handled.
         guard let tap = CGEvent.tapCreate(
-            tap: .cgSessionEventTap,
+            tap: .cghidEventTap,
             place: .headInsertEventTap,
             options: .defaultTap,
             eventsOfInterest: mask,
@@ -147,14 +155,30 @@ final class InputBridge {
         frozenLocation = location
         pressedButtons = 0
         synchronizeModifierState()
-        // The cursor stays put and keeps reporting deltas.
-        CGAssociateMouseAndMouseCursorPosition(0)
-        PointerVisibility.hide()
+        // Parked and hidden from the run loop, not from inside the tap
+        // callback, as Deskflow and lan-mouse do.
+        Task { @MainActor [weak self] in self?.park(from: location) }
         didChangeTarget?(portal.peerID)
 
         Self.log.info(
             "enter \(portal.peerID, privacy: .public) via \(portal.side.rawValue, privacy: .public) local=(\(location.x), \(location.y)) remote=(\(remote.position.x), \(remote.position.y))"
         )
+
+        // TEMPORARY, until the Windows agent honours absolute positions:
+        // pin the peer's cursor to the top-left of its desktop with an
+        // oversized relative move (peers clamp to their desktop), then move
+        // it to the entry point. Exact on a single-display peer.
+        let desktop = Display.bounds(of: remote.displays)
+        for (dx, dy) in [
+            (-desktop.width - 100, -desktop.height - 100),
+            (remote.position.x - desktop.minX, remote.position.y - desktop.minY),
+        ] {
+            var pin = LcInputEvent()
+            pin.kind = UInt32(LC_INPUT_MOUSE_MOVE)
+            pin.delta_x = dx
+            pin.delta_y = dy
+            send?(pin)
+        }
 
         // Tells the peer where the pointer arrives. A peer that does not
         // honour absolute positions treats it as a zero move.
@@ -166,16 +190,63 @@ final class InputBridge {
         send?(arrival)
     }
 
+    /// Parks the cursor in the middle of its display, out of the way of the
+    /// Dock, hot corners and full-screen menu bars, and hides it.
+    ///
+    /// The cursor is moved with a posted event, not a warp, and hidden only
+    /// once the window server has handled that move. A warp updates no hover
+    /// state: when the pointer left through an edge it crossed the Dock on
+    /// (a peer below the main display), the Dock keeps owning the cursor and
+    /// keeps it visible, whatever this app hides. Measured: warp then hide
+    /// leaves it visible; posted move, 50 ms, then hide hides it.
+    private func park(from location: CGPoint) {
+        guard pointer != nil else { return }
+        let centre = Self.centre(ofDisplayAt: location)
+        Self.postMove(to: centre)
+        pendingWarp = (
+            CGVector(dx: centre.x - location.x, dy: centre.y - location.y),
+            .now() + .milliseconds(350)
+        )
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) { [weak self] in
+            guard let self, self.pointer != nil else { return }
+            PointerVisibility.hide()
+            // Dissociating freezes the cursor while it keeps reporting
+            // deltas; it must follow the hide, which re-associates it.
+            CGAssociateMouseAndMouseCursorPosition(1)
+            CGAssociateMouseAndMouseCursorPosition(0)
+        }
+    }
+
+    /// Takes the parking jump out of the motion that carries it: one whose
+    /// delta is mostly that jump (a hand never moves hundreds of points in
+    /// one event).
+    private func removeWarpJump(from delta: CGVector) -> CGVector {
+        guard let (jump, deadline) = pendingWarp else { return delta }
+        let length = jump.dx * jump.dx + jump.dy * jump.dy
+        guard DispatchTime.now() < deadline, length > 0 else {
+            pendingWarp = nil
+            return delta
+        }
+        let share = (delta.dx * jump.dx + delta.dy * jump.dy) / length
+        guard share > 0.5 else { return delta }
+        pendingWarp = nil
+        Self.log.info("removed warp jump (\(jump.dx), \(jump.dy)) from (\(delta.dx), \(delta.dy))")
+        return CGVector(dx: delta.dx - jump.dx, dy: delta.dy - jump.dy)
+    }
+
     private func endCapture(at location: CGPoint) {
         guard pointer != nil else { return }
         pointer = nil
+        pendingWarp = nil
         pressedButtons = 0
         pressedModifierUsages.removeAll(keepingCapacity: true)
-        CGWarpMouseCursorPosition(location)
-        // Re-associating right after the warp also cancels the short
-        // suppression of local mouse events that a warp starts.
         CGAssociateMouseAndMouseCursorPosition(1)
         PointerVisibility.show()
+        // A posted move, not a warp, as when parking: the window server then
+        // hands the cursor to whatever is under it (the Dock, on a bottom
+        // edge) and shows it. After a warp it sometimes stayed hidden. Posted
+        // events keep their order, so a park still in flight lands first.
+        Self.postMove(to: location)
         didChangeTarget?(nil)
         Self.log.info("return local=(\(location.x), \(location.y))")
         if portals.isEmpty {
@@ -283,18 +354,69 @@ final class InputBridge {
             return nil
         }
 
+        var delta = Self.delta(of: event)
         if Self.isMovement(type) {
-            if let exit = remote.move(by: Self.delta(of: event)) {
+            delta = removeWarpJump(from: delta)
+            if let exit = remote.move(by: delta) {
                 endCapture(at: exit)
                 return nil
             }
             pointer = remote
         }
 
-        for input in makeInputs(type: type, event: event, at: remote.position) {
+        for input in makeInputs(type: type, event: event, delta: delta, at: remote.position) {
             send?(input)
         }
         return nil
+    }
+
+    /// Moves the cursor with a real (synthetic) mouse-moved event, so the
+    /// window server updates hover state along the way, unlike a warp.
+    /// Marked, so this tap lets it through.
+    private static func postMove(to point: CGPoint) {
+        guard
+            let source = CGEventSource(stateID: .hidSystemState),
+            let event = CGEvent(
+                mouseEventSource: source,
+                mouseType: .mouseMoved,
+                mouseCursorPosition: point,
+                mouseButton: .left
+            )
+        else {
+            return
+        }
+        event.setIntegerValueField(.eventSourceUserData, value: syntheticMarker)
+        event.post(tap: .cghidEventTap)
+    }
+
+    private static func centre(ofDisplayAt location: CGPoint) -> CGPoint {
+        var display: CGDirectDisplayID = 0
+        var count: UInt32 = 0
+        guard CGGetDisplaysWithPoint(location, 1, &display, &count) == .success, count > 0 else {
+            return location
+        }
+        let bounds = CGDisplayBounds(display)
+        return CGPoint(x: bounds.midX, y: bounds.midY)
+    }
+
+    /// Whether the modifier key of a flagsChanged event is down afterwards,
+    /// read from the event's own device-dependent flag bits (IOLLEvent.h).
+    /// The global key state cannot tell: at the HID tap it still describes
+    /// the moment before this event, which turned every press into a release.
+    private static func modifierIsDown(keyCode: CGKeyCode, flags: CGEventFlags) -> Bool? {
+        let bit: UInt64
+        switch keyCode {
+        case 59: bit = 0x0000_0001 // left control
+        case 56: bit = 0x0000_0002 // left shift
+        case 60: bit = 0x0000_0004 // right shift
+        case 55: bit = 0x0000_0008 // left command
+        case 54: bit = 0x0000_0010 // right command
+        case 58: bit = 0x0000_0020 // left option
+        case 61: bit = 0x0000_0040 // right option
+        case 62: bit = 0x0000_2000 // right control
+        default: return nil
+        }
+        return flags.rawValue & bit != 0
     }
 
     private static func isMovement(_ type: CGEventType) -> Bool {
@@ -326,7 +448,12 @@ final class InputBridge {
     /// `position` is where the pointer is on the peer (peer space); it goes
     /// into x/y for the peer's diagnostics but only counts with
     /// `LC_INPUT_FLAG_ABSOLUTE_POSITION`.
-    private func makeInputs(type: CGEventType, event: CGEvent, at position: CGPoint) -> [LcInputEvent] {
+    private func makeInputs(
+        type: CGEventType,
+        event: CGEvent,
+        delta: CGVector,
+        at position: CGPoint
+    ) -> [LcInputEvent] {
         var input = LcInputEvent()
         input.timestamp_micros = event.timestamp / 1_000
         input.x = position.x
@@ -334,7 +461,6 @@ final class InputBridge {
 
         switch type {
         case .mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged:
-            let delta = Self.delta(of: event)
             input.kind = UInt32(LC_INPUT_MOUSE_MOVE)
             input.delta_x = delta.dx
             input.delta_y = delta.dy
@@ -376,7 +502,9 @@ final class InputBridge {
                 release.kind = UInt32(LC_INPUT_KEY_UP)
                 return [input, release]
             }
-            let isDown = CGEventSource.keyState(.combinedSessionState, key: keyCode)
+            guard let isDown = Self.modifierIsDown(keyCode: keyCode, flags: event.flags) else {
+                return []
+            }
             if isDown {
                 pressedModifierUsages.insert(usage)
             } else {
@@ -500,35 +628,44 @@ final class InputBridge {
 @MainActor
 private enum PointerVisibility {
     private static var hidden = false
-    private static var backgroundAllowed = false
+    private static let log = Logger(subsystem: "com.linkcursor.mac", category: "cursor")
 
+    /// Same sequence as Deskflow's OSXScreen::hideCursor, including the
+    /// re-association that it found fixes the cursor "randomly not hiding".
     static func hide() {
         guard !hidden else { return }
-        allowInBackground()
-        hidden = CGDisplayHideCursor(CGMainDisplayID()) == .success
+        let allowed = allowInBackground()
+        let result = CGDisplayHideCursor(CGMainDisplayID())
+        CGAssociateMouseAndMouseCursorPosition(1)
+        hidden = result == .success
+        log.info("hide result=\(result.rawValue) background=\(allowed)")
     }
 
     static func show() {
         guard hidden else { return }
-        CGDisplayShowCursor(CGMainDisplayID())
+        _ = allowInBackground()
+        let result = CGDisplayShowCursor(CGMainDisplayID())
+        CGAssociateMouseAndMouseCursorPosition(1)
         hidden = false
+        log.info("show result=\(result.rawValue)")
     }
 
-    private static func allowInBackground() {
-        guard !backgroundAllowed else { return }
-        typealias Connection = @convention(c) () -> Int32
-        typealias SetProperty = @convention(c) (Int32, Int32, CFString, CFTypeRef) -> Int32
-        let everywhere = UnsafeMutableRawPointer(bitPattern: -2) // RTLD_DEFAULT
-        guard
-            let connection = dlsym(everywhere, "_CGSDefaultConnection"),
-            let setProperty = dlsym(everywhere, "CGSSetConnectionProperty")
-        else {
-            return
-        }
-        let id = unsafeBitCast(connection, to: Connection.self)()
-        backgroundAllowed = unsafeBitCast(setProperty, to: SetProperty.self)(
-            id, id, "SetsCursorInBackground" as CFString, kCFBooleanTrue
-        ) == 0
+    /// Set before every hide and show, as Deskflow does.
+    private static func allowInBackground() -> Bool {
+        guard let connection, let setProperty else { return false }
+        let id = connection()
+        return setProperty(id, id, "SetsCursorInBackground" as CFString, kCFBooleanTrue) == 0
+    }
+
+    private typealias Connection = @convention(c) () -> Int32
+    private typealias SetProperty = @convention(c) (Int32, Int32, CFString, CFTypeRef) -> Int32
+    private static let connection = symbol("_CGSDefaultConnection", as: Connection.self)
+    private static let setProperty = symbol("CGSSetConnectionProperty", as: SetProperty.self)
+
+    private static func symbol<T>(_ name: String, as type: T.Type) -> T? {
+        // RTLD_DEFAULT
+        guard let pointer = dlsym(UnsafeMutableRawPointer(bitPattern: -2), name) else { return nil }
+        return unsafeBitCast(pointer, to: type)
     }
 }
 

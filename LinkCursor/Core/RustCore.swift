@@ -100,6 +100,18 @@ final class RustCore {
         }
     }
 
+    /// Proposes a spot for the peer, or removes its placement with nil.
+    /// The core snaps it and reports the result as `placement_changed`.
+    func place(_ peerID: String, at offset: Offset?) {
+        guard let handle else { return }
+        _ = peerID.withCString { peer in
+            guard let offset, let json = Self.json(offset) else {
+                return lc_core_set_placement(handle, peer, nil)
+            }
+            return json.withCString { lc_core_set_placement(handle, peer, $0) }
+        }
+    }
+
     private static func json(_ value: some Encodable) -> String? {
         guard let data = try? JSONEncoder().encode(value) else { return nil }
         return String(data: data, encoding: .utf8)

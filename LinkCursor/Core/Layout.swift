@@ -31,6 +31,38 @@ struct Display: Codable, Equatable, Sendable {
     }
 }
 
+extension Display {
+    var rect: CGRect { CGRect(x: x, y: y, width: width, height: height) }
+
+    /// Bounding box of a desktop; `.null` for no displays.
+    static func bounds(of displays: [Display]) -> CGRect {
+        displays.reduce(CGRect.null) { $0.union($1.rect) }
+    }
+}
+
+/// A device on the arrangement canvas.
+struct ArrangedDevice: Identifiable, Equatable {
+    enum State: Equatable {
+        case connected
+        /// Discovered but not connected.
+        case online
+        /// Placed earlier, not on the network now.
+        case offline
+    }
+
+    let id: String
+    let name: String
+    let platform: String?
+    /// In the device's own space.
+    let displays: [Display]
+    /// Where it sits in this Mac's space; nil while unplaced.
+    let offset: Offset?
+    let state: State
+
+    /// Bounding box of its displays, in its own space.
+    var bounds: CGRect { Display.bounds(of: displays) }
+}
+
 /// Translation from a peer's desktop space into this Mac's space.
 struct Offset: Codable, Equatable, Sendable {
     var x: Double

@@ -8,7 +8,7 @@ struct Peer: Codable, Identifiable, Equatable, Sendable {
     let address: String
     let port: UInt16
     /// As announced by the peer, in its own logical space.
-    let displays: [Display]?
+    var displays: [Display]?
 }
 
 /// The side menu in the UI. The real placement is the core's offset; this is
