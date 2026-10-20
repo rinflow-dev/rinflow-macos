@@ -33,7 +33,7 @@ private struct MenuBarContent: View {
                         : "请选择设备位置以启用自动切换"
                 )
             }
-            Button("断开连接", action: model.disconnect)
+            Button("断开连接") { model.disconnect(peer) }
         } else {
             Text("未连接")
         }

@@ -10,6 +10,7 @@
 		0E2A2781672B2C7E58DC3285 /* LinkCursorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60041A94C75DCE3BDB2581F1 /* LinkCursorApp.swift */; };
 		215DE65FB7D560FD335527BD /* PeerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6507B56012C6A97A2E743A4 /* PeerRow.swift */; };
 		3599F7657914CA2F9ADA5AE5 /* RustCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553594E4FC3C9A668588A0C2 /* RustCore.swift */; };
+		4E2F3C1006E1D3856B33F9DC /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5652DB9C286C74B8D828D6 /* Layout.swift */; };
 		593A3C7649C7EBE5073DEB3A /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE701D5ACBFC21831EA6D85 /* HIDKeyMap.swift */; };
 		665B454185A55D17314809B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7FA4974EF07DAA1FA9CF60 /* ContentView.swift */; };
 		76AE843A83D96E270F49EF9E /* InputBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CAEC06B886306F22AD010A /* InputBridge.swift */; };
@@ -28,6 +29,7 @@
 		553594E4FC3C9A668588A0C2 /* RustCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RustCore.swift; sourceTree = "<group>"; };
 		60041A94C75DCE3BDB2581F1 /* LinkCursorApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCursorApp.swift; sourceTree = "<group>"; };
 		6822CB74F61CD4DCD3EA25A7 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		6D5652DB9C286C74B8D828D6 /* Layout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		7EE701D5ACBFC21831EA6D85 /* HIDKeyMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HIDKeyMap.swift; sourceTree = "<group>"; };
 		81CAEC06B886306F22AD010A /* InputBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputBridge.swift; sourceTree = "<group>"; };
 		A3BBD719CCAC692D47705FA4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -153,6 +155,7 @@
 			children = (
 				E798963D709CA6B6A91746CD /* CoreTypes.swift */,
 				553594E4FC3C9A668588A0C2 /* RustCore.swift */,
+				6D5652DB9C286C74B8D828D6 /* Layout.swift */,
 			);
 			name = Core;
 			path = Core;
@@ -281,6 +284,7 @@
 				A9C625819884E34F7237BA8D /* AppModel.swift in Sources */,
 				665B454185A55D17314809B5 /* ContentView.swift in Sources */,
 				215DE65FB7D560FD335527BD /* PeerRow.swift in Sources */,
+				4E2F3C1006E1D3856B33F9DC /* Layout.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

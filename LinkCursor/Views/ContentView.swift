@@ -92,12 +92,12 @@ struct ContentView: View {
                 ForEach(model.peers) { peer in
                     PeerRow(
                         peer: peer,
-                        isConnected: model.connectionState.connectedPeer?.id == peer.id,
-                        isConnecting: isConnecting(peer),
+                        isConnected: model.sessions[peer.id]?.peer != nil,
+                        isConnecting: model.sessions[peer.id]?.status == .connecting,
                         placement: model.placement(for: peer),
                         setPlacement: { model.setPlacement($0, for: peer) },
                         connect: { model.connect(to: peer) },
-                        disconnect: model.disconnect
+                        disconnect: { model.disconnect(peer) }
                     )
                     Divider()
                 }
@@ -105,14 +105,6 @@ struct ContentView: View {
         }
         .padding(16)
         .background(.background.secondary, in: .rect(cornerRadius: 14))
-    }
-
-    private func isConnecting(_ peer: Peer) -> Bool {
-        if case let .connecting(peerID) = model.connectionState {
-            peerID == peer.id
-        } else {
-            false
-        }
     }
 }
 
