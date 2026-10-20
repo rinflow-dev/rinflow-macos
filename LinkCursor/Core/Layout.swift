@@ -153,9 +153,19 @@ struct Portal: Equatable, Sendable {
     }
 
     /// Where a pointer entering at `location` (local) appears on the peer,
-    /// in the peer's space.
+    /// in the peer's space: two points inside its edge, so a small move back
+    /// right after crossing does not bounce straight out again (the same
+    /// margin `localExit` leaves on the way back, and `CROSSING_MARGIN` in
+    /// the core's `RemotePointer`).
     func peerEntry(for location: CGPoint) -> CGPoint {
-        peerDisplay.clamp(CGPoint(x: location.x - offset.x, y: location.y - offset.y))
+        let entry = peerDisplay.clamp(CGPoint(x: location.x - offset.x, y: location.y - offset.y))
+        let margin = 2.0
+        switch side {
+        case .right: return CGPoint(x: min(entry.x + margin, peerDisplay.right - 1), y: entry.y)
+        case .left: return CGPoint(x: max(entry.x - margin, peerDisplay.x), y: entry.y)
+        case .bottom: return CGPoint(x: entry.x, y: min(entry.y + margin, peerDisplay.bottom - 1))
+        case .top: return CGPoint(x: entry.x, y: max(entry.y - margin, peerDisplay.y))
+        }
     }
 
     /// If a peer pointer moving to `point` (peer space) leaves the peer

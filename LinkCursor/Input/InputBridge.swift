@@ -168,24 +168,9 @@ final class InputBridge {
             "enter \(portal.peerID, privacy: .public) via \(portal.side.rawValue, privacy: .public) local=(\(location.x), \(location.y)) remote=(\(remote.position.x), \(remote.position.y))"
         )
 
-        // TEMPORARY, until the Windows agent honours absolute positions:
-        // pin the peer's cursor to the top-left of its desktop with an
-        // oversized relative move (peers clamp to their desktop), then move
-        // it to the entry point. Exact on a single-display peer.
-        let desktop = Display.bounds(of: remote.displays)
-        for (dx, dy) in [
-            (-desktop.width - 100, -desktop.height - 100),
-            (remote.position.x - desktop.minX, remote.position.y - desktop.minY),
-        ] {
-            var pin = LcInputEvent()
-            pin.kind = UInt32(LC_INPUT_MOUSE_MOVE)
-            pin.delta_x = dx
-            pin.delta_y = dy
-            send?(pin)
-        }
-
-        // Tells the peer where the pointer arrives. A peer that does not
-        // honour absolute positions treats it as a zero move.
+        // Tells the peer where the pointer arrives; it puts its cursor there.
+        // (The Windows agent honours this now, and the core never merges it
+        // with relative motion, so the earlier pin-to-corner moves are gone.)
         var arrival = LcInputEvent()
         arrival.kind = UInt32(LC_INPUT_MOUSE_MOVE)
         arrival.flags = UInt32(LC_INPUT_FLAG_ABSOLUTE_POSITION)
@@ -265,11 +250,18 @@ final class InputBridge {
         let event: CGEvent?
         switch input.kind {
         case UInt32(LC_INPUT_MOUSE_MOVE):
-            let current = CGEvent(source: nil)?.location ?? .zero
-            let destination = CGPoint(
-                x: current.x + input.delta_x,
-                y: current.y + input.delta_y
-            )
+            let destination: CGPoint
+            if input.flags & UInt32(LC_INPUT_FLAG_ABSOLUTE_POSITION) != 0 {
+                // Where the pointer arrives from the peer: a point in this
+                // Mac's global display space (points, y down).
+                destination = CGPoint(x: input.x, y: input.y)
+            } else {
+                let current = CGEvent(source: nil)?.location ?? .zero
+                destination = CGPoint(
+                    x: current.x + input.delta_x,
+                    y: current.y + input.delta_y
+                )
+            }
             event = CGEvent(
                 mouseEventSource: source,
                 mouseType: dragEventType(for: input.buttons),

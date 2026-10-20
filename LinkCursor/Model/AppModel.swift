@@ -208,7 +208,10 @@ final class AppModel: RustCoreDelegate {
             let name = sessions[peerID]?.peer?.name ?? peerID
             sessions[peerID] = nil
             refreshPortals()
-            if let reason = event.reason, reason != "local request" {
+            // Ending a session here or on the peer is not an error.
+            if let reason = event.reason, reason != "local request",
+               reason != "peer closed the connection"
+            {
                 lastError = "\(name)：\(reason)"
             }
         case "remote_control_started", "remote_control_ended":
