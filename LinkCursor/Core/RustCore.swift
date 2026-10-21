@@ -33,6 +33,11 @@ final class RustCore {
         /// Copied files travel with the clipboard; received ones land here.
         let files = true
         let downloadDirectory: String
+        /// This Mac's key and certificate; kept, so paired peers know it.
+        let identityPath: String
+        let trustedPeers: [TrustedPeer]
+        /// Only paired peers may connect (as on Windows, by default).
+        let requirePairing: Bool
 
         enum CodingKeys: String, CodingKey {
             case deviceID = "device_id"
@@ -45,6 +50,9 @@ final class RustCore {
             case clipboard
             case files
             case downloadDirectory = "download_directory"
+            case identityPath = "identity_path"
+            case trustedPeers = "trusted_peers"
+            case requirePairing = "require_pairing"
         }
     }
 
@@ -52,7 +60,9 @@ final class RustCore {
         deviceID: String,
         deviceName: String,
         displays: [Display],
-        placements: [PlacementRecord]
+        placements: [PlacementRecord],
+        trustedPeers: [TrustedPeer],
+        requirePairing: Bool
     ) -> Bool {
         guard handle == nil else { return true }
         guard lc_core_abi_version() == UInt32(LC_CORE_ABI_VERSION) else { return false }
@@ -62,7 +72,10 @@ final class RustCore {
             deviceName: deviceName,
             displays: displays,
             placements: placements,
-            downloadDirectory: Self.downloadDirectory.path
+            downloadDirectory: Self.downloadDirectory.path,
+            identityPath: Self.identityPath.path,
+            trustedPeers: trustedPeers,
+            requirePairing: requirePairing
         )
         guard let json = Self.json(configuration) else { return false }
 
@@ -126,6 +139,30 @@ final class RustCore {
         let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
             ?? FileManager.default.homeDirectoryForCurrentUser.appending(path: "Downloads")
         return downloads.appending(path: "LinkCursor", directoryHint: .isDirectory)
+    }
+
+    /// ~/Library/Application Support/LinkCursor/identity.pem
+    static var identityPath: URL {
+        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.homeDirectoryForCurrentUser.appending(path: "Library/Application Support")
+        let directory = support.appending(path: "LinkCursor", directoryHint: .isDirectory)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory.appending(path: "identity.pem")
+    }
+
+    func acceptPairing(_ peerID: String) {
+        guard let handle else { return }
+        _ = peerID.withCString { lc_core_accept_pairing(handle, $0) }
+    }
+
+    func rejectPairing(_ peerID: String) {
+        guard let handle else { return }
+        _ = peerID.withCString { lc_core_reject_pairing(handle, $0) }
+    }
+
+    func unpair(_ peerID: String) {
+        guard let handle else { return }
+        _ = peerID.withCString { lc_core_unpair(handle, $0) }
     }
 
     func acceptFiles(_ transfer: UInt32) {

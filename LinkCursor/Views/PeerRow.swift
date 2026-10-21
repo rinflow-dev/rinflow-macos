@@ -8,6 +8,8 @@ struct PeerRow: View {
     let setPlacement: (PeerPlacement) -> Void
     let connect: () -> Void
     let disconnect: () -> Void
+    let isPaired: Bool
+    let unpair: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -23,6 +25,11 @@ struct PeerRow: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
+                if isPaired {
+                    Label("已配对", systemImage: "lock.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.green)
+                }
             }
 
             Spacer()
@@ -57,5 +64,10 @@ struct PeerRow: View {
             }
         }
         .padding(.vertical, 6)
+        .contextMenu {
+            if isPaired {
+                Button("取消配对", role: .destructive, action: unpair)
+            }
+        }
     }
 }

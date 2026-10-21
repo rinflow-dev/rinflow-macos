@@ -18,6 +18,8 @@ final class AppModel: RustCoreDelegate {
     private(set) var lastError: String?
     /// The files being received, for the window footer.
     private(set) var fileTransfer: String?
+    /// Peers the user paired, saved from `paired` and handed to the core.
+    private(set) var trustedPeers: [String: TrustedPeer]
     /// The core's placements, saved as it reports them and handed back to it
     /// at start-up. The core owns them; the Mac never edits one directly.
     private(set) var placements: [String: PlacementRecord]
@@ -32,6 +34,7 @@ final class AppModel: RustCoreDelegate {
     private let inputBridge = InputBridge()
     private let hud = ControlHUDController()
     private let clipboard = ClipboardBridge()
+    private let pairing = PairingPrompt()
     private var reconnectTimer: Timer?
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "model")
 
@@ -56,6 +59,7 @@ final class AppModel: RustCoreDelegate {
         deviceName = Host.current().localizedName ?? "Mac"
         placements = Self.loadPlacements()
         knownPeers = Self.loadKnownPeers()
+        trustedPeers = Self.loadTrustedPeers()
         core.delegate = self
         inputBridge.send = { [weak self] input in
             guard let self else { return }
@@ -95,7 +99,9 @@ final class AppModel: RustCoreDelegate {
             deviceID: Self.deviceID,
             deviceName: deviceName,
             displays: localDisplays,
-            placements: Array(placements.values)
+            placements: Array(placements.values),
+            trustedPeers: Array(trustedPeers.values),
+            requirePairing: true
         ) else {
             coreState = .failed("无法启动 Rust Core")
             return
@@ -249,6 +255,31 @@ final class AppModel: RustCoreDelegate {
                 Data(base64Encoded: format.data).map { ClipboardItem(mime: format.mime, data: $0) }
             }
             clipboard.write(items)
+        case "pairing_requested":
+            guard let peerID = event.peerID, let code = event.code else { break }
+            let name = event.name ?? peers.first { $0.id == peerID }?.name ?? peerID
+            pairing.ask(peerID: peerID, name: name, code: code) { [core] accepted in
+                if accepted {
+                    core.acceptPairing(peerID)
+                } else {
+                    core.rejectPairing(peerID)
+                }
+            }
+        case "paired":
+            guard let peerID = event.peerID, let fingerprint = event.fingerprint else { break }
+            trustedPeers[peerID] = TrustedPeer(peerID: peerID, fingerprint: fingerprint)
+            Self.saveTrustedPeers(trustedPeers)
+            pairing.dismiss(peerID: peerID)
+        case "pairing_ended":
+            guard let peerID = event.peerID else { break }
+            pairing.dismiss(peerID: peerID)
+            if let reason = event.reason {
+                lastError = "配对未完成：\(reason)"
+            }
+        case "unpaired":
+            guard let peerID = event.peerID else { break }
+            trustedPeers[peerID] = nil
+            Self.saveTrustedPeers(trustedPeers)
         case "files_offered":
             guard let transfer = event.transfer else { break }
             askToReceiveFiles(transfer, from: event.peerID, count: event.count ?? 0, size: event.totalSize ?? 0)
@@ -416,6 +447,32 @@ final class AppModel: RustCoreDelegate {
         let id = UUID().uuidString.lowercased()
         UserDefaults.standard.set(id, forKey: key)
         return id
+    }
+
+    func isPaired(_ peer: Peer) -> Bool {
+        trustedPeers[peer.id] != nil
+    }
+
+    /// Forgets a paired peer; with pairing required it must pair again.
+    func unpair(_ peer: Peer) {
+        core.unpair(peer.id)
+    }
+
+    private static let trustedPeersKey = "linkcursor.trusted-peers"
+
+    private static func loadTrustedPeers() -> [String: TrustedPeer] {
+        guard
+            let data = UserDefaults.standard.data(forKey: trustedPeersKey),
+            let peers = try? JSONDecoder().decode([TrustedPeer].self, from: data)
+        else {
+            return [:]
+        }
+        return Dictionary(peers.map { ($0.peerID, $0) }) { _, latest in latest }
+    }
+
+    private static func saveTrustedPeers(_ peers: [String: TrustedPeer]) {
+        guard let data = try? JSONEncoder().encode(Array(peers.values)) else { return }
+        UserDefaults.standard.set(data, forKey: trustedPeersKey)
     }
 
     private static let placementsKey = "linkcursor.placements"

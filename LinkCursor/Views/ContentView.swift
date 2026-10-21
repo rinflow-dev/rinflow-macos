@@ -117,7 +117,9 @@ struct ContentView: View {
                         placement: model.placement(for: peer),
                         setPlacement: { model.setPlacement($0, for: peer) },
                         connect: { model.connect(to: peer) },
-                        disconnect: { model.disconnect(peer) }
+                        disconnect: { model.disconnect(peer) },
+                        isPaired: model.isPaired(peer),
+                        unpair: { model.unpair(peer) }
                     )
                     Divider()
                 }

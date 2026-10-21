@@ -102,6 +102,17 @@ enum ConnectionState: Equatable, Sendable {
     }
 }
 
+/// A peer the user paired, as the core reports it in `paired`.
+struct TrustedPeer: Codable, Equatable, Sendable {
+    let peerID: String
+    let fingerprint: String
+
+    enum CodingKeys: String, CodingKey {
+        case peerID = "peer_id"
+        case fingerprint
+    }
+}
+
 struct CoreEventEnvelope: Decodable, Sendable {
     let event: String
     let peer: Peer?
@@ -122,6 +133,10 @@ struct CoreEventEnvelope: Decodable, Sendable {
     let received: UInt64?
     let total: UInt64?
     let paths: [String]?
+    /// `pairing_requested`
+    let code: String?
+    let name: String?
+    let fingerprint: String?
 
     struct ClipboardFormat: Decodable, Sendable {
         let mime: String
@@ -145,5 +160,8 @@ struct CoreEventEnvelope: Decodable, Sendable {
         case received
         case total
         case paths
+        case code
+        case name
+        case fingerprint
     }
 }
