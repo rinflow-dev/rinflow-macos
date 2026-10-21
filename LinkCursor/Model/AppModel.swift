@@ -218,6 +218,12 @@ final class AppModel: RustCoreDelegate {
             if let peerID = event.peerID {
                 sessions[peerID]?.remoteControl = event.event == "remote_control_started"
             }
+        case "control_revoked":
+            // The core took this Mac's control of the peer away: another
+            // device drives that peer now, or a peer drives this Mac
+            // ("taken_over", and that peer places the cursor).
+            guard let peerID = event.peerID, peerID == controlledPeerID else { break }
+            inputBridge.controlRevoked(pointerStays: event.reason == "taken_over")
         case "peer_displays":
             guard let peerID = event.peerID, let displays = event.displays,
                   var peer = knownPeers[peerID] ?? peers.first(where: { $0.id == peerID })

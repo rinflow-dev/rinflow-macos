@@ -90,6 +90,14 @@ final class InputBridge {
         endCapture(at: pointer.entry.localInside(near: frozenLocation))
     }
 
+    /// The core took this Mac's control of the peer away (`control_revoked`).
+    /// With `pointerStays` a peer now drives this Mac and places the cursor
+    /// itself; otherwise the cursor comes back as after the release key.
+    func controlRevoked(pointerStays: Bool) {
+        guard let pointer else { return }
+        endCapture(at: pointerStays ? nil : pointer.entry.localInside(near: frozenLocation))
+    }
+
     private func installEventTapIfNeeded(promptForPermission: Bool) -> Bool {
         if let eventTap {
             CGEvent.tapEnable(tap: eventTap, enable: true)
@@ -223,7 +231,9 @@ final class InputBridge {
         return CGVector(dx: delta.dx - jump.dx, dy: delta.dy - jump.dy)
     }
 
-    private func endCapture(at location: CGPoint) {
+    /// Ends the capture. `location` is where the cursor comes back; nil
+    /// leaves it alone, for a peer that now drives this Mac and places it.
+    private func endCapture(at location: CGPoint?) {
         guard pointer != nil else { return }
         pointer = nil
         pendingWarp = nil
@@ -231,13 +241,18 @@ final class InputBridge {
         pressedModifierUsages.removeAll(keepingCapacity: true)
         CGAssociateMouseAndMouseCursorPosition(1)
         PointerVisibility.show()
-        // A posted move, not a warp, as when parking: the window server then
-        // hands the cursor to whatever is under it (the Dock, on a bottom
-        // edge) and shows it. After a warp it sometimes stayed hidden. Posted
-        // events keep their order, so a park still in flight lands first.
-        Self.postMove(to: location)
+        if let location {
+            // A posted move, not a warp, as when parking: the window server
+            // then hands the cursor to whatever is under it (the Dock, on a
+            // bottom edge) and shows it. After a warp it sometimes stayed
+            // hidden. Posted events keep their order, so a park still in
+            // flight lands first.
+            Self.postMove(to: location)
+            Self.log.info("return local=(\(location.x), \(location.y))")
+        } else {
+            Self.log.info("control taken over; the new controller places the cursor")
+        }
         didChangeTarget?(nil)
-        Self.log.info("return local=(\(location.x), \(location.y))")
         if portals.isEmpty {
             removeEventTap()
         }
