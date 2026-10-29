@@ -30,6 +30,20 @@ bridging_group.new_file('LinkCursor-Bridging-Header.h')
 resources_group = app_group.groups.find { |group| group.display_name == 'Resources' } || app_group.new_group('Resources', 'Resources')
 resources_group.new_file('Info.plist')
 
+# Localizations: the keys are the Chinese text; en.lproj translates them, and
+# zh-Hans.lproj makes Chinese one of the app's languages. English is the
+# development region, so every other system language gets English.
+project.root_object.development_region = 'en'
+project.root_object.known_regions = %w[en Base zh-Hans]
+%w[Localizable.strings InfoPlist.strings].each do |name|
+  variant = resources_group.new_variant_group(name)
+  %w[en zh-Hans].each do |language|
+    reference = variant.new_reference("#{language}.lproj/#{name}")
+    reference.name = language
+  end
+  target.resources_build_phase.add_file_reference(variant)
+end
+
 scripts_group = project.main_group.new_group('scripts', 'scripts')
 scripts_group.new_file('build-rust.sh')
 scripts_group.new_file('generate-xcodeproj.rb')
@@ -76,8 +90,32 @@ target.build_configurations.each do |configuration|
   settings['ONLY_ACTIVE_ARCH'] = 'YES'
 end
 
+# Unit tests of the pure geometry, without the app (no host): it starts the
+# core and asks for permissions, which tests have no business doing.
+tests_root = File.join(root, 'LinkCursorTests')
+test_target = project.new_target(:unit_test_bundle, 'LinkCursorTests', :osx, '14.0')
+tests_group = project.main_group.new_group('LinkCursorTests', 'LinkCursorTests')
+Dir.glob(File.join(tests_root, '*.swift')).sort.each do |path|
+  test_target.source_build_phase.add_file_reference(tests_group.new_file(File.basename(path)))
+end
+['Core/Layout.swift'].each do |relative|
+  reference = app_group.recursive_children.find { |item| item.respond_to?(:real_path) && item.real_path.to_s == File.join(source_root, relative) }
+  test_target.source_build_phase.add_file_reference(reference)
+end
+test_target.build_configurations.each do |configuration|
+  settings = configuration.build_settings
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.linkcursor.mac.tests'
+  settings['GENERATE_INFOPLIST_FILE'] = 'YES'
+  settings['SWIFT_VERSION'] = '6.0'
+  settings['SWIFT_STRICT_CONCURRENCY'] = 'complete'
+  settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
+  settings['CODE_SIGN_STYLE'] = 'Automatic'
+  settings['ONLY_ACTIVE_ARCH'] = 'YES'
+end
+
 scheme = Xcodeproj::XCScheme.new
 scheme.add_build_target(target)
+scheme.add_test_target(test_target)
 scheme.set_launch_target(target)
 scheme.save_as(project_path, 'LinkCursor', true)
 

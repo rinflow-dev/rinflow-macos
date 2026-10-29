@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "06EC070F9D14FA139973588C"
+               BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
                BuildableName = "LinkCursor.app"
                BlueprintName = "LinkCursor"
                ReferencedContainer = "container:LinkCursor.xcodeproj">
@@ -30,13 +30,23 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "06EC070F9D14FA139973588C"
+            BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
             BuildableName = "LinkCursor.app"
             BlueprintName = "LinkCursor"
             ReferencedContainer = "container:LinkCursor.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AFC93C14D8E41453641BDB71"
+               BuildableName = "LinkCursorTests.xctest"
+               BlueprintName = "LinkCursorTests"
+               ReferencedContainer = "container:LinkCursor.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -53,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "06EC070F9D14FA139973588C"
+            BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
             BuildableName = "LinkCursor.app"
             BlueprintName = "LinkCursor"
             ReferencedContainer = "container:LinkCursor.xcodeproj">
@@ -70,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "06EC070F9D14FA139973588C"
+            BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
             BuildableName = "LinkCursor.app"
             BlueprintName = "LinkCursor"
             ReferencedContainer = "container:LinkCursor.xcodeproj">

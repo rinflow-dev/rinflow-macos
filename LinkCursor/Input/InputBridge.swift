@@ -3,13 +3,15 @@ import AppKit
 @preconcurrency import CoreGraphics
 import OSLog
 
-/// Captures local input while the pointer is on a peer, and plays input a
-/// peer sends to this Mac.
+/// Captures local input while the pointer is on a peer.
 ///
 /// Edge switching works on portals: the stretches of local display edges
-/// that touch a placed peer. Pushing through one freezes the Mac cursor and
+/// that touch a placed peer. Pushing through one parks the Mac cursor and
 /// starts a `RemotePointer` in the peer's space; pushing that pointer back
-/// out through a portal unfreezes the cursor at the matching local point.
+/// out through a portal unparks the cursor at the matching local point, and
+/// pushing it into another placed peer that touches this one moves on to
+/// that peer (chained placements). The switch shortcuts jump between devices
+/// without an edge.
 @MainActor
 final class InputBridge {
     var send: ((LcInputEvent) -> Void)?
@@ -19,25 +21,45 @@ final class InputBridge {
     /// The pointer is about to leave for a peer: last chance to report what
     /// it should take along (the clipboard).
     var willEnter: (() -> Void)?
+    /// How this Mac's mouse feels on a peer (speeds, scroll direction).
+    var inputFor: ((String) -> PeerInput)?
 
-    private static let syntheticMarker: Int64 = 0x4C_49_4E_4B_43_55_52
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "input")
 
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     private var pressedButtons: UInt32 = 0
     private var pressedModifierUsages: Set<UInt32> = []
-    private var portals: [Portal] = []
-    private var peerDisplays: [String: [Display]] = [:]
+    /// Keys the current peer was told are down.
+    private var pressedKeys: Set<UInt32> = []
+    /// Keys pressed on a peer the pointer moved on from: their releases go
+    /// nowhere.
+    private var staleKeys: Set<UInt32> = []
+    /// This Mac and every placed peer.
+    private var world = World()
+    /// Peers with a session: the pointer only goes to these.
+    private var connected: Set<String> = []
+    /// The edges of this Mac that lead to connected peers.
+    private var entryPortals: [Portal] = []
+    /// Modifier keys held on this Mac when the capture began: their release
+    /// goes to this Mac, which saw them go down, not to the peer.
+    private var localModifiers: Set<CGKeyCode> = []
     private var pointer: RemotePointer?
-    /// Where the Mac cursor is frozen while `pointer` is active.
+    /// How the mouse feels on the peer it drives now.
+    private var peerInput = PeerInput()
+    /// Peers where a game holds the pointer (`peer_pointer_lock`).
+    private var heldPointers: Set<String> = []
+    /// The switch shortcuts' modifiers, or nil when they are off.
+    private var switchModifiers: SwitchModifiers?
+    /// The arrow key of a switch shortcut, held: its repeats and release go
+    /// nowhere.
+    private var switchKeyDown: Int64?
+    /// Where the Mac cursor is parked from while `pointer` is active.
     private var frozenLocation: CGPoint = .zero
     /// The jump that a motion shortly after parking the cursor still
     /// carries (SDL's Cocoa backend compensates the same way). Not every
     /// first motion carries it, so it is only taken out of one that does.
     private var pendingWarp: (jump: CGVector, deadline: DispatchTime)?
-    /// Sub-unit scroll carried to the next played event.
-    private var scrollRest = CGVector.zero
     private var hasRequestedAccessibilityPrompt = false
 
     var isCapturing: Bool { pointer != nil }
@@ -64,30 +86,42 @@ final class InputBridge {
         _ = AXIsProcessTrustedWithOptions(options)
     }
 
-    /// The edges that lead to connected, placed peers. With none, the event
-    /// tap is removed. Returns false when a tap is needed but cannot be
-    /// installed (no accessibility permission).
-    func setPortals(_ portals: [Portal], peerDisplays: [String: [Display]]) -> Bool {
-        self.portals = portals
-        self.peerDisplays = peerDisplays
-        if let pointer, !portals.contains(where: { $0.peerID == pointer.peerID }) {
+    /// The arrangement and the peers with a session. With no edge leading
+    /// to a connected peer and no switch shortcut, the event tap is removed.
+    /// Returns false when a tap is needed but cannot be installed (no
+    /// accessibility permission).
+    func setArrangement(_ world: World, connected: Set<String>) -> Bool {
+        self.world = world
+        self.connected = connected
+        entryPortals = connected.sorted().flatMap { world.portals(to: $0) }
+        if let pointer, !connected.contains(pointer.peerID) || world.peer(pointer.peerID) == nil {
             stopCapturing()
         }
-        if portals.isEmpty {
-            if !isCapturing {
-                removeEventTap()
-            }
-            return true
+        return updateEventTap()
+    }
+
+    /// The switch shortcuts (nil: off), recognised while a peer is driven.
+    func setSwitchShortcuts(_ modifiers: SwitchModifiers?) {
+        switchModifiers = modifiers
+    }
+
+    /// A game on `peerID` started or stopped holding its pointer. While it
+    /// holds it, motion goes there whole and no edge leads anywhere; when
+    /// it lets go, the peer's cursor is put back where this Mac tracks it.
+    func setPointerHeld(_ held: Bool, on peerID: String) {
+        if held {
+            heldPointers.insert(peerID)
+        } else if heldPointers.remove(peerID) != nil, let pointer, pointer.peerID == peerID {
+            sendPosition(of: pointer)
         }
-        return installEventTapIfNeeded(promptForPermission: false)
     }
 
     /// Gives control back to the Mac without crossing an edge (release key,
     /// HUD button, peer gone). The cursor reappears just inside the edge it
-    /// left through.
+    /// left through, or where it was for a shortcut.
     func stopCapturing() {
         guard let pointer else { return }
-        endCapture(at: pointer.entry.localInside(near: frozenLocation))
+        endCapture(at: pointer.returnPoint(near: frozenLocation))
     }
 
     /// The core took this Mac's control of the peer away (`control_revoked`).
@@ -95,20 +129,51 @@ final class InputBridge {
     /// itself; otherwise the cursor comes back as after the release key.
     func controlRevoked(pointerStays: Bool) {
         guard let pointer else { return }
-        endCapture(at: pointerStays ? nil : pointer.entry.localInside(near: frozenLocation))
+        endCapture(at: pointerStays ? nil : pointer.returnPoint(near: frozenLocation))
     }
 
-    private func installEventTapIfNeeded(promptForPermission: Bool) -> Bool {
+    /// The switch shortcut toward `side` while this Mac has the pointer:
+    /// on to the connected device on that side, if any.
+    func jumpFromHere(toward side: Side) {
+        guard pointer == nil,
+              case let .peer(peerID)? = world.toward(from: .local, side: side),
+              connected.contains(peerID),
+              let peer = world.peer(peerID),
+              let landing = world.landing(from: .local, to: .peer(peerID)),
+              updateEventTap(needed: true)
+        else {
+            return
+        }
+        let remote = RemotePointer(
+            arrivingAt: landing,
+            peer: peer,
+            portals: world.portals(to: peerID),
+            neighbors: world.neighbors(of: peerID),
+            entry: nil
+        )
+        Self.log.info("driving \(peerID, privacy: .public) by shortcut")
+        start(remote, from: Self.cursorLocation)
+        // The arrow's release is the shortcut's, not the peer's.
+        switchKeyDown = Self.arrowKeyCode(side)
+    }
+
+    /// Installs the tap when an edge leads to a connected peer (or one is
+    /// `needed` now), removes it when nothing needs it.
+    @discardableResult
+    private func updateEventTap(needed: Bool = false) -> Bool {
+        if entryPortals.isEmpty, !needed, !isCapturing {
+            removeEventTap()
+            return true
+        }
+        return installEventTapIfNeeded()
+    }
+
+    private func installEventTapIfNeeded() -> Bool {
         if let eventTap {
             CGEvent.tapEnable(tap: eventTap, enable: true)
             return true
         }
-        guard hasAccessibilityPermission else {
-            if promptForPermission {
-                requestAccessibilityPermission()
-            }
-            return false
-        }
+        guard hasAccessibilityPermission else { return false }
 
         let types: [CGEventType] = [
             .mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,
@@ -155,30 +220,105 @@ final class InputBridge {
     }
 
     private func beginCapture(through portal: Portal, at location: CGPoint) {
-        willEnter?()
-        let peerPortals = portals.filter { $0.peerID == portal.peerID }
+        guard let peer = world.peer(portal.peerID) else { return }
         let remote = RemotePointer(
-            entering: portal,
+            crossing: portal,
             at: location,
-            portals: peerPortals,
-            displays: peerDisplays[portal.peerID] ?? []
+            peer: peer,
+            portals: world.portals(to: peer.id),
+            neighbors: world.neighbors(of: peer.id)
         )
+        Self.log.info(
+            "enter \(portal.peerID, privacy: .public) via \(portal.side.rawValue, privacy: .public) local=(\(location.x), \(location.y))"
+        )
+        start(remote, from: location)
+    }
+
+    /// Starts driving the pointer's peer: its cursor is placed, this Mac's
+    /// is parked and hidden, and the tap takes the keyboard and mouse.
+    private func start(_ remote: RemotePointer, from location: CGPoint) {
+        willEnter?()
         pointer = remote
         frozenLocation = location
         pressedButtons = 0
+        pressedKeys.removeAll()
+        staleKeys.removeAll()
+        switchKeyDown = nil
         synchronizeModifierState()
+        localModifiers = Set(Self.modifierKeyCodes.filter { CGEventSource.keyState(.combinedSessionState, key: $0) })
+        peerInput = inputFor?(remote.peerID) ?? PeerInput()
+        // Whether a game holds its pointer, the peer says afresh.
+        heldPointers.remove(remote.peerID)
         // Parked and hidden from the run loop, not from inside the tap
         // callback, as Deskflow and lan-mouse do.
         Task { @MainActor [weak self] in self?.park(from: location) }
-        didChangeTarget?(portal.peerID)
-
-        Self.log.info(
-            "enter \(portal.peerID, privacy: .public) via \(portal.side.rawValue, privacy: .public) local=(\(location.x), \(location.y)) remote=(\(remote.position.x), \(remote.position.y))"
-        )
-
+        didChangeTarget?(remote.peerID)
+        Self.log.info("arrive at (\(remote.position.x), \(remote.position.y)) on \(remote.peerID, privacy: .public)")
         // Tells the peer where the pointer arrives; it puts its cursor there.
-        // (The Windows agent honours this now, and the core never merges it
-        // with relative motion, so the earlier pin-to-corner moves are gone.)
+        sendPosition(of: remote)
+    }
+
+    /// Moves on to the placed peer `peerID` (into a neighbour, or by
+    /// shortcut), arriving at the local point `location`. False when it is
+    /// not connected: the pointer then stays.
+    private func moveOn(to peerID: String, at location: CGPoint) -> Bool {
+        guard let current = pointer, connected.contains(peerID), let peer = world.peer(peerID) else {
+            return false
+        }
+        let remote = RemotePointer(
+            arrivingAt: location,
+            peer: peer,
+            portals: world.portals(to: peerID),
+            neighbors: world.neighbors(of: peerID),
+            entry: current.entry
+        )
+        // The old peer gets a reset from the core: it releases what it holds.
+        didChangeTarget?(peerID)
+        pointer = remote
+        peerInput = inputFor?(peerID) ?? PeerInput()
+        heldPointers.remove(peerID)
+        pressedButtons = 0
+        sendPosition(of: remote)
+        // Modifiers held go on to the new peer (Shift through a drag
+        // across); other keys were for the old one, so their releases go
+        // nowhere.
+        let held = pressedKeys
+        pressedKeys.removeAll()
+        for usage in held {
+            if (0xE0...0xE7).contains(usage) {
+                pressedKeys.insert(usage)
+                var down = LcInputEvent()
+                down.kind = UInt32(LC_INPUT_KEY_DOWN)
+                down.code = usage
+                down.modifiers = currentModifiers
+                send?(down)
+            } else {
+                staleKeys.insert(usage)
+            }
+        }
+        Self.log.info("moved on to \(peerID, privacy: .public)")
+        return true
+    }
+
+    /// A switch shortcut while a peer is driven: on to the device on that
+    /// side of it, or back to this Mac.
+    private func jump(toward side: Side) {
+        guard let current = pointer,
+              let next = world.toward(from: .peer(current.peerID), side: side),
+              let landing = world.landing(from: .peer(current.peerID), to: next)
+        else {
+            return
+        }
+        switch next {
+        case .local:
+            endCapture(at: landing)
+        case let .peer(peerID):
+            _ = moveOn(to: peerID, at: landing)
+        }
+    }
+
+    /// An absolute move to where the pointer is on its peer.
+    private func sendPosition(of remote: RemotePointer) {
         var arrival = LcInputEvent()
         arrival.kind = UInt32(LC_INPUT_MOUSE_MOVE)
         arrival.flags = UInt32(LC_INPUT_FLAG_ABSOLUTE_POSITION)
@@ -238,6 +378,10 @@ final class InputBridge {
         pointer = nil
         pendingWarp = nil
         pressedButtons = 0
+        pressedKeys.removeAll()
+        staleKeys.removeAll()
+        switchKeyDown = nil
+        localModifiers.removeAll()
         pressedModifierUsages.removeAll(keepingCapacity: true)
         CGAssociateMouseAndMouseCursorPosition(1)
         PointerVisibility.show()
@@ -253,89 +397,11 @@ final class InputBridge {
             Self.log.info("control taken over; the new controller places the cursor")
         }
         didChangeTarget?(nil)
-        if portals.isEmpty {
-            removeEventTap()
-        }
-    }
-
-    func inject(_ input: LcInputEvent) {
-        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
-        let flags = cgFlags(from: input.modifiers)
-
-        let event: CGEvent?
-        switch input.kind {
-        case UInt32(LC_INPUT_MOUSE_MOVE):
-            let destination: CGPoint
-            if input.flags & UInt32(LC_INPUT_FLAG_ABSOLUTE_POSITION) != 0 {
-                // Where the pointer arrives from the peer: a point in this
-                // Mac's global display space (points, y down).
-                destination = CGPoint(x: input.x, y: input.y)
-            } else {
-                let current = CGEvent(source: nil)?.location ?? .zero
-                destination = CGPoint(
-                    x: current.x + input.delta_x,
-                    y: current.y + input.delta_y
-                )
-            }
-            event = CGEvent(
-                mouseEventSource: source,
-                mouseType: dragEventType(for: input.buttons),
-                mouseCursorPosition: destination,
-                mouseButton: dragButton(for: input.buttons)
-            )
-        case UInt32(LC_INPUT_MOUSE_BUTTON_DOWN), UInt32(LC_INPUT_MOUSE_BUTTON_UP):
-            let down = input.kind == UInt32(LC_INPUT_MOUSE_BUTTON_DOWN)
-            let (button, downType, upType) = mouseButton(for: input.code)
-            event = CGEvent(
-                mouseEventSource: source,
-                mouseType: down ? downType : upType,
-                mouseCursorPosition: CGEvent(source: nil)?.location ?? .zero,
-                mouseButton: button
-            )
-            event?.setIntegerValueField(
-                .mouseEventButtonNumber,
-                value: Int64(input.code.saturatingSubtracting(1))
-            )
-        case UInt32(LC_INPUT_SCROLL):
-            // Wire: points; a notched wheel sends 10 points per line.
-            let precise = input.flags & UInt32(LC_INPUT_FLAG_PRECISE_SCROLL) != 0
-            let pointsPerUnit = precise ? 1.0 : 10.0
-            let wantedX = scrollRest.dx + input.scroll_x / pointsPerUnit
-            let wantedY = scrollRest.dy + input.scroll_y / pointsPerUnit
-            let stepX = wantedX.rounded(.towardZero)
-            let stepY = wantedY.rounded(.towardZero)
-            scrollRest = CGVector(dx: wantedX - stepX, dy: wantedY - stepY)
-            guard stepX != 0 || stepY != 0 else { return }
-            event = CGEvent(
-                scrollWheelEvent2Source: source,
-                units: precise ? .pixel : .line,
-                wheelCount: 2,
-                wheel1: clampedInt32(stepY),
-                wheel2: clampedInt32(stepX),
-                wheel3: 0
-            )
-        case UInt32(LC_INPUT_KEY_DOWN), UInt32(LC_INPUT_KEY_UP):
-            guard let keyCode = HIDKeyMap.macKeyCode(for: input.code) else { return }
-            event = CGEvent(
-                keyboardEventSource: source,
-                virtualKey: keyCode,
-                keyDown: input.kind == UInt32(LC_INPUT_KEY_DOWN)
-            )
-            if input.flags & UInt32(LC_INPUT_FLAG_KEY_REPEAT) != 0 {
-                event?.setIntegerValueField(.keyboardEventAutorepeat, value: 1)
-            }
-        default:
-            event = nil
-        }
-
-        guard let event else { return }
-        event.flags = flags
-        event.setIntegerValueField(.eventSourceUserData, value: Self.syntheticMarker)
-        event.post(tap: .cghidEventTap)
+        updateEventTap()
     }
 
     fileprivate func handle(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
-        if event.getIntegerValueField(.eventSourceUserData) == Self.syntheticMarker {
+        if event.getIntegerValueField(.eventSourceUserData) == SyntheticInput.marker {
             return Unmanaged.passUnretained(event)
         }
 
@@ -355,30 +421,98 @@ final class InputBridge {
             return nil
         }
 
-        if type == .keyDown,
-           event.getIntegerValueField(.keyboardEventKeycode) == 53,
-           event.flags.contains(.maskControl),
-           event.flags.contains(.maskAlternate)
-        {
-            Self.log.info("release key")
-            stopCapturing()
-            return nil
+        if type == .flagsChanged {
+            let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
+            if localModifiers.contains(keyCode), Self.modifierIsDown(keyCode: keyCode, flags: event.flags) == false {
+                // Held since before the capture: this Mac gets its release.
+                localModifiers.remove(keyCode)
+                return Unmanaged.passUnretained(event)
+            }
+        }
+
+        if type == .keyDown || type == .keyUp {
+            let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+            if type == .keyDown, keyCode == 53,
+               event.flags.contains(.maskControl), event.flags.contains(.maskAlternate)
+            {
+                Self.log.info("release key")
+                stopCapturing()
+                return nil
+            }
+            // The switch shortcuts: on to the device on that side. The peer
+            // saw the modifiers, never the arrow.
+            if keyCode == switchKeyDown {
+                if type == .keyUp { switchKeyDown = nil }
+                return nil
+            }
+            if type == .keyDown, let side = Self.arrowSide(keyCode), isSwitchShortcut(event.flags) {
+                switchKeyDown = keyCode
+                jump(toward: side)
+                return nil
+            }
         }
 
         var delta = Self.delta(of: event)
         if Self.isMovement(type) {
             delta = removeWarpJump(from: delta)
-            if let exit = remote.move(by: delta) {
-                endCapture(at: exit)
-                return nil
+            // The pointer speed set for this peer.
+            delta.dx *= peerInput.pointerSpeed
+            delta.dy *= peerInput.pointerSpeed
+            if heldPointers.contains(remote.peerID) {
+                // A game there holds its pointer: every bit of motion goes to
+                // it (it turns the camera), and no edge leads anywhere.
+            } else {
+                switch remote.step(by: delta) {
+                case .stay:
+                    pointer = remote
+                case let .home(exit):
+                    endCapture(at: exit)
+                    return nil
+                case let .neighbor(peerID, location):
+                    if moveOn(to: peerID, at: location) {
+                        return nil
+                    }
+                    // A neighbour not connected: an edge.
+                    pointer = remote
+                }
             }
-            pointer = remote
         }
 
         for input in makeInputs(type: type, event: event, delta: delta, at: remote.position) {
             send?(input)
         }
         return nil
+    }
+
+    /// Exactly the switch shortcuts' modifiers are held.
+    private func isSwitchShortcut(_ flags: CGEventFlags) -> Bool {
+        guard let switchModifiers else { return false }
+        let held = flags.intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
+        return switch switchModifiers {
+        case .controlOptionShift: held == [.maskControl, .maskAlternate, .maskShift]
+        case .controlOption: held == [.maskControl, .maskAlternate]
+        }
+    }
+
+    private static let modifierKeyCodes: [CGKeyCode] = [54, 55, 56, 58, 59, 60, 61, 62]
+
+    private static func arrowKeyCode(_ side: Side) -> Int64 {
+        switch side {
+        case .left: 123
+        case .right: 124
+        case .bottom: 125
+        case .top: 126
+        }
+    }
+
+    private static func arrowSide(_ keyCode: Int64) -> Side? {
+        switch keyCode {
+        case 123: .left
+        case 124: .right
+        case 125: .bottom
+        case 126: .top
+        default: nil
+        }
     }
 
     /// Moves the cursor with a real (synthetic) mouse-moved event, so the
@@ -396,8 +530,12 @@ final class InputBridge {
         else {
             return
         }
-        event.setIntegerValueField(.eventSourceUserData, value: syntheticMarker)
+        event.setIntegerValueField(.eventSourceUserData, value: SyntheticInput.marker)
         event.post(tap: .cghidEventTap)
+    }
+
+    private static var cursorLocation: CGPoint {
+        CGEvent(source: nil)?.location ?? .zero
     }
 
     private static func centre(ofDisplayAt location: CGPoint) -> CGPoint {
@@ -453,7 +591,7 @@ final class InputBridge {
         guard Self.isMovement(type) else { return nil }
         let location = liveLocation(of: event)
         let delta = Self.delta(of: event)
-        return portals.first { $0.isEntered(at: location, delta: delta) }
+        return entryPortals.first { $0.isEntered(at: location, delta: delta) }
     }
 
     /// `position` is where the pointer is on the peer (peer space); it goes
@@ -480,19 +618,32 @@ final class InputBridge {
             input.code = UInt32(event.getIntegerValueField(.mouseEventButtonNumber) + 1)
             updatePressedButton(code: input.code, isDown: true)
         case .leftMouseUp, .rightMouseUp, .otherMouseUp:
-            input.kind = UInt32(LC_INPUT_MOUSE_BUTTON_UP)
             input.code = UInt32(event.getIntegerValueField(.mouseEventButtonNumber) + 1)
+            // Pressed on a peer the pointer moved on from, which was reset:
+            // this peer never saw it go down.
+            guard (1...32).contains(input.code), pressedButtons & (1 << (input.code - 1)) != 0 else {
+                return []
+            }
+            input.kind = UInt32(LC_INPUT_MOUSE_BUTTON_UP)
             updatePressedButton(code: input.code, isDown: false)
         case .scrollWheel:
+            // The scrolling speed and direction set for this peer.
+            let factor = peerInput.scrollSpeed * (peerInput.invertScroll ? -1 : 1)
             input.kind = UInt32(LC_INPUT_SCROLL)
-            input.scroll_x = Double(event.getIntegerValueField(.scrollWheelEventPointDeltaAxis2))
-            input.scroll_y = Double(event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1))
+            input.scroll_x = Double(event.getIntegerValueField(.scrollWheelEventPointDeltaAxis2)) * factor
+            input.scroll_y = Double(event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)) * factor
             if event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0 {
                 input.flags |= UInt32(LC_INPUT_FLAG_PRECISE_SCROLL)
             }
         case .keyDown, .keyUp:
             let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
             guard let usage = HIDKeyMap.hidUsage(for: keyCode) else { return [] }
+            if type == .keyUp {
+                if staleKeys.remove(usage) != nil { return [] }
+                pressedKeys.remove(usage)
+            } else {
+                pressedKeys.insert(usage)
+            }
             input.kind = type == .keyDown ? UInt32(LC_INPUT_KEY_DOWN) : UInt32(LC_INPUT_KEY_UP)
             input.code = usage
             input.key_symbol = type == .keyDown ? unicodeScalar(for: event) : 0
@@ -518,8 +669,10 @@ final class InputBridge {
             }
             if isDown {
                 pressedModifierUsages.insert(usage)
+                pressedKeys.insert(usage)
             } else {
                 pressedModifierUsages.remove(usage)
+                pressedKeys.remove(usage)
             }
             input.kind = isDown ? UInt32(LC_INPUT_KEY_DOWN) : UInt32(LC_INPUT_KEY_UP)
             input.code = usage
@@ -534,7 +687,7 @@ final class InputBridge {
 
     private func synchronizeModifierState() {
         pressedModifierUsages.removeAll(keepingCapacity: true)
-        for keyCode: CGKeyCode in [54, 55, 56, 58, 59, 60, 61, 62] {
+        for keyCode in Self.modifierKeyCodes {
             guard CGEventSource.keyState(.combinedSessionState, key: keyCode),
                   let usage = HIDKeyMap.hidUsage(for: keyCode)
             else {
@@ -567,6 +720,11 @@ final class InputBridge {
             .unicodeScalars.first?.value ?? 0
     }
 
+    /// The modifiers of the keys held, for an event without its own flags.
+    private var currentModifiers: UInt32 {
+        canonicalModifiers(from: CGEventSource.flagsState(.combinedSessionState))
+    }
+
     private func canonicalModifiers(from flags: CGEventFlags) -> UInt32 {
         var value: UInt32 = 0
         if flags.contains(.maskShift) { value |= UInt32(LC_MODIFIER_SHIFT) }
@@ -590,94 +748,6 @@ final class InputBridge {
         }
         return value
     }
-
-    private func cgFlags(from modifiers: UInt32) -> CGEventFlags {
-        var flags: CGEventFlags = []
-        if modifiers & UInt32(LC_MODIFIER_SHIFT) != 0 { flags.insert(.maskShift) }
-        if modifiers & UInt32(LC_MODIFIER_CONTROL) != 0 { flags.insert(.maskControl) }
-        if modifiers & UInt32(LC_MODIFIER_OPTION) != 0 { flags.insert(.maskAlternate) }
-        if modifiers & UInt32(LC_MODIFIER_COMMAND) != 0 { flags.insert(.maskCommand) }
-        if modifiers & UInt32(LC_MODIFIER_CAPS_LOCK) != 0 { flags.insert(.maskAlphaShift) }
-        return flags
-    }
-
-    private func dragEventType(for buttons: UInt32) -> CGEventType {
-        if buttons & 1 != 0 { return .leftMouseDragged }
-        if buttons & 2 != 0 { return .rightMouseDragged }
-        if buttons != 0 { return .otherMouseDragged }
-        return .mouseMoved
-    }
-
-    private func dragButton(for buttons: UInt32) -> CGMouseButton {
-        if buttons & 1 != 0 { return .left }
-        if buttons & 2 != 0 { return .right }
-        return .center
-    }
-
-    private func mouseButton(
-        for code: UInt32
-    ) -> (CGMouseButton, CGEventType, CGEventType) {
-        switch code {
-        case 2: (.right, .rightMouseDown, .rightMouseUp)
-        case 3...32: (.center, .otherMouseDown, .otherMouseUp)
-        default: (.left, .leftMouseDown, .leftMouseUp)
-        }
-    }
-
-    private func clampedInt32(_ value: Double) -> Int32 {
-        Int32(max(Double(Int32.min), min(Double(Int32.max), value.rounded())))
-    }
-}
-
-/// Hides the Mac pointer while it is on a peer.
-///
-/// `CGDisplayHideCursor` only works for the frontmost app unless the
-/// WindowServer connection has the private property "SetsCursorInBackground"
-/// (Deskflow does the same). Looked up at run time: if it ever disappears the
-/// pointer merely stays visible. Hide and show are counted by the system, so
-/// they are kept strictly paired.
-@MainActor
-private enum PointerVisibility {
-    private static var hidden = false
-    private static let log = Logger(subsystem: "com.linkcursor.mac", category: "cursor")
-
-    /// Same sequence as Deskflow's OSXScreen::hideCursor, including the
-    /// re-association that it found fixes the cursor "randomly not hiding".
-    static func hide() {
-        guard !hidden else { return }
-        let allowed = allowInBackground()
-        let result = CGDisplayHideCursor(CGMainDisplayID())
-        CGAssociateMouseAndMouseCursorPosition(1)
-        hidden = result == .success
-        log.info("hide result=\(result.rawValue) background=\(allowed)")
-    }
-
-    static func show() {
-        guard hidden else { return }
-        _ = allowInBackground()
-        let result = CGDisplayShowCursor(CGMainDisplayID())
-        CGAssociateMouseAndMouseCursorPosition(1)
-        hidden = false
-        log.info("show result=\(result.rawValue)")
-    }
-
-    /// Set before every hide and show, as Deskflow does.
-    private static func allowInBackground() -> Bool {
-        guard let connection, let setProperty else { return false }
-        let id = connection()
-        return setProperty(id, id, "SetsCursorInBackground" as CFString, kCFBooleanTrue) == 0
-    }
-
-    private typealias Connection = @convention(c) () -> Int32
-    private typealias SetProperty = @convention(c) (Int32, Int32, CFString, CFTypeRef) -> Int32
-    private static let connection = symbol("_CGSDefaultConnection", as: Connection.self)
-    private static let setProperty = symbol("CGSSetConnectionProperty", as: SetProperty.self)
-
-    private static func symbol<T>(_ name: String, as type: T.Type) -> T? {
-        // RTLD_DEFAULT
-        guard let pointer = dlsym(UnsafeMutableRawPointer(bitPattern: -2), name) else { return nil }
-        return unsafeBitCast(pointer, to: type)
-    }
 }
 
 private func linkCursorEventTapCallback(
@@ -694,11 +764,5 @@ private func linkCursorEventTapCallback(
         }
         let bridge = Unmanaged<InputBridge>.fromOpaque(pointer).takeUnretainedValue()
         return bridge.handle(type: type, event: event)
-    }
-}
-
-private extension UInt32 {
-    func saturatingSubtracting(_ value: UInt32) -> UInt32 {
-        self >= value ? self - value : 0
     }
 }

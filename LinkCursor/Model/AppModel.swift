@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import Network
 import Observation
 import OSLog
 
@@ -16,8 +17,13 @@ final class AppModel: RustCoreDelegate {
     private(set) var sentEventCount = 0
     private(set) var receivedEventCount = 0
     private(set) var lastError: String?
-    /// The files being received, for the window footer.
-    private(set) var fileTransfer: String?
+    /// Files on their way, either way.
+    private(set) var transfers: [FileTransfer] = []
+    /// The addresses the user added, as the core reports them.
+    private(set) var manualAddressStatus: [ManualAddressStatus] = []
+    /// Another program holds the switch shortcuts' combination.
+    private(set) var switchHotkeysBlocked = false
+    private(set) var settings: AppSettings
     /// Peers the user paired, saved from `paired` and handed to the core.
     private(set) var trustedPeers: [String: TrustedPeer]
     /// The core's placements, saved as it reports them and handed back to it
@@ -32,10 +38,18 @@ final class AppModel: RustCoreDelegate {
 
     private let core = RustCore()
     private let inputBridge = InputBridge()
+    private let player = InputPlayer()
     private let hud = ControlHUDController()
     private let clipboard = ClipboardBridge()
     private let pairing = PairingPrompt()
-    private var reconnectTimer: Timer?
+    private let hotkeys = SwitchHotkeys()
+    private let presence = Presence()
+    private let cursorHider = CursorHider()
+    private let notifications = TransferNotifications()
+    /// Reports network changes to the core (Wi-Fi, addresses, VPN).
+    private let pathMonitor = NWPathMonitor()
+    /// Network changes come in bursts; the core hears of them once settled.
+    private var pendingNetworkChange: DispatchWorkItem?
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "model")
 
     var isControlling: Bool { controlledPeerID != nil }
@@ -57,6 +71,7 @@ final class AppModel: RustCoreDelegate {
 
     init() {
         deviceName = Host.current().localizedName ?? "Mac"
+        settings = AppSettings.load()
         placements = Self.loadPlacements()
         knownPeers = Self.loadKnownPeers()
         trustedPeers = Self.loadTrustedPeers()
@@ -66,18 +81,31 @@ final class AppModel: RustCoreDelegate {
             if self.core.send(input) {
                 self.sentEventCount += 1
             } else {
-                self.lastError = "Rust Core 拒绝了输入事件"
+                self.lastError = String(localized: "Rust Core 拒绝了输入事件")
             }
         }
         inputBridge.didChangeTarget = { [weak self] peerID in
             self?.controlTargetChanged(peerID)
         }
+        inputBridge.inputFor = { [weak self] peerID in
+            self?.settings.input(for: peerID) ?? PeerInput()
+        }
         clipboard.didChange = { [weak self] items in
             self?.core.setClipboard(items)
         }
         inputBridge.willEnter = { [weak self] in
+            // The cursor a peer left hidden here is this capture's to hide now.
+            self?.cursorHider.reveal()
             self?.clipboard.reportIfChanged()
         }
+        player.pointerLockChanged = { [weak self] locked in
+            self?.core.setPointerLocked(locked)
+        }
+        hotkeys.pressed = { [weak self] side in
+            self?.inputBridge.jumpFromHere(toward: side)
+        }
+        presence.reportActivity = { [weak self] in self?.core.reportUserActivity() }
+        presence.lockPeers = { [weak self] in self?.core.lockPeers() }
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil,
@@ -85,9 +113,10 @@ final class AppModel: RustCoreDelegate {
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.screensChanged() }
         }
-        reconnectTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.connectPlacedPeers() }
-        }
+        observePowerAndNetwork()
+        applySettings(settings, previous: nil)
+        presence.start()
+        notifications.start()
         startCore()
         refreshPermission()
     }
@@ -101,14 +130,83 @@ final class AppModel: RustCoreDelegate {
             displays: localDisplays,
             placements: Array(placements.values),
             trustedPeers: Array(trustedPeers.values),
-            requirePairing: true
+            settings: settings
         ) else {
-            coreState = .failed("无法启动 Rust Core")
+            coreState = .failed(String(localized: "无法启动 Rust Core"))
             return
         }
         migrateLegacyPlacements()
         clipboard.start()
     }
+
+    // MARK: - Settings
+
+    /// Changes the settings, saves them and applies what changed at once.
+    func updateSettings(_ change: (inout AppSettings) -> Void) {
+        var next = settings
+        change(&next)
+        guard next != settings else { return }
+        let previous = settings
+        settings = next
+        next.save()
+        applySettings(next, previous: previous)
+    }
+
+    private func applySettings(_ settings: AppSettings, previous: AppSettings?) {
+        if previous != nil {
+            // At start-up these go into the core's configuration.
+            if settings.pairedOnly != previous?.pairedOnly {
+                core.setRequirePairing(settings.pairedOnly)
+            }
+            if settings.shortcutRemap != previous?.shortcutRemap {
+                core.setShortcutRemap(settings.shortcutRemap)
+            }
+            if settings.manualAddresses != previous?.manualAddresses {
+                core.setManualAddresses(settings.manualAddresses)
+            }
+        }
+        if settings.switchHotkeys != previous?.switchHotkeys
+            || settings.switchModifiers != previous?.switchModifiers
+        {
+            let modifiers = settings.switchHotkeys ? settings.switchModifiers : nil
+            switchHotkeysBlocked = !hotkeys.register(modifiers)
+            inputBridge.setSwitchShortcuts(modifiers)
+        }
+        if settings.language != previous?.language {
+            settings.language.apply()
+        }
+        if !settings.hideCursorOnLeave {
+            cursorHider.reveal()
+        }
+        presence.keepAwake = settings.keepAwake
+        presence.lockSync = settings.lockSync
+    }
+
+    /// Adds an address to look for devices at; a message when it cannot be.
+    func addManualAddress(_ text: String) -> String? {
+        if let problem = ManualAddress.problem(with: text, existing: settings.manualAddresses) {
+            return problem
+        }
+        let address = text.trimmingCharacters(in: .whitespaces)
+        updateSettings { $0.manualAddresses.append(address) }
+        return nil
+    }
+
+    func removeManualAddress(_ address: String) {
+        updateSettings { $0.manualAddresses.removeAll { $0 == address } }
+    }
+
+    func setInput(_ input: PeerInput, for peerID: String) {
+        updateSettings { $0.peerInput[peerID] = input.isDefault ? nil : input }
+    }
+
+    /// What the UI shows for an address: the core's report, or searching.
+    func status(of address: String) -> ManualAddressStatus {
+        manualAddressStatus.first { $0.address == address }
+            ?? ManualAddressStatus(address: address, status: .searching, peerID: nil, name: nil, error: nil)
+    }
+
+    // MARK: - Devices
 
     func connect(to peer: Peer) {
         if sessions[peer.id] == nil {
@@ -116,7 +214,7 @@ final class AppModel: RustCoreDelegate {
         }
         if !core.connect(to: peer.id) {
             sessions[peer.id] = nil
-            lastError = "无法向 Rust Core 发送连接请求"
+            lastError = String(localized: "无法向 Rust Core 发送连接请求")
         }
     }
 
@@ -128,8 +226,16 @@ final class AppModel: RustCoreDelegate {
         inputBridge.stopCapturing()
     }
 
+    func cancelTransfer(_ transfer: FileTransfer) {
+        core.cancelFiles(transfer.transfer)
+    }
+
     func placement(for peer: Peer) -> PeerPlacement {
-        PeerPlacement(portals(for: peer.id).first?.side)
+        if let side = world.portals(to: peer.id).first?.side {
+            return PeerPlacement(side)
+        }
+        // Placed against another peer only.
+        return placements[peer.id]?.offset != nil ? .chained : .disabled
     }
 
     /// What the arrangement canvas draws: discovered devices and placed ones,
@@ -161,6 +267,7 @@ final class AppModel: RustCoreDelegate {
     /// Asks the core to place the peer beside an edge (or remove it); the
     /// outcome arrives as `placement_changed`.
     func setPlacement(_ placement: PeerPlacement, for peer: Peer) {
+        guard placement != .chained else { return }
         core.place(peer.id, beside: placement.side)
         if placement.isEnabled, sessions[peer.id] == nil {
             connect(to: peer)
@@ -175,12 +282,27 @@ final class AppModel: RustCoreDelegate {
     func refreshPermission() {
         hasAccessibilityPermission = inputBridge.hasAccessibilityPermission
         if hasAccessibilityPermission {
-            if lastError?.hasPrefix("设备位置已保存；") == true {
+            if lastError == Self.permissionNeeded {
                 lastError = nil
             }
-            refreshPortals()
+            refreshArrangement()
         }
     }
+
+    func isPaired(_ peer: Peer) -> Bool {
+        trustedPeers[peer.id] != nil
+    }
+
+    /// Forgets a paired peer; with pairing required it must pair again.
+    func unpair(_ peer: Peer) {
+        core.unpair(peer.id)
+    }
+
+    func dismissError() {
+        lastError = nil
+    }
+
+    // MARK: - Core events
 
     func rustCore(_ core: RustCore, received event: CoreEventEnvelope) {
         switch event.event {
@@ -194,7 +316,6 @@ final class AppModel: RustCoreDelegate {
             peers.append(peer)
             peers.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             remember(peer)
-            connectPlacedPeers()
         case "peer_down":
             if let peerID = event.peerID {
                 peers.removeAll { $0.id == peerID }
@@ -207,22 +328,31 @@ final class AppModel: RustCoreDelegate {
             guard let peer = event.peer else { break }
             sessions[peer.id, default: PeerSession(status: .connecting)].status = .connected(peer)
             lastError = nil
-            refreshPortals()
+            refreshArrangement()
         case "disconnected":
             // Sessions are per peer; one without a peer ID concerns none.
             guard let peerID = event.peerID else { break }
-            let name = sessions[peerID]?.peer?.name ?? peerID
+            let name = sessions[peerID]?.peer?.name ?? name(of: peerID)
             sessions[peerID] = nil
-            refreshPortals()
-            // Ending a session here or on the peer is not an error.
-            if let reason = event.reason, reason != "local request",
-               reason != "peer closed the connection"
-            {
-                lastError = "\(name)：\(reason)"
+            inputBridge.setPointerHeld(false, on: peerID)
+            refreshArrangement()
+            updateDriven()
+            if let message = event.reason.flatMap(Self.disconnectMessage) {
+                lastError = "\(name)：\(message)"
             }
         case "remote_control_started", "remote_control_ended":
-            if let peerID = event.peerID {
-                sessions[peerID]?.remoteControl = event.event == "remote_control_started"
+            guard let peerID = event.peerID else { break }
+            let active = event.event == "remote_control_started"
+            sessions[peerID]?.remoteControl = active
+            updateDriven()
+            if active {
+                cursorHider.reveal()
+            } else if event.reason == "remote reset", settings.hideCursorOnLeave,
+                      !sessions.values.contains(where: \.remoteControl)
+            {
+                // The peer's pointer moved away: the cursor shows only where
+                // the pointer is.
+                cursorHider.hideUntilLocalMotion()
             }
         case "control_revoked":
             // The core took this Mac's control of the peer away: another
@@ -230,6 +360,15 @@ final class AppModel: RustCoreDelegate {
             // ("taken_over", and that peer places the cursor).
             guard let peerID = event.peerID, peerID == controlledPeerID else { break }
             inputBridge.controlRevoked(pointerStays: event.reason == "taken_over")
+        case "peer_pointer_lock":
+            guard let peerID = event.peerID else { break }
+            inputBridge.setPointerHeld(event.locked ?? false, on: peerID)
+        case "peer_active":
+            presence.peerActive()
+        case "lock_requested":
+            presence.lockRequested()
+        case "manual_addresses":
+            manualAddressStatus = event.addresses ?? []
         case "peer_displays":
             guard let peerID = event.peerID, let displays = event.displays,
                   var peer = knownPeers[peerID] ?? peers.first(where: { $0.id == peerID })
@@ -238,7 +377,7 @@ final class AppModel: RustCoreDelegate {
             }
             peer.displays = displays
             remember(peer)
-            refreshPortals()
+            refreshArrangement()
         case "placement_changed":
             guard let peerID = event.peerID, let updatedMs = event.updatedMs else { break }
             placements[peerID] = PlacementRecord(
@@ -247,8 +386,7 @@ final class AppModel: RustCoreDelegate {
                 updatedMs: updatedMs
             )
             Self.savePlacements(placements)
-            refreshPortals()
-            connectPlacedPeers()
+            refreshArrangement()
         case "clipboard":
             // A peer's clipboard, handed over with the control.
             let items = (event.formats ?? []).compactMap { format in
@@ -257,7 +395,7 @@ final class AppModel: RustCoreDelegate {
             clipboard.write(items)
         case "pairing_requested":
             guard let peerID = event.peerID, let code = event.code else { break }
-            let name = event.name ?? peers.first { $0.id == peerID }?.name ?? peerID
+            let name = event.name ?? name(of: peerID)
             pairing.ask(peerID: peerID, name: name, code: code) { [core] accepted in
                 if accepted {
                     core.acceptPairing(peerID)
@@ -273,8 +411,8 @@ final class AppModel: RustCoreDelegate {
         case "pairing_ended":
             guard let peerID = event.peerID else { break }
             pairing.dismiss(peerID: peerID)
-            if let reason = event.reason {
-                lastError = "配对未完成：\(reason)"
+            if let message = event.reason.flatMap(Self.disconnectMessage) {
+                lastError = String(localized: "配对未完成：\(message)")
             }
         case "unpaired":
             guard let peerID = event.peerID else { break }
@@ -283,16 +421,22 @@ final class AppModel: RustCoreDelegate {
         case "files_offered":
             guard let transfer = event.transfer else { break }
             askToReceiveFiles(transfer, from: event.peerID, count: event.count ?? 0, size: event.totalSize ?? 0)
-        case "files_progress":
-            if let received = event.received, let total = event.total, total > 0 {
-                fileTransfer = "正在接收文件 \(received * 100 / total)%"
-            }
+        case "files_receiving", "files_progress", "files_sending":
+            updateTransfer(with: event)
         case "files_received":
-            fileTransfer = nil
+            guard let transfer = event.transfer else { break }
+            transfers.removeAll { $0.direction == .receiving && $0.transfer == transfer }
+            notifications.filesReceived(from: name(of: event.peerID), paths: event.paths ?? [])
             Self.log.info("received files: \(event.paths ?? [], privacy: .public)")
-        case "files_failed":
-            fileTransfer = nil
-            lastError = "文件接收失败：\(event.reason ?? "")"
+        case "files_failed", "files_send_ended":
+            guard let transfer = event.transfer else { break }
+            let sending = event.event == "files_send_ended"
+            transfers.removeAll { $0.direction == (sending ? .sending : .receiving) && $0.transfer == transfer }
+            if let reason = event.reason, !Self.quietTransferEnds.contains(reason) {
+                lastError = sending
+                    ? String(localized: "发送文件失败：\(reason)")
+                    : String(localized: "接收文件失败：\(reason)")
+            }
         case "error":
             lastError = event.message
         default:
@@ -301,31 +445,120 @@ final class AppModel: RustCoreDelegate {
     }
 
     func rustCore(_ core: RustCore, received input: LcInputEvent) {
-        inputBridge.inject(input)
+        player.play(input)
         receivedEventCount += 1
     }
 
-    /// A placed peer is meant to be one push away, so its session is kept
-    /// open: opened when it appears or is placed, and reopened (by the timer)
-    /// when it drops while the peer is still around. Not while this Mac is
-    /// driving a peer: `connect` also moves the input target.
-    private func connectPlacedPeers() {
-        guard controlledPeerID == nil else { return }
-        for peer in peers where placements[peer.id]?.offset != nil && sessions[peer.id] == nil {
-            Self.log.info("connecting placed peer \(peer.id, privacy: .public)")
-            connect(to: peer)
+    /// The card of a transfer starting or under way.
+    private func updateTransfer(with event: CoreEventEnvelope) {
+        guard let transfer = event.transfer else { return }
+        let direction: FileTransfer.Direction = event.event == "files_sending" ? .sending : .receiving
+        let index = transfers.firstIndex { $0.direction == direction && $0.transfer == transfer }
+        var card = index.map { transfers[$0] } ?? FileTransfer(
+            direction: direction,
+            transfer: transfer,
+            peerID: event.peerID,
+            name: "",
+            items: 0,
+            count: 0,
+            done: 0,
+            total: 0
+        )
+        if let name = event.name { card.name = name }
+        if let items = event.items { card.items = items }
+        if let count = event.count { card.count = count }
+        if let total = event.totalSize ?? event.total { card.total = total }
+        if let done = event.received ?? event.sent { card.done = done }
+        if let index {
+            transfers[index] = card
+        } else {
+            transfers.append(card)
         }
+    }
+
+    /// Transfers that end for these were stopped on purpose or replaced.
+    private static let quietTransferEnds: Set<String> = [
+        "done",
+        "cancelled",
+        "replaced by a newer copy",
+        "files are no longer on the clipboard",
+    ]
+
+    /// What to tell the user about a session or pairing that ended, if
+    /// anything: ending it here or on the peer, or for sleep, is not an
+    /// error. The core reconnects by itself where it should.
+    private static func disconnectMessage(_ reason: String) -> String? {
+        switch reason {
+        case "local request", "peer closed the connection", "disconnected on the other device",
+             "going to sleep", "pairing declined", "core stopped":
+            nil
+        case "heartbeat timeout":
+            String(localized: "对方没有响应（可能睡眠了或断网），回来后会自动重新连接。")
+        case "refused by the other device":
+            String(localized: "对方拒绝了连接：对方可能移除了本机，或只允许已配对的设备。点“连接”可以重新配对。")
+        case "the device's identity changed":
+            String(localized: "设备的身份证书变了，已拒绝连接。如果对方重装过，请取消配对后重新配对。")
+        case "pairing declined on the other device":
+            String(localized: "对方拒绝了配对。")
+        case "pairing timed out":
+            String(localized: "配对超时，没有在两分钟内确认。")
+        case "pairing required":
+            String(localized: "未配对的设备已断开（已开启“仅允许已配对的设备”）。")
+        case "the other device needs a newer LinkCursor to pair":
+            String(localized: "对方的 LinkCursor 版本太旧，无法配对，请先更新。")
+        case "unpaired":
+            String(localized: "已取消配对。")
+        default:
+            reason
+        }
+    }
+
+    /// The core keeps the user's devices connected by itself, but it has to
+    /// hear about sleep and network changes to end sessions in order and
+    /// come back at once instead of after heartbeat timeouts.
+    private func observePowerAndNetwork() {
+        let workspace = NSWorkspace.shared.notificationCenter
+        workspace.addObserver(
+            forName: NSWorkspace.willSleepNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.core.systemWillSleep() }
+        }
+        workspace.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.core.networkChanged() }
+        }
+        pathMonitor.pathUpdateHandler = { [weak self] _ in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { self?.networkChanged() }
+            }
+        }
+        pathMonitor.start(queue: DispatchQueue(label: "com.linkcursor.network"))
+    }
+
+    /// Tells the core once the network has been quiet for 0.8 s.
+    private func networkChanged() {
+        pendingNetworkChange?.cancel()
+        let change = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated { self?.core.networkChanged() }
+        }
+        pendingNetworkChange = change
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: change)
     }
 
     /// Over the automatic limit, the user decides.
     private func askToReceiveFiles(_ transfer: UInt32, from peerID: String?, count: Int, size: UInt64) {
-        let name = peerID.flatMap { id in peers.first { $0.id == id }?.name } ?? peerID ?? "对方"
         let alert = NSAlert()
-        alert.messageText = "\(name) 想发送 \(count) 个文件"
-        alert.informativeText = "共 \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))，"
-            + "将保存到“下载/LinkCursor”。"
-        alert.addButton(withTitle: "接收")
-        alert.addButton(withTitle: "取消")
+        alert.messageText = String(localized: "\(name(of: peerID)) 想发送 \(count) 个文件")
+        alert.informativeText = String(
+            localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))，将保存到“下载/LinkCursor”。"
+        )
+        alert.addButton(withTitle: String(localized: "接收"))
+        alert.addButton(withTitle: String(localized: "取消"))
         NSApp.activate()
         if alert.runModal() == .alertFirstButtonReturn {
             core.acceptFiles(transfer)
@@ -353,22 +586,54 @@ final class AppModel: RustCoreDelegate {
             hud.dismiss()
             return
         }
-        let name = sessions[peerID]?.peer?.name
+        hud.show(peerName: name(of: peerID)) { [weak self] in self?.stopControlling() }
+    }
+
+    /// Whether some peer drives this Mac: input is played then.
+    private func updateDriven() {
+        player.setDriven(sessions.values.contains(where: \.remoteControl))
+    }
+
+    private func name(of peerID: String?) -> String {
+        guard let peerID else { return String(localized: "对方") }
+        return sessions[peerID]?.peer?.name
             ?? peers.first { $0.id == peerID }?.name
+            ?? knownPeers[peerID]?.name
             ?? peerID
-        hud.show(peerName: name) { [weak self] in self?.stopControlling() }
     }
 
     private func screensChanged() {
         localDisplays = Self.currentDisplays()
         core.setLocalDisplays(localDisplays)
-        refreshPortals()
+        refreshArrangement()
     }
+
+    // MARK: - Arrangement
 
     /// The peer's displays as last described, or the core's default.
     private func layout(of peerID: String) -> [Display] {
         let displays = knownPeers[peerID]?.displays ?? []
         return displays.isEmpty ? [.fallback] : displays
+    }
+
+    /// This Mac and every placed peer, in this Mac's space.
+    private var world: World {
+        World(
+            local: localDisplays,
+            peers: placements.values.compactMap { record in
+                record.offset.map { PlacedPeer(id: record.peerID, displays: layout(of: record.peerID), offset: $0) }
+            }.sorted { $0.id < $1.id }
+        )
+    }
+
+    private static let permissionNeeded = String(localized: "设备位置已保存；授予辅助功能权限后即可从屏幕边缘切换")
+
+    /// Hands the arrangement and the connected peers to the input bridge.
+    private func refreshArrangement() {
+        let connected = Set(sessions.filter { $0.value.peer != nil }.keys)
+        if !inputBridge.setArrangement(world, connected: connected) {
+            lastError = Self.permissionNeeded
+        }
     }
 
     private func remember(_ peer: Peer) {
@@ -392,31 +657,6 @@ final class AppModel: RustCoreDelegate {
             return [:]
         }
         return Dictionary(peers.map { ($0.id, $0) }) { _, latest in latest }
-    }
-
-    private func portals(for peerID: String) -> [Portal] {
-        guard let offset = placements[peerID]?.offset else { return [] }
-        return Portal.between(
-            local: localDisplays,
-            peer: layout(of: peerID),
-            offset: offset,
-            peerID: peerID
-        )
-    }
-
-    /// Hands the edges of every connected, placed peer to the input bridge.
-    private func refreshPortals() {
-        let connected = sessions.filter { $0.value.peer != nil }.keys.sorted()
-        let portals = connected.flatMap(portals(for:))
-        let displays = Dictionary(uniqueKeysWithValues: connected.map { ($0, layout(of: $0)) })
-        if !inputBridge.setPortals(portals, peerDisplays: displays) {
-            lastError = "设备位置已保存；授予辅助功能权限后即可从屏幕边缘切换"
-        }
-        for portal in portals {
-            Self.log.info(
-                "portal \(portal.peerID, privacy: .public) \(portal.side.rawValue, privacy: .public) line=\(portal.line) \(portal.from)..<\(portal.to) offset=(\(portal.offset.x), \(portal.offset.y))"
-            )
-        }
     }
 
     /// This Mac's displays in the CoreGraphics global space (points, origin
@@ -447,15 +687,6 @@ final class AppModel: RustCoreDelegate {
         let id = UUID().uuidString.lowercased()
         UserDefaults.standard.set(id, forKey: key)
         return id
-    }
-
-    func isPaired(_ peer: Peer) -> Bool {
-        trustedPeers[peer.id] != nil
-    }
-
-    /// Forgets a paired peer; with pairing required it must pair again.
-    func unpair(_ peer: Peer) {
-        core.unpair(peer.id)
     }
 
     private static let trustedPeersKey = "linkcursor.trusted-peers"

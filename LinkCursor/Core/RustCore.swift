@@ -38,6 +38,10 @@ final class RustCore {
         let trustedPeers: [TrustedPeer]
         /// Only paired peers may connect (as on Windows, by default).
         let requirePairing: Bool
+        /// Keys from a PC driving this Mac follow the Mac's shortcuts.
+        let shortcutRemap: Bool
+        /// Devices to look for by address, besides multicast discovery.
+        let manualAddresses: [String]
 
         enum CodingKeys: String, CodingKey {
             case deviceID = "device_id"
@@ -53,6 +57,8 @@ final class RustCore {
             case identityPath = "identity_path"
             case trustedPeers = "trusted_peers"
             case requirePairing = "require_pairing"
+            case shortcutRemap = "shortcut_remap"
+            case manualAddresses = "manual_addresses"
         }
     }
 
@@ -62,7 +68,7 @@ final class RustCore {
         displays: [Display],
         placements: [PlacementRecord],
         trustedPeers: [TrustedPeer],
-        requirePairing: Bool
+        settings: AppSettings
     ) -> Bool {
         guard handle == nil else { return true }
         guard lc_core_abi_version() == UInt32(LC_CORE_ABI_VERSION) else { return false }
@@ -75,7 +81,9 @@ final class RustCore {
             downloadDirectory: Self.downloadDirectory.path,
             identityPath: Self.identityPath.path,
             trustedPeers: trustedPeers,
-            requirePairing: requirePairing
+            requirePairing: settings.pairedOnly,
+            shortcutRemap: settings.shortcutRemap,
+            manualAddresses: settings.manualAddresses
         )
         guard let json = Self.json(configuration) else { return false }
 
@@ -150,6 +158,52 @@ final class RustCore {
         return directory.appending(path: "identity.pem")
     }
 
+    /// The system is about to sleep: sessions end in order now.
+    func systemWillSleep() {
+        guard let handle else { return }
+        _ = lc_core_system_will_sleep(handle)
+    }
+
+    /// After waking, or when the network changed: find and reconnect peers now.
+    func networkChanged() {
+        guard let handle else { return }
+        _ = lc_core_network_changed(handle)
+    }
+
+    func setRequirePairing(_ required: Bool) {
+        guard let handle else { return }
+        _ = lc_core_set_require_pairing(handle, required)
+    }
+
+    func setShortcutRemap(_ enabled: Bool) {
+        guard let handle else { return }
+        _ = lc_core_set_shortcut_remap(handle, enabled)
+    }
+
+    /// Replaces the addresses to look for devices at.
+    func setManualAddresses(_ addresses: [String]) {
+        guard let handle, let json = Self.json(addresses) else { return }
+        _ = json.withCString { lc_core_set_manual_addresses(handle, $0) }
+    }
+
+    /// Someone uses this Mac's own keyboard or mouse (every few seconds).
+    func reportUserActivity() {
+        guard let handle else { return }
+        _ = lc_core_report_user_activity(handle)
+    }
+
+    /// This Mac was locked: peers that want to lock too.
+    func lockPeers() {
+        guard let handle else { return }
+        _ = lc_core_lock_peers(handle)
+    }
+
+    /// A game here holds the pointer (hidden, relative motion), or let go.
+    func setPointerLocked(_ locked: Bool) {
+        guard let handle else { return }
+        _ = lc_core_set_pointer_locked(handle, locked)
+    }
+
     func acceptPairing(_ peerID: String) {
         guard let handle else { return }
         _ = peerID.withCString { lc_core_accept_pairing(handle, $0) }
@@ -170,6 +224,8 @@ final class RustCore {
         _ = lc_core_accept_files(handle, transfer)
     }
 
+    /// Stops a transfer either way: one being received, or this Mac's
+    /// files being sent.
     func cancelFiles(_ transfer: UInt32) {
         guard let handle else { return }
         _ = lc_core_cancel_files(handle, transfer)

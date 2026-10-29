@@ -47,17 +47,35 @@ struct ContentView: View {
                     .padding(16)
                     .background(.background.secondary, in: .rect(cornerRadius: 14))
 
-                    peerSection
-
-                    if let lastError = model.lastError {
-                        Label(lastError, systemImage: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                            .font(.callout)
+                    if !model.transfers.isEmpty {
+                        TransfersView(
+                            transfers: model.transfers,
+                            peerName: { id in
+                                id.flatMap { id in model.peers.first { $0.id == id }?.name } ?? String(localized: "对方")
+                            },
+                            cancel: model.cancelTransfer
+                        )
                     }
 
-                    Text("MVP 说明：当前链路未启用加密和配对，仅应在可信局域网中测试。")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    peerSection
+
+                    ManualAddressesView(
+                        addresses: model.settings.manualAddresses,
+                        status: model.status(of:),
+                        add: model.addManualAddress,
+                        remove: model.removeManualAddress
+                    )
+
+                    if let lastError = model.lastError {
+                        HStack(alignment: .firstTextBaseline) {
+                            Label(lastError, systemImage: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .font(.callout)
+                            Spacer()
+                            Button("关闭", action: model.dismissError)
+                                .buttonStyle(.borderless)
+                        }
+                    }
                 }
                 .padding(22)
             }
@@ -65,15 +83,11 @@ struct ContentView: View {
             Divider()
 
             HStack {
-                if let fileTransfer = model.fileTransfer {
-                    Text(fileTransfer)
-                    Text("·")
-                }
                 Text("已发送 \(model.sentEventCount) 个事件")
                 Text("·")
                 Text("已接收 \(model.receivedEventCount) 个事件")
                 Spacer()
-                Text("Rust Core · UDP Discovery · TCP")
+                Text(verbatim: "Rust Core · QUIC · TLS 1.3")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -105,7 +119,7 @@ struct ContentView: View {
                 ContentUnavailableView(
                     "正在发现设备",
                     systemImage: "network",
-                    description: Text("请在另一台设备上启动 LinkCursor，并保持在同一局域网。")
+                    description: Text("请在另一台设备上启动 LinkCursor，并保持在同一局域网；没有出现时可以在下方通过地址添加。")
                 )
                 .frame(maxWidth: .infinity, minHeight: 150)
             } else {
@@ -119,7 +133,9 @@ struct ContentView: View {
                         connect: { model.connect(to: peer) },
                         disconnect: { model.disconnect(peer) },
                         isPaired: model.isPaired(peer),
-                        unpair: { model.unpair(peer) }
+                        unpair: { model.unpair(peer) },
+                        input: model.settings.input(for: peer.id),
+                        setInput: { model.setInput($0, for: peer.id) }
                     )
                     Divider()
                 }
@@ -163,11 +179,11 @@ private struct StatusPill: View {
     let connectionState: ConnectionState
 
     private var label: String {
-        if case let .connected(peer) = connectionState { return "已连接 · \(peer.name)" }
-        if case .connecting = connectionState { return "正在连接" }
-        if coreState == .running { return "正在运行" }
-        if case .failed = coreState { return "Core 异常" }
-        return "正在启动"
+        if case let .connected(peer) = connectionState { return String(localized: "已连接 · \(peer.name)") }
+        if case .connecting = connectionState { return String(localized: "正在连接") }
+        if coreState == .running { return String(localized: "正在运行") }
+        if case .failed = coreState { return String(localized: "Core 异常") }
+        return String(localized: "正在启动")
     }
 
     private var color: Color {
@@ -233,7 +249,7 @@ private struct ConnectedControlCard: View {
                 .foregroundStyle(peer == nil ? Color.secondary : Color.accentColor)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(peer.map { "输入目标：\($0.name)" } ?? "尚未连接控制目标")
+                Text(peer.map { String(localized: "输入目标：\($0.name)") } ?? String(localized: "尚未连接控制目标"))
                     .bold()
                 Text(detailText)
                     .font(.caption)
@@ -257,17 +273,17 @@ private struct ConnectedControlCard: View {
 
     private var detailText: String {
         if isControlling {
-            return "键鼠输入正在转发，按 ⌃⌥⎋ 释放"
+            return String(localized: "键鼠输入正在转发，按 ⌃⌥⎋ 释放")
         }
         if peer != nil, !placement.isEnabled {
-            return "请在下方设备列表选择位置；位置决定从哪条边缘自动切换"
+            return String(localized: "请在下方设备列表选择位置；位置决定从哪条边缘自动切换")
         }
         if peer != nil, placement.isEnabled, !hasAccessibilityPermission {
-            return "授予辅助功能权限后，越过\(placement.edgeDescription)即可自动切换"
+            return String(localized: "授予辅助功能权限后，越过\(placement.edgeDescription)即可自动切换")
         }
         if peer != nil, placement.isEnabled {
-            return "将鼠标越过\(placement.edgeDescription)，输入会自动切换到该设备"
+            return String(localized: "将鼠标越过\(placement.edgeDescription)，输入会自动切换到该设备")
         }
-        return "连接设备并配置相对位置后，将自动启用边缘切换"
+        return String(localized: "连接设备并配置相对位置后，将自动启用边缘切换")
     }
 }

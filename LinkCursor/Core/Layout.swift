@@ -190,54 +190,211 @@ struct Portal: Equatable, Sendable {
         }
     }
 
-    /// A local point just inside this edge, for leaving control without
-    /// crossing (release key, disconnect).
+    /// A local point just inside this edge, near `location`, for leaving
+    /// control without crossing (release key, disconnect). Kept within the
+    /// portal's extent, as the core's `RemotePointer::return_point`.
     func localInside(near location: CGPoint) -> CGPoint {
         let inset = 8.0
+        let along = { (value: Double) in max(min(value, to - 1), from) }
         switch side {
-        case .right: return CGPoint(x: line - inset, y: location.y)
-        case .left: return CGPoint(x: line + inset, y: location.y)
-        case .bottom: return CGPoint(x: location.x, y: line - inset)
-        case .top: return CGPoint(x: location.x, y: line + inset)
+        case .right: return CGPoint(x: line - inset, y: along(location.y))
+        case .left: return CGPoint(x: line + inset, y: along(location.y))
+        case .bottom: return CGPoint(x: along(location.x), y: line - inset)
+        case .top: return CGPoint(x: along(location.x), y: line + inset)
         }
     }
 }
 
-/// The pointer while it drives a peer, tracked in the peer's logical space.
-/// The Mac cursor stays frozen meanwhile; this is the only position there is.
+extension Display {
+    func translated(by offset: Offset) -> Display {
+        Display(x: x + offset.x, y: y + offset.y, width: width, height: height, scale: scale)
+    }
+
+    var centre: CGPoint { CGPoint(x: x + width / 2, y: y + height / 2) }
+}
+
+/// A placed peer: its displays in its own space, and the offset that puts
+/// them into this Mac's space.
+struct PlacedPeer: Equatable, Sendable {
+    let id: String
+    /// Never empty: the core's default size until the peer describes them.
+    let displays: [Display]
+    let offset: Offset
+
+    init(id: String, displays: [Display], offset: Offset) {
+        self.id = id
+        self.displays = displays.isEmpty ? [.fallback] : displays
+        self.offset = offset
+    }
+
+    /// Its displays in this Mac's space.
+    var placed: [Display] { displays.map { $0.translated(by: offset) } }
+}
+
+/// One of the devices of an arrangement: this Mac or a placed peer.
+enum Device: Hashable, Sendable {
+    case local
+    case peer(String)
+}
+
+/// This Mac and every placed peer, in this Mac's space: what crossing,
+/// moving on between peers (chained placements) and the switch shortcuts
+/// go by. The port of the Windows agent's `World` and the core's
+/// `RemotePointer` neighbours.
+struct World: Equatable, Sendable {
+    var local: [Display] = []
+    /// By device ID, as the core orders them.
+    var peers: [PlacedPeer] = []
+
+    func peer(_ id: String) -> PlacedPeer? {
+        peers.first { $0.id == id }
+    }
+
+    /// The portals between this Mac and the peer; none for a peer placed
+    /// against another peer only.
+    func portals(to id: String) -> [Portal] {
+        guard let peer = peer(id) else { return [] }
+        return Portal.between(local: local, peer: peer.displays, offset: peer.offset, peerID: id)
+    }
+
+    /// The pointer on `id` may move on into these.
+    func neighbors(of id: String) -> [PlacedPeer] {
+        peers.filter { $0.id != id }
+    }
+
+    private func displays(of device: Device) -> [Display]? {
+        switch device {
+        case .local: local
+        case let .peer(id): peer(id)?.placed
+        }
+    }
+
+    /// The device next to `from` toward `side`: the nearest whose middle
+    /// lies that way, more that way than sideways.
+    func toward(from: Device, side: Side) -> Device? {
+        guard let current = displays(of: from).map(Display.bounds(of:)), !current.isNull else {
+            return nil
+        }
+        let candidates = [Device.local] + peers.map { Device.peer($0.id) }
+        var best: (score: Double, device: Device)?
+        for device in candidates where device != from {
+            guard let bounds = displays(of: device).map(Display.bounds(of:)), !bounds.isNull else {
+                continue
+            }
+            let (dx, dy) = (bounds.midX - current.midX, bounds.midY - current.midY)
+            let (along, across): (Double, Double) = switch side {
+            case .right: (dx, dy)
+            case .left: (-dx, dy)
+            case .bottom: (dy, dx)
+            case .top: (-dy, dx)
+            }
+            guard along > 1, abs(across) <= along * 2 else { continue }
+            let score = along + 2 * abs(across)
+            if best.map({ score < $0.score }) ?? true {
+                best = (score, device)
+            }
+        }
+        return best?.device
+    }
+
+    /// Where the pointer lands when it jumps from `from` to `to`: the middle
+    /// of the display of `to` nearest to `from`.
+    func landing(from: Device, to: Device) -> CGPoint? {
+        guard let source = displays(of: from).map(Display.bounds(of:)), !source.isNull,
+              let targets = displays(of: to)
+        else {
+            return nil
+        }
+        let origin = CGPoint(x: source.midX, y: source.midY)
+        return targets.map(\.centre).min {
+            hypot($0.x - origin.x, $0.y - origin.y) < hypot($1.x - origin.x, $1.y - origin.y)
+        }
+    }
+}
+
+/// The pointer while it drives a peer, tracked in the peer's logical space:
+/// the port of the core's `layout::RemotePointer`. The Mac cursor stays
+/// parked meanwhile; this is the only position there is.
 struct RemotePointer {
-    let peerID: String
+    /// Where a move took the pointer.
+    enum Motion: Equatable {
+        /// Still on the peer.
+        case stay
+        /// Back on this Mac, continuing at this local point.
+        case home(CGPoint)
+        /// Into another placed peer that touches this one, at this local
+        /// point. The pointer itself stopped at the edge, so not moving on
+        /// simply leaves an edge there.
+        case neighbor(String, CGPoint)
+    }
+
+    let peer: PlacedPeer
     /// Every portal to this peer: the pointer may come back through any.
     let portals: [Portal]
-    let displays: [Display]
-    let entry: Portal
+    /// Where the pointer first left this Mac, for giving control back
+    /// without crossing; nil when it came by shortcut.
+    let entry: Portal?
+    let neighbors: [PlacedPeer]
     private(set) var position: CGPoint
 
-    init(entering portal: Portal, at location: CGPoint, portals: [Portal], displays: [Display]) {
-        peerID = portal.peerID
-        entry = portal
+    var peerID: String { peer.id }
+
+    /// Crosses through `portal` from the local point `location` on its edge.
+    init(crossing portal: Portal, at location: CGPoint, peer: PlacedPeer, portals: [Portal], neighbors: [PlacedPeer]) {
+        self.peer = peer
         self.portals = portals
-        self.displays = displays.isEmpty ? [.fallback] : displays
+        self.neighbors = neighbors
+        entry = portal
         position = portal.peerEntry(for: location)
     }
 
-    /// Moves by `delta`. Returns the local point to continue at when the
-    /// move leaves the peer through a portal; the position is then stale.
-    mutating func move(by delta: CGVector) -> CGPoint? {
+    /// Arrives at the local point `location`, from another peer (`entry` is
+    /// where the pointer first left this Mac) or by shortcut (none). The
+    /// point is moved into the nearest of the peer's displays.
+    init(arrivingAt location: CGPoint, peer: PlacedPeer, portals: [Portal], neighbors: [PlacedPeer], entry: Portal?) {
+        self.peer = peer
+        self.portals = portals
+        self.neighbors = neighbors
+        self.entry = entry
+        let point = CGPoint(x: location.x - peer.offset.x, y: location.y - peer.offset.y)
+        let distance = { (display: Display) -> Double in
+            let clamped = display.clamp(point)
+            return hypot(clamped.x - point.x, clamped.y - point.y)
+        }
+        let nearest = peer.displays.min { distance($0) < distance($1) } ?? peer.displays[0]
+        position = nearest.clamp(point)
+    }
+
+    /// Where the pointer is, in this Mac's space.
+    var localPosition: CGPoint {
+        CGPoint(x: position.x + peer.offset.x, y: position.y + peer.offset.y)
+    }
+
+    /// Moves by `delta`: within the peer, back to this Mac through a portal,
+    /// or on into a neighbouring peer.
+    mutating func step(by delta: CGVector) -> Motion {
         let target = CGPoint(x: position.x + delta.dx, y: position.y + delta.dy)
-        if displays.contains(where: { $0.contains(target) }) {
+        if peer.displays.contains(where: { $0.contains(target) }) {
             position = target
-            return nil
+            return .stay
         }
         for portal in portals {
             if let exit = portal.localExit(for: target) {
-                return exit
+                return .home(exit)
             }
         }
-        // Against an edge with nothing beyond it: slide along it, as the
-        // peer's own cursor does.
-        let current = displays.first { $0.contains(position) } ?? displays[0]
+        let local = CGPoint(x: target.x + peer.offset.x, y: target.y + peer.offset.y)
+        let neighbor = neighbors.first { $0.placed.contains { $0.contains(local) } }
+        // Against an edge: slide along it, as the peer's own cursor does.
+        let current = peer.displays.first { $0.contains(position) } ?? peer.displays[0]
         position = current.clamp(target)
-        return nil
+        return neighbor.map { .neighbor($0.id, local) } ?? .stay
+    }
+
+    /// Where the cursor comes back when control is given back without
+    /// crossing: just inside the edge it left through, near `location`;
+    /// `location` itself when it came by shortcut.
+    func returnPoint(near location: CGPoint) -> CGPoint {
+        entry?.localInside(near: location) ?? location
     }
 }

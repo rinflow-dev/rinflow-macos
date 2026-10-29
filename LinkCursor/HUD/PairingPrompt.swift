@@ -11,16 +11,12 @@ final class PairingPrompt {
     /// dismissed because the pairing ended elsewhere.
     func ask(peerID: String, name: String, code: String, answer: (Bool) -> Void) {
         let alert = NSAlert()
-        alert.messageText = "与 \(name) 配对"
-        alert.informativeText = """
-        请确认两台设备上显示的数字相同：
-
-        \(Self.grouped(code))
-
-        数字一致时点“配对”，并在对方设备上也确认。
-        """
-        alert.addButton(withTitle: "配对")
-        alert.addButton(withTitle: "取消")
+        alert.messageText = String(localized: "与 \(name) 配对")
+        alert.informativeText = String(
+            localized: "请确认两台设备上显示的数字相同：\n\n\(Self.grouped(code))\n\n数字一致时点“配对”，并在对方设备上也确认。"
+        )
+        alert.addButton(withTitle: String(localized: "配对"))
+        alert.addButton(withTitle: String(localized: "取消"))
         self.peerID = peerID
         NSApp.activate()
         let response = alert.runModal()
