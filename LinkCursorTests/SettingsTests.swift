@@ -34,3 +34,13 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(restored, settings)
     }
 }
+
+final class ModifierMapTests: XCTestCase {
+    func testUsingTheMacShortcutsIsTheCoresSwapAndOffKeepsPositions() {
+        // linkcursor-core remap.rs ModifierMap::SWAP / ::KEEP.
+        XCTAssertEqual(AppSettings.modifierMap(followMacShortcuts: true),
+                       ["super": "control", "control": "super", "alt": "alt"])
+        XCTAssertEqual(AppSettings.modifierMap(followMacShortcuts: false),
+                       ["super": "super", "control": "control", "alt": "alt"])
+    }
+}

@@ -45,9 +45,9 @@ final class RustCore {
         let clipboard = true
         /// Copied files travel with the clipboard; received ones land here.
         let files = true
-        /// macOS has no native remote-file provider yet. Ask before saving
-        /// every offer; disabled clipboard sharing can then reject it before
-        /// any file contents are downloaded, even a zero-byte file.
+        /// Every transfer is offered (`files_offered`), as on Windows: the
+        /// app accepts up to its own limit and asks beyond it, and with the
+        /// clipboard off rejects it before any file contents are downloaded.
         let maxAutoReceiveBytes: UInt64 = 0
         let downloadDirectory: String
         /// This Mac's key and certificate; kept, so paired peers know it.
@@ -55,8 +55,8 @@ final class RustCore {
         let trustedPeers: [TrustedPeer]
         /// Only paired peers may connect (as on Windows, by default).
         let requirePairing: Bool
-        /// Keys from a PC driving this Mac follow the Mac's shortcuts.
-        let shortcutRemap: Bool
+        /// What a PC's modifier keys play as here (core `remap.rs`).
+        let modifierMap: [String: String]
         /// Devices to look for by address, besides multicast discovery.
         let manualAddresses: [String]
 
@@ -75,7 +75,7 @@ final class RustCore {
             case identityPath = "identity_path"
             case trustedPeers = "trusted_peers"
             case requirePairing = "require_pairing"
-            case shortcutRemap = "shortcut_remap"
+            case modifierMap = "modifier_map"
             case manualAddresses = "manual_addresses"
         }
     }
@@ -100,7 +100,7 @@ final class RustCore {
             identityPath: Self.identityPath.path,
             trustedPeers: trustedPeers,
             requirePairing: settings.pairedOnly,
-            shortcutRemap: settings.shortcutRemap,
+            modifierMap: AppSettings.modifierMap(followMacShortcuts: settings.shortcutRemap),
             manualAddresses: settings.manualAddresses
         )
         guard let json = Self.json(configuration) else { return false }
@@ -196,9 +196,13 @@ final class RustCore {
     }
 
     func setShortcutRemap(_ enabled: Bool) {
-        guard let handle else { return }
-        _ = lc_core_set_shortcut_remap(handle, enabled)
+        guard let handle,
+              let data = try? JSONEncoder().encode(AppSettings.modifierMap(followMacShortcuts: enabled)),
+              let json = String(data: data, encoding: .utf8)
+        else { return }
+        _ = json.withCString { lc_core_set_modifier_map(handle, $0) }
     }
+
 
     func setRemoteControlAllowed(_ allowed: Bool) {
         guard let handle else { return }

@@ -17,33 +17,37 @@ struct PeerRow: View {
     @State private var showsInput = false
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             Image(systemName: peer.platform == "android" ? "iphone" : "desktopcomputer")
-                .font(.title2)
-                .frame(width: 34, height: 34)
-                .background(.quaternary, in: .rect(cornerRadius: 8))
+                .font(.body)
+                .foregroundStyle(isConnected ? Color.accentColor : .secondary)
+                .frame(width: 26, height: 26)
+                .background(.quaternary, in: .rect(cornerRadius: 6))
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(peer.name)
-                    .bold()
-                Text(peer.address == "incoming"
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(spacing: 4) {
+                    Text(peer.name)
+                        .font(.callout.weight(.medium))
+                        .lineLimit(1)
+                    if isPaired {
+                        Image(systemName: "lock.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.green)
+                            .help("已配对")
+                            .accessibilityLabel("已配对")
+                    }
+                }
+                Text(!isOnline && !isConnected
+                     ? String(localized: "离线 · 设备回来后自动重连")
+                     : peer.address == "incoming"
                      ? String(localized: "由对方发起的连接") : "\(peer.address):\(peer.port)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
                     .textSelection(.enabled)
-                if isPaired {
-                    Label("已配对", systemImage: "lock.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.green)
-                }
-                if !isOnline, !isConnected {
-                    Text("离线 · 设备回来后自动重连")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
             Button {
                 showsInput = true
@@ -57,7 +61,7 @@ struct PeerRow: View {
                 PeerInputView(peerName: peer.name, input: input, setInput: setInput)
             }
 
-            VStack(alignment: .trailing, spacing: 6) {
+            HStack(spacing: 6) {
                 Picker(
                     "位置",
                     selection: Binding(
@@ -72,11 +76,12 @@ struct PeerRow: View {
                 }
                 .pickerStyle(.menu)
                 .labelsHidden()
-                .frame(width: 150)
+                .frame(width: 130)
 
                 if isConnecting {
                     ProgressView()
                         .controlSize(.small)
+                        .frame(width: 56)
                 } else if isConnected {
                     Button("断开", action: disconnect)
                         .buttonStyle(.bordered)
@@ -86,8 +91,9 @@ struct PeerRow: View {
                         .disabled(!isOnline)
                 }
             }
+            .controlSize(.small)
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 5)
         .contextMenu {
             if isPaired {
                 Button("取消配对", role: .destructive, action: unpair)

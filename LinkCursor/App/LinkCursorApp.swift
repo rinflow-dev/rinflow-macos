@@ -8,7 +8,7 @@ struct LinkCursorApp: App {
         Window("LinkCursor", id: "main") {
             ContentView(model: model)
         }
-        .windowResizability(.contentMinSize)
+        .windowResizability(.contentSize)
 
         MenuBarExtra("LinkCursor", systemImage: "cursorarrow.rays") {
             MenuBarContent(model: model)

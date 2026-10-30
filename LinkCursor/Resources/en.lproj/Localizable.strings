@@ -102,7 +102,7 @@
 "设置…" = "Settings…";
 "语言" = "Language";
 "请在下方设备列表选择位置；位置决定从哪条边缘自动切换" = "Choose a position in the device list below; it decides which edge switches to the device";
-"请在另一台设备上启动 LinkCursor，并保持在同一局域网；没有出现时可以在下方通过地址添加。" = "Open LinkCursor on the other device and keep both on the same network. If it doesn’t show up, add it by address below.";
+"请在另一台设备上启动 LinkCursor，并保持在同一局域网；没有出现时可以在下方通过地址添加。如果曾拒绝“本地网络”权限，请在“系统设置 › 隐私与安全性 › 本地网络”中允许 LinkCursor。" = "Open LinkCursor on the other device and keep both on the same network. If it doesn’t show up, add it by address below. If you declined Local Network access, allow LinkCursor in System Settings › Privacy & Security › Local Network.";
 "请确认两台设备上显示的数字相同：\n\n%@\n\n数字一致时点“配对”，并在对方设备上也确认。" = "Check that both devices show the same number:\n\n%@\n\nIf they match, click Pair, and confirm on the other device too.";
 "请输入 IP 地址或设备名称" = "Enter an IP address or a device name";
 "请选择设备位置以启用自动切换" = "Choose the device’s position to switch at an edge";
@@ -169,3 +169,6 @@
 "解锁（⌃⌥L）" = "Unlock (⌃⌥L)";
 "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。" = "A switch or lock shortcut is used by another app. Change the combination or close the conflicting app.";
 "由对方发起的连接" = "Incoming connection";
+"复制的文件夹层级太深，文件未共享。请先压缩后再复制。" = "The copied folders are nested too deeply, so the files weren’t shared. Compress them first, then copy again.";
+"复制的文件太多，文件未共享。请先压缩后再复制。" = "Too many files were copied, so they weren’t shared. Compress them first, then copy again.";
+"已连接" = "Connected";

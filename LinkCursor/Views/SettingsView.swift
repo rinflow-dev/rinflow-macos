@@ -99,7 +99,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 520, height: 620)
+        .frame(width: 460, height: 560)
         .onAppear(perform: model.refreshPermission)
     }
 

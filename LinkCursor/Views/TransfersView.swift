@@ -8,17 +8,13 @@ struct TransfersView: View {
     let cancel: (FileTransfer) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("文件传输")
-                .font(.headline)
+        SectionBox("文件传输") {
             ForEach(transfers) { transfer in
                 TransferCard(transfer: transfer, peerName: peerName(transfer.peerID)) {
                     cancel(transfer)
                 }
             }
         }
-        .padding(16)
-        .background(.background.secondary, in: .rect(cornerRadius: 14))
     }
 }
 

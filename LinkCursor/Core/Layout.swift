@@ -136,20 +136,29 @@ struct Portal: Equatable, Sendable {
         return found
     }
 
-    /// Whether a local pointer at `location`, moving by `delta`, pushes
-    /// through this portal. The pointer must be within a point of the edge
-    /// and moving toward it, so resting against the edge does nothing.
-    func isEntered(at location: CGPoint, delta: CGVector) -> Bool {
+    /// Whether a local pointer at `location` is against this portal: within
+    /// a point of the edge and along its extent.
+    func touches(_ location: CGPoint) -> Bool {
         switch side {
-        case .right:
-            delta.dx > 0 && abs(location.x - line) <= 1 && (from..<to).contains(location.y)
-        case .left:
-            delta.dx < 0 && abs(location.x - line) <= 1 && (from..<to).contains(location.y)
-        case .bottom:
-            delta.dy > 0 && abs(location.y - line) <= 1 && (from..<to).contains(location.x)
-        case .top:
-            delta.dy < 0 && abs(location.y - line) <= 1 && (from..<to).contains(location.x)
+        case .left, .right: abs(location.x - line) <= 1 && (from..<to).contains(location.y)
+        case .top, .bottom: abs(location.y - line) <= 1 && (from..<to).contains(location.x)
         }
+    }
+
+    /// How far `delta` moves through this portal's edge (negative: away).
+    func outward(_ delta: CGVector) -> Double {
+        switch side {
+        case .right: delta.dx
+        case .left: -delta.dx
+        case .bottom: delta.dy
+        case .top: -delta.dy
+        }
+    }
+
+    /// Whether a local pointer at `location`, moving by `delta`, pushes
+    /// through this portal.
+    func isEntered(at location: CGPoint, delta: CGVector) -> Bool {
+        outward(delta) > 0 && touches(location)
     }
 
     /// Where a pointer entering at `location` (local) appears on the peer,

@@ -133,6 +133,17 @@ final class AppModel: RustCoreDelegate {
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.screensChanged() }
         }
+        // Locked or switched away: the tap no longer sees the keyboard (the
+        // login window has secure input), so give the pointer back here.
+        for (center, name) in [
+            (DistributedNotificationCenter.default() as NotificationCenter,
+             Notification.Name("com.apple.screenIsLocked")),
+            (NSWorkspace.shared.notificationCenter, NSWorkspace.sessionDidResignActiveNotification),
+        ] {
+            center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.inputBridge.stopCapturing() }
+            }
+        }
         observePowerAndNetwork()
         NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification, object: nil, queue: .main
@@ -414,10 +425,15 @@ final class AppModel: RustCoreDelegate {
         case "started":
             coreState = .running
         case "stopped":
-            coreState = .stopped
+            // A failed start sends `error`, then `stopped`: keep the failure
+            // (and its Retry button) on screen.
+            if case .failed = coreState {} else { coreState = .stopped }
             inputBridge.stop()
             player.releaseAll()
             sessions.removeAll()
+            transfers.removeAll()
+            pairing.dismissAll()
+            updateDriven()
         case "peer_up":
             guard let peer = event.peer else { break }
             peers.removeAll { $0.id == peer.id }
@@ -443,6 +459,12 @@ final class AppModel: RustCoreDelegate {
             guard let peerID = event.peerID else { break }
             let name = sessions[peerID]?.peer?.name ?? name(of: peerID)
             sessions[peerID] = nil
+            // The core does not always end a transfer whose peer went away
+            // (as on Windows, `state.rs`, they go with the peer).
+            for transfer in transfers where transfer.peerID == peerID {
+                pairing.dismiss(id: "file-\(transfer.transfer)")
+            }
+            transfers.removeAll { $0.peerID == peerID }
             inputBridge.setPointerHeld(false, on: peerID)
             refreshArrangement()
             updateDriven()
@@ -497,7 +519,12 @@ final class AppModel: RustCoreDelegate {
             Self.savePlacements(placements)
             refreshArrangement()
         case "clipboard":
-            guard settings.clipboard else { break }
+            guard settings.clipboard else {
+                // The core keeps what it received as this device's clipboard
+                // and would pass it on to the next peer (as on Windows).
+                core.setClipboard([])
+                break
+            }
             // A peer's clipboard, handed over with the control.
             let items = (event.formats ?? []).compactMap { format in
                 Data(base64Encoded: format.data).map { ClipboardItem(mime: format.mime, data: $0) }
@@ -546,6 +573,12 @@ final class AppModel: RustCoreDelegate {
             transfers.removeAll { $0.direction == .receiving && $0.transfer == transfer }
             notifications.filesReceived(from: name(of: event.peerID), paths: event.paths ?? [])
             Self.log.info("received \(event.paths?.count ?? 0) file items")
+        case "files_not_shared":
+            // Copied here, past the core's limits: the rest of the clipboard
+            // still went.
+            lastError = event.reason == "too_deep"
+                ? String(localized: "复制的文件夹层级太深，文件未共享。请先压缩后再复制。")
+                : String(localized: "复制的文件太多，文件未共享。请先压缩后再复制。")
         case "files_failed", "files_send_ended":
             guard let transfer = event.transfer else { break }
             let sending = event.event == "files_send_ended"
@@ -678,8 +711,17 @@ final class AppModel: RustCoreDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: change)
     }
 
-    /// Over the automatic limit, the user decides.
+    /// Up to this size copied files come in by themselves, as on Windows
+    /// (the agent's 512 MB); over it, the user decides.
+    private static let autoReceiveBytes: UInt64 = 512 * 1024 * 1024
+
+    /// The core offers every transfer (its own limit is 0), so turning the
+    /// clipboard off stops one before any file is written.
     private func askToReceiveFiles(_ transfer: UInt32, from peerID: String?, count: Int, size: UInt64) {
+        if size <= Self.autoReceiveBytes {
+            core.acceptFiles(transfer)
+            return
+        }
         pairing.show(
             id: "file-\(transfer)",
             title: String(localized: "\(name(of: peerID)) 想发送 \(count) 个文件"),

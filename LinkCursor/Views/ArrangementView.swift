@@ -20,8 +20,8 @@ struct ArrangementView: View {
     }
 
     private static let space = "arrangement"
-    private static let trayHeight: CGFloat = 64
-    private static let gap: CGFloat = 10
+    private static let trayHeight: CGFloat = 48
+    private static let gap: CGFloat = 8
 
     var body: some View {
         GeometryReader { geometry in
@@ -34,7 +34,7 @@ struct ArrangementView: View {
             let scale = CanvasScale(local: local, devices: devices, in: canvas.insetBy(dx: 12, dy: 12))
 
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(Color.secondary.opacity(0.08))
                     .frame(width: canvas.width, height: canvas.height)
 
@@ -61,7 +61,7 @@ struct ArrangementView: View {
             }
             .coordinateSpace(name: Self.space)
         }
-        .frame(height: 300)
+        .frame(height: 220)
     }
 
     private func localTile(_ display: Display, scale: CanvasScale) -> some View {

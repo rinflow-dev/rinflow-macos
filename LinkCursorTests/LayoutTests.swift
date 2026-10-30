@@ -112,3 +112,17 @@ final class LayoutTests: XCTestCase {
         XCTAssertEqual(shortcut.returnPoint(near: CGPoint(x: 10, y: 20)), CGPoint(x: 10, y: 20))
     }
 }
+
+final class HIDKeyMapTests: XCTestCase {
+    func testFunctionAndJapaneseKeysMatchTheirHIDUsages() {
+        // Events.h kVK_* → USB HID usage. F12 was sent as F14.
+        let expected: [CGKeyCode: UInt32] = [
+            111: 0x45, 105: 0x46, 107: 0x69, 113: 0x6A, 106: 0x6B,
+            10: 0x64, 93: 0x89, 94: 0x87, 102: 0x91, 104: 0x90,
+        ]
+        for (key, usage) in expected {
+            XCTAssertEqual(HIDKeyMap.hidUsage(for: key), usage, "key \(key)")
+            XCTAssertEqual(HIDKeyMap.macKeyCode(for: usage), key, "usage \(usage)")
+        }
+    }
+}

@@ -64,6 +64,15 @@ struct AppSettings: Codable, Equatable, Sendable {
 
     private static let key = "linkcursor.settings"
 
+    /// "Use the Mac's shortcuts": a PC's Ctrl plays as ⌘ and its Windows key
+    /// as Control (the core's `ModifierMap::SWAP`, what the former
+    /// `shortcut_remap` did); otherwise keys keep their position (`KEEP`).
+    static func modifierMap(followMacShortcuts: Bool) -> [String: String] {
+        followMacShortcuts
+            ? ["super": "control", "control": "super", "alt": "alt"]
+            : ["super": "super", "control": "control", "alt": "alt"]
+    }
+
     static func load() -> AppSettings {
         guard let data = UserDefaults.standard.data(forKey: key),
               let settings = try? JSONDecoder().decode(AppSettings.self, from: data)

@@ -190,8 +190,10 @@ final class InputBridge {
         )
         Self.log.info("driving \(peerID, privacy: .public) by shortcut")
         start(remote, from: Self.cursorLocation)
-        // The arrow's release is the shortcut's, not the peer's.
+        // The arrow's release is the shortcut's, not the peer's (nor this
+        // Mac's: `start` saw it held).
         switchKeyDown = Self.arrowKeyCode(side)
+        localKeys.remove(CGKeyCode(Self.arrowKeyCode(side)))
     }
 
     /// Installs the tap when an edge leads to a connected peer (or one is
@@ -429,6 +431,7 @@ final class InputBridge {
         pressedModifierUsages.removeAll(keepingCapacity: true)
         CGAssociateMouseAndMouseCursorPosition(1)
         PointerVisibility.show()
+        crossingGate.returned(at: Self.now)
         if let location {
             // A posted move, not a warp, as when parking: the window server
             // then hands the cursor to whatever is under it (the Dock, on a
@@ -662,19 +665,58 @@ final class InputBridge {
         // would strand it here and send an unmatched release there. (Held
         // keys are handed back on release instead; see `localKeys`.)
         guard type == .mouseMoved, !crossingLocked, !fullscreenBlocked else {
-            crossingGate.reset()
+            // Keys (a held key's repeats), modifiers and scrolling leave a
+            // push alone, as on Windows; a button or a drag ends it.
+            if type != .keyDown, type != .keyUp, type != .flagsChanged, type != .scrollWheel {
+                crossingGate.reset()
+            }
             return nil
         }
-        let location = liveLocation(of: event)
-        let delta = Self.delta(of: event)
+        let portal = portal(at: liveLocation(of: event))
+        let amount = portal?.outward(Self.delta(of: event)) ?? 0
+        switch crossingGate.push(portal, by: amount, at: Self.now, delay: switchDelay) {
+        case .cross:
+            return portal
+        case .began:
+            // A push that went far enough crosses when the delay is up even
+            // if the pointer stops against the edge: no motion may follow.
+            DispatchQueue.main.asyncAfter(deadline: .now() + switchDelay + 0.01) { [weak self] in
+                MainActor.assumeIsolated { self?.finishPush() }
+            }
+            return nil
+        case .none:
+            return nil
+        }
+    }
+
+    /// The portal the pointer at `location` is against, outside the corners.
+    private func portal(at location: CGPoint) -> Portal? {
         let inCorner = cornerGuard && world.local.contains { display in
             let nearX = min(abs(location.x - display.x), abs(location.x - display.right)) < 24
             let nearY = min(abs(location.y - display.y), abs(location.y - display.bottom)) < 24
             return nearX && nearY
         }
-        let portal = inCorner ? nil : entryPortals.first { $0.isEntered(at: location, delta: delta) }
-        let now = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
-        return crossingGate.allows(portal, at: now, delay: switchDelay) ? portal : nil
+        return inCorner ? nil : entryPortals.first { $0.touches(location) }
+    }
+
+    private func finishPush() {
+        guard pointer == nil, !crossingLocked, !fullscreenBlocked,
+              NSEvent.pressedMouseButtons == 0,
+              let portal = crossingGate.portal,
+              crossingGate.isDue(at: Self.now, delay: switchDelay)
+        else {
+            return
+        }
+        let location = Self.cursorLocation
+        guard self.portal(at: location) == portal else {
+            crossingGate.reset()
+            return
+        }
+        beginCapture(through: portal, at: location)
+    }
+
+    private static var now: TimeInterval {
+        Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
     }
 
     /// `position` is where the pointer is on the peer (peer space); it goes
@@ -725,6 +767,9 @@ final class InputBridge {
                 if staleKeys.remove(usage) != nil { return [] }
                 pressedKeys.remove(usage)
             } else {
+                // Held on a peer the pointer moved on from: its repeats go
+                // nowhere, like its release.
+                if staleKeys.contains(usage) { return [] }
                 pressedKeys.insert(usage)
             }
             input.kind = type == .keyDown ? UInt32(LC_INPUT_KEY_DOWN) : UInt32(LC_INPUT_KEY_UP)

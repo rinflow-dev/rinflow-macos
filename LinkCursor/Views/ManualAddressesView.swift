@@ -12,11 +12,15 @@ struct ManualAddressesView: View {
 
     @State private var text = ""
     @State private var problem: String?
+    /// A fallback: folded away until it holds an address.
+    @State private var expanded: Bool?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("通过地址添加设备")
-                .font(.headline)
+        DisclosureGroup(isExpanded: Binding(
+            get: { expanded ?? !addresses.isEmpty },
+            set: { expanded = $0 }
+        )) {
+            VStack(alignment: .leading, spacing: 6) {
             Text("设备没有自动出现时（访客或公司网络、不同网段、VPN），输入它的 IP 地址或设备名称。只需在其中一台设备上添加。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -37,9 +41,12 @@ struct ManualAddressesView: View {
             ForEach(addresses, id: \.self) { address in
                 AddressRow(status: status(address)) { remove(address) }
             }
+            }
+            .controlSize(.small)
+            .padding(.top, 4)
+        } label: {
+            Text("通过地址添加设备").font(.callout)
         }
-        .padding(16)
-        .background(.background.secondary, in: .rect(cornerRadius: 14))
     }
 
     private func submit() {
@@ -72,6 +79,7 @@ private struct AddressRow: View {
             }
             .buttonStyle(.borderless)
             .help("移除这个地址")
+            .accessibilityLabel("移除这个地址")
         }
     }
 
