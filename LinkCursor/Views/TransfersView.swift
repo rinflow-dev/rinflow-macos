@@ -59,8 +59,8 @@ private struct TransferCard: View {
     }
 
     private var detail: String {
-        let done = ByteCountFormatter.string(fromByteCount: Int64(transfer.done), countStyle: .file)
-        let total = ByteCountFormatter.string(fromByteCount: Int64(transfer.total), countStyle: .file)
+        let done = ByteCountFormatter.string(fromByteCount: Int64(clamping: transfer.done), countStyle: .file)
+        let total = ByteCountFormatter.string(fromByteCount: Int64(clamping: transfer.total), countStyle: .file)
         let percent = Int((transfer.fraction * 100).rounded())
         return "\(done) / \(total) · \(percent)%"
     }

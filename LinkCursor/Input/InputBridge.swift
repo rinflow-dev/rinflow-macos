@@ -23,6 +23,9 @@ final class InputBridge {
     var willEnter: (() -> Void)?
     /// How this Mac's mouse feels on a peer (speeds, scroll direction).
     var inputFor: ((String) -> PeerInput)?
+    var togglePointerLock: (() -> Void)?
+    var crossingLocked = false
+    var fullscreenBlocked = false
 
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "input")
 
@@ -44,6 +47,11 @@ final class InputBridge {
     /// Modifier keys held on this Mac when the capture began: their release
     /// goes to this Mac, which saw them go down, not to the peer.
     private var localModifiers: Set<CGKeyCode> = []
+    /// Other keys held on this Mac when the capture began (as on Windows):
+    /// their repeats go nowhere and their release goes to this Mac. Read
+    /// live at the start, never cached across captures, so a release this
+    /// tap missed (secure input, the lock screen) cannot block crossing.
+    private var localKeys: Set<CGKeyCode> = []
     private var pointer: RemotePointer?
     /// How the mouse feels on the peer it drives now.
     private var peerInput = PeerInput()
@@ -54,6 +62,7 @@ final class InputBridge {
     /// The arrow key of a switch shortcut, held: its repeats and release go
     /// nowhere.
     private var switchKeyDown: Int64?
+    private var lockKeyDown = false
     /// Where the Mac cursor is parked from while `pointer` is active.
     private var frozenLocation: CGPoint = .zero
     /// The jump that a motion shortly after parking the cursor still
@@ -61,8 +70,30 @@ final class InputBridge {
     /// first motion carries it, so it is only taken out of one that does.
     private var pendingWarp: (jump: CGVector, deadline: DispatchTime)?
     private var hasRequestedAccessibilityPrompt = false
+    private var crossingGate = CrossingGate()
+    private var switchDelay = 0.15
+    private var cornerGuard = true
+
+    func setCrossingOptions(delay: TimeInterval, cornerGuard: Bool) {
+        switchDelay = delay
+        self.cornerGuard = cornerGuard
+        crossingGate.reset()
+    }
 
     var isCapturing: Bool { pointer != nil }
+
+    func refreshInputSettings() {
+        if let pointer { peerInput = inputFor?(pointer.peerID) ?? PeerInput() }
+    }
+
+    func stop() {
+        crossingGate.reset()
+        stopCapturing()
+        removeEventTap()
+        connected.removeAll()
+        entryPortals.removeAll()
+        heldPointers.removeAll()
+    }
 
     var hasAccessibilityPermission: Bool {
         AXIsProcessTrusted()
@@ -91,6 +122,10 @@ final class InputBridge {
     /// Returns false when a tap is needed but cannot be installed (no
     /// accessibility permission).
     func setArrangement(_ world: World, connected: Set<String>) -> Bool {
+        crossingGate.reset()
+        // An active RemotePointer caches portals and display bounds. Do not
+        // keep using stale geometry after a monitor or placement changes.
+        if self.world != world { stopCapturing() }
         self.world = world
         self.connected = connected
         entryPortals = connected.sorted().flatMap { world.portals(to: $0) }
@@ -136,7 +171,9 @@ final class InputBridge {
     /// on to the connected device on that side, if any.
     func jumpFromHere(toward side: Side) {
         guard pointer == nil,
-              case let .peer(peerID)? = world.toward(from: .local, side: side),
+              !crossingLocked,
+              NSEvent.pressedMouseButtons == 0,
+              case let .peer(peerID)? = world.toward(from: .local, side: side, connected: connected),
               connected.contains(peerID),
               let peer = world.peer(peerID),
               let landing = world.landing(from: .local, to: .peer(peerID)),
@@ -244,8 +281,13 @@ final class InputBridge {
         pressedKeys.removeAll()
         staleKeys.removeAll()
         switchKeyDown = nil
+        lockKeyDown = false
         synchronizeModifierState()
         localModifiers = Set(Self.modifierKeyCodes.filter { CGEventSource.keyState(.combinedSessionState, key: $0) })
+        localKeys = Set((0..<128).map { CGKeyCode($0) }.filter {
+            !Self.modifierKeyCodes.contains($0) && $0 != 57 && $0 != 63 // Caps Lock, fn
+                && CGEventSource.keyState(.hidSystemState, key: $0)
+        })
         peerInput = inputFor?(remote.peerID) ?? PeerInput()
         // Whether a game holds its pointer, the peer says afresh.
         heldPointers.remove(remote.peerID)
@@ -303,8 +345,8 @@ final class InputBridge {
     /// A switch shortcut while a peer is driven: on to the device on that
     /// side of it, or back to this Mac.
     private func jump(toward side: Side) {
-        guard let current = pointer,
-              let next = world.toward(from: .peer(current.peerID), side: side),
+        guard !crossingLocked, let current = pointer,
+              let next = world.toward(from: .peer(current.peerID), side: side, connected: connected),
               let landing = world.landing(from: .peer(current.peerID), to: next)
         else {
             return
@@ -381,7 +423,9 @@ final class InputBridge {
         pressedKeys.removeAll()
         staleKeys.removeAll()
         switchKeyDown = nil
+        lockKeyDown = false
         localModifiers.removeAll()
+        localKeys.removeAll()
         pressedModifierUsages.removeAll(keepingCapacity: true)
         CGAssociateMouseAndMouseCursorPosition(1)
         PointerVisibility.show()
@@ -406,6 +450,10 @@ final class InputBridge {
         }
 
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            // Events may have escaped to the local app while the tap was
+            // disabled. Release the peer instead of resuming stale keys.
+            stopCapturing()
+            crossingGate.reset()
             if let eventTap {
                 CGEvent.tapEnable(tap: eventTap, enable: true)
             }
@@ -426,12 +474,27 @@ final class InputBridge {
             if localModifiers.contains(keyCode), Self.modifierIsDown(keyCode: keyCode, flags: event.flags) == false {
                 // Held since before the capture: this Mac gets its release.
                 localModifiers.remove(keyCode)
+                if let usage = HIDKeyMap.hidUsage(for: keyCode) {
+                    pressedModifierUsages.remove(usage)
+                }
                 return Unmanaged.passUnretained(event)
             }
         }
 
         if type == .keyDown || type == .keyUp {
             let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+            if keyCode == 37 {
+                if lockKeyDown {
+                    if type == .keyUp { lockKeyDown = false }
+                    return nil
+                }
+                let held = event.flags.intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
+                if type == .keyDown, held == [.maskControl, .maskAlternate] {
+                    lockKeyDown = true
+                    togglePointerLock?()
+                    return nil
+                }
+            }
             if type == .keyDown, keyCode == 53,
                event.flags.contains(.maskControl), event.flags.contains(.maskAlternate)
             {
@@ -444,6 +507,13 @@ final class InputBridge {
             if keyCode == switchKeyDown {
                 if type == .keyUp { switchKeyDown = nil }
                 return nil
+            }
+            if localKeys.contains(CGKeyCode(keyCode)) {
+                // Held before the capture: this Mac gets its release, and
+                // its repeats go nowhere.
+                guard type == .keyUp else { return nil }
+                localKeys.remove(CGKeyCode(keyCode))
+                return Unmanaged.passUnretained(event)
             }
             if type == .keyDown, let side = Self.arrowSide(keyCode), isSwitchShortcut(event.flags) {
                 switchKeyDown = keyCode
@@ -462,7 +532,7 @@ final class InputBridge {
                 // A game there holds its pointer: every bit of motion goes to
                 // it (it turns the camera), and no edge leads anywhere.
             } else {
-                switch remote.step(by: delta) {
+                switch remote.step(by: delta, allowCrossing: !crossingLocked) {
                 case .stay:
                     pointer = remote
                 case let .home(exit):
@@ -588,10 +658,23 @@ final class InputBridge {
     }
 
     private func enteredPortal(type: CGEventType, event: CGEvent) -> Portal? {
-        guard Self.isMovement(type) else { return nil }
+        // A local drag must get its release on this Mac. Entering mid-drag
+        // would strand it here and send an unmatched release there. (Held
+        // keys are handed back on release instead; see `localKeys`.)
+        guard type == .mouseMoved, !crossingLocked, !fullscreenBlocked else {
+            crossingGate.reset()
+            return nil
+        }
         let location = liveLocation(of: event)
         let delta = Self.delta(of: event)
-        return entryPortals.first { $0.isEntered(at: location, delta: delta) }
+        let inCorner = cornerGuard && world.local.contains { display in
+            let nearX = min(abs(location.x - display.x), abs(location.x - display.right)) < 24
+            let nearY = min(abs(location.y - display.y), abs(location.y - display.bottom)) < 24
+            return nearX && nearY
+        }
+        let portal = inCorner ? nil : entryPortals.first { $0.isEntered(at: location, delta: delta) }
+        let now = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
+        return crossingGate.allows(portal, at: now, delay: switchDelay) ? portal : nil
     }
 
     /// `position` is where the pointer is on the peer (peer space); it goes

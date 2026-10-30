@@ -9,6 +9,15 @@ struct Peer: Codable, Identifiable, Equatable, Sendable {
     let port: UInt16
     /// As announced by the peer, in its own logical space.
     var displays: [Display]?
+
+    /// Incoming connections may identify only the ID and name. Preserve
+    /// discovery metadata instead of replacing it with a placeholder.
+    func mergingKnown(_ known: Peer?) -> Peer {
+        guard let known, known.id == id else { return self }
+        return Peer(id: id, name: name, platform: platform ?? known.platform,
+                    address: address == "incoming" ? known.address : address, port: port,
+                    displays: displays?.isEmpty == false ? displays : known.displays)
+    }
 }
 
 /// The side menu in the UI. The real placement is the core's offset; this is

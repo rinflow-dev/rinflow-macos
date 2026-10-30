@@ -3,6 +3,13 @@ import Foundation
 /// The user's preferences, saved as JSON in the user defaults. Defaults as
 /// on Windows (`agent/src/settings.rs`).
 struct AppSettings: Codable, Equatable, Sendable {
+    /// Pauses input in both directions, keeping device connections alive.
+    var sharing = true
+    /// Explicit opt-in, matching Windows. Includes copied files.
+    var clipboard = false
+    var switchDelay = 0.15
+    var cornerGuard = true
+    var pauseInFullscreen = false
     /// Only paired devices may connect: others pair first.
     var pairedOnly = true
     /// A PC driving this Mac uses its own shortcuts: Ctrl plays as ⌘ (Ctrl+C
@@ -32,6 +39,11 @@ struct AppSettings: Codable, Equatable, Sendable {
     init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let defaults = AppSettings()
+        sharing = try values.decodeIfPresent(Bool.self, forKey: .sharing) ?? defaults.sharing
+        clipboard = try values.decodeIfPresent(Bool.self, forKey: .clipboard) ?? defaults.clipboard
+        switchDelay = min(2, max(0, try values.decodeIfPresent(Double.self, forKey: .switchDelay) ?? defaults.switchDelay))
+        cornerGuard = try values.decodeIfPresent(Bool.self, forKey: .cornerGuard) ?? defaults.cornerGuard
+        pauseInFullscreen = try values.decodeIfPresent(Bool.self, forKey: .pauseInFullscreen) ?? defaults.pauseInFullscreen
         pairedOnly = try values.decodeIfPresent(Bool.self, forKey: .pairedOnly) ?? defaults.pairedOnly
         shortcutRemap = try values.decodeIfPresent(Bool.self, forKey: .shortcutRemap) ?? defaults.shortcutRemap
         hideCursorOnLeave = try values.decodeIfPresent(Bool.self, forKey: .hideCursorOnLeave)
@@ -93,6 +105,17 @@ struct PeerInput: Codable, Equatable, Sendable {
     var scrollSpeed = 1.0
     /// Scrolls the other way (natural scrolling on one side only).
     var invertScroll = false
+
+    init() {}
+
+    init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let pointer = try values.decodeIfPresent(Double.self, forKey: .pointerSpeed) ?? 1
+        let scroll = try values.decodeIfPresent(Double.self, forKey: .scrollSpeed) ?? 1
+        pointerSpeed = pointer.isFinite ? min(Self.pointerSpeeds.upperBound, max(Self.pointerSpeeds.lowerBound, pointer)) : 1
+        scrollSpeed = scroll.isFinite ? min(Self.scrollSpeeds.upperBound, max(Self.scrollSpeeds.lowerBound, scroll)) : 1
+        invertScroll = try values.decodeIfPresent(Bool.self, forKey: .invertScroll) ?? false
+    }
 
     var isDefault: Bool { self == PeerInput() }
 }

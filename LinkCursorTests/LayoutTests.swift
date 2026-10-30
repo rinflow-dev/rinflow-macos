@@ -4,6 +4,17 @@ import XCTest
 /// The arrangement geometry, against the same cases as the Windows agent's
 /// `arrangement.rs` and the core's `layout.rs`.
 final class LayoutTests: XCTestCase {
+    func testPointerLockClampsAtTheEdgeUntilUnlocked() throws {
+        let world = world()
+        let peer = try XCTUnwrap(world.peer("mac"))
+        let portal = try XCTUnwrap(world.portals(to: "mac").first)
+        var pointer = RemotePointer(crossing: portal, at: CGPoint(x: 1920, y: 500), peer: peer,
+                                    portals: world.portals(to: "mac"), neighbors: world.neighbors(of: "mac"))
+        XCTAssertEqual(pointer.step(by: CGVector(dx: -100, dy: 0), allowCrossing: false), .stay)
+        XCTAssertEqual(pointer.position.x, 0)
+        XCTAssertEqual(pointer.step(by: CGVector(dx: -10, dy: 0)), .home(CGPoint(x: 1918, y: 500)))
+    }
+
     private func screen(_ x: Double, _ y: Double, _ width: Double, _ height: Double) -> Display {
         Display(x: x, y: y, width: width, height: height, scale: 1)
     }
@@ -31,6 +42,10 @@ final class LayoutTests: XCTestCase {
         // Nothing that way.
         XCTAssertNil(world.toward(from: .local, side: .left))
         XCTAssertNil(world.toward(from: .peer("pc"), side: .right))
+        // A remembered offline device must not block a connected device
+        // farther in the same direction.
+        XCTAssertEqual(world.toward(from: .local, side: .right, connected: ["pc"]), .peer("pc"))
+        XCTAssertNil(world.toward(from: .local, side: .right, connected: []))
     }
 
     func testAJumpLandsInTheMiddleOfTheNearestDisplay() {

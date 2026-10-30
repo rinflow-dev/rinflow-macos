@@ -64,28 +64,42 @@ enum PointerVisibility {
 @MainActor
 final class CursorHider {
     private var monitor: Any?
+    private var localMonitor: Any?
 
     var isHiding: Bool { monitor != nil }
 
     func hideUntilLocalMotion() {
         guard monitor == nil else { return }
-        PointerVisibility.hide()
-        monitor = NSEvent.addGlobalMonitorForEvents(
-            matching: [
-                .mouseMoved, .leftMouseDown, .rightMouseDown, .otherMouseDown,
-                .leftMouseDragged, .rightMouseDragged, .otherMouseDragged, .scrollWheel,
-            ]
-        ) { [weak self] _ in
+        let mask: NSEvent.EventTypeMask = [
+            .mouseMoved, .leftMouseDown, .rightMouseDown, .otherMouseDown,
+            .leftMouseDragged, .rightMouseDragged, .otherMouseDragged, .scrollWheel,
+        ]
+        monitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
+            guard event.cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker else { return }
             MainActor.assumeIsolated { self?.reveal() }
         }
+        // Global monitors exclude this app's own windows.
+        localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
+            if event.cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker {
+                MainActor.assumeIsolated { self?.reveal() }
+            }
+            return event
+        }
+        guard monitor != nil, localMonitor != nil else {
+            reveal()
+            return
+        }
+        PointerVisibility.hide()
     }
 
     /// Shows the cursor again: local motion, a peer drives this Mac again,
     /// or this Mac's pointer leaves for a peer (that capture hides it).
     func reveal() {
-        guard let monitor else { return }
-        NSEvent.removeMonitor(monitor)
+        guard monitor != nil || localMonitor != nil else { return }
+        if let monitor { NSEvent.removeMonitor(monitor) }
+        if let localMonitor { NSEvent.removeMonitor(localMonitor) }
         self.monitor = nil
+        self.localMonitor = nil
         PointerVisibility.show()
     }
 }

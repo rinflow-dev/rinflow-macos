@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 
 /// The Settings window (⌘,). Every change applies at once, except the
 /// language, which needs a restart.
@@ -7,6 +8,23 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            Section("通用") {
+                Toggle("登录时启动", isOn: Binding(
+                    get: { model.loginStatus == .enabled || model.loginStatus == .requiresApproval },
+                    set: model.setLaunchAtLogin
+                ))
+                if model.loginStatus == .requiresApproval {
+                    Button("在系统设置中允许登录启动", action: model.openLoginSettings)
+                }
+                Toggle(isOn: setting(\.sharing)) {
+                    Text("共享键盘与鼠标")
+                    Text("关闭后暂停双向控制，设备保持连接。剪贴板同步由下方开关单独控制。")
+                }
+                Toggle(isOn: setting(\.clipboard)) {
+                    Text("同步剪贴板与文件")
+                    Text("切换设备时同步复制的文字、图片和文件。仅在信任对方设备时开启。")
+                }
+            }
             Section("配对与连接") {
                 Toggle(isOn: setting(\.pairedOnly)) {
                     Text("仅允许已配对的设备")
@@ -29,13 +47,29 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(!model.settings.switchHotkeys)
-                if model.settings.switchHotkeys, model.switchHotkeysBlocked {
-                    Label("这组快捷键已被其他程序占用，请换一种组合键。", systemImage: "exclamationmark.triangle.fill")
+                if model.settings.sharing, model.switchHotkeysBlocked {
+                    Label("切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。", systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
                 }
             }
 
             Section("指针") {
+                Text("按 ⌃⌥L 锁定或解锁当前屏幕；按 ⌃⌥⎋ 始终可以释放控制。")
+                    .font(.caption).foregroundStyle(.secondary)
+                Toggle(isOn: setting(\.pauseInFullscreen)) {
+                    Text("全屏时暂停自动切换")
+                    Text("游戏或演示全屏时，指针不会从本机屏幕边缘切出。")
+                }
+                Picker("边缘切换延迟", selection: setting(\.switchDelay)) {
+                    Text("无延迟").tag(0.0)
+                    Text("短（150 毫秒）").tag(0.15)
+                    Text("中（300 毫秒）").tag(0.3)
+                    Text("长（500 毫秒）").tag(0.5)
+                }
+                Toggle(isOn: setting(\.cornerGuard)) {
+                    Text("保护屏幕角落")
+                    Text("靠近屏幕角落时不自动切换，方便使用菜单和触发角。")
+                }
                 Toggle(isOn: setting(\.hideCursorOnLeave)) {
                     Text("其他设备的指针离开后隐藏光标")
                     Text("光标只显示在指针所在的设备上；动一下这台 Mac 的鼠标或触控板就会出现。")
@@ -65,8 +99,8 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 480)
-        .fixedSize(horizontal: false, vertical: true)
+        .frame(width: 520, height: 620)
+        .onAppear(perform: model.refreshPermission)
     }
 
     private func setting<Value>(_ path: WritableKeyPath<AppSettings, Value>) -> Binding<Value> {

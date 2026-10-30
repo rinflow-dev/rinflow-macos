@@ -4,6 +4,7 @@ struct PeerRow: View {
     let peer: Peer
     let isConnected: Bool
     let isConnecting: Bool
+    let isOnline: Bool
     let placement: PeerPlacement
     let setPlacement: (PeerPlacement) -> Void
     let connect: () -> Void
@@ -25,7 +26,8 @@ struct PeerRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(peer.name)
                     .bold()
-                Text(verbatim: "\(peer.address):\(peer.port)")
+                Text(peer.address == "incoming"
+                     ? String(localized: "由对方发起的连接") : "\(peer.address):\(peer.port)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
@@ -33,6 +35,11 @@ struct PeerRow: View {
                     Label("已配对", systemImage: "lock.fill")
                         .font(.caption2)
                         .foregroundStyle(.green)
+                }
+                if !isOnline, !isConnected {
+                    Text("离线 · 设备回来后自动重连")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -45,6 +52,7 @@ struct PeerRow: View {
             }
             .buttonStyle(.borderless)
             .help("指针与滚动")
+            .accessibilityLabel("指针与滚动")
             .popover(isPresented: $showsInput, arrowEdge: .bottom) {
                 PeerInputView(peerName: peer.name, input: input, setInput: setInput)
             }
@@ -75,6 +83,7 @@ struct PeerRow: View {
                 } else {
                     Button("连接", systemImage: "link", action: connect)
                         .buttonStyle(.borderedProminent)
+                        .disabled(!isOnline)
                 }
             }
         }

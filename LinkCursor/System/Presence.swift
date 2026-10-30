@@ -22,7 +22,9 @@ final class Presence {
     var reportActivity: (() -> Void)?
     /// This Mac was locked by its user: lock the peers that want to.
     var lockPeers: (() -> Void)?
-    var keepAwake = true
+    var keepAwake = true {
+        didSet { if !keepAwake { letSleep() } }
+    }
     var lockSync = false
 
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "presence")
@@ -40,19 +42,30 @@ final class Presence {
     private var assertion: IOPMAssertionID?
     private var lastNudge: Date?
     private var lockRequestedAt: Date?
+    private var lockObserver: NSObjectProtocol?
 
     func start() {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.tick() }
         }
-        DistributedNotificationCenter.default().addObserver(
+        lockObserver = DistributedNotificationCenter.default().addObserver(
             forName: NSNotification.Name("com.apple.screenIsLocked"),
             object: nil,
             queue: .main
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.screenLocked() }
         }
+    }
+
+    func stop() {
+        timer?.invalidate()
+        timer = nil
+        if let lockObserver {
+            DistributedNotificationCenter.default().removeObserver(lockObserver)
+            self.lockObserver = nil
+        }
+        letSleep()
     }
 
     /// `peer_active`: another device is in use.
@@ -134,8 +147,9 @@ final class Presence {
     private static func lockScreen() {
         typealias Lock = @convention(c) () -> Int32
         let path = "/System/Library/PrivateFrameworks/login.framework/Versions/Current/login"
-        guard let library = dlopen(path, RTLD_LAZY),
-              let symbol = dlsym(library, "SACLockScreenImmediate")
+        guard let library = dlopen(path, RTLD_LAZY) else { return }
+        defer { dlclose(library) }
+        guard let symbol = dlsym(library, "SACLockScreenImmediate")
         else {
             log.error("cannot lock the screen: SACLockScreenImmediate not found")
             return

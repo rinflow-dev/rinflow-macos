@@ -142,13 +142,13 @@ struct Portal: Equatable, Sendable {
     func isEntered(at location: CGPoint, delta: CGVector) -> Bool {
         switch side {
         case .right:
-            delta.dx > 0 && location.x >= line - 1 && (from..<to).contains(location.y)
+            delta.dx > 0 && abs(location.x - line) <= 1 && (from..<to).contains(location.y)
         case .left:
-            delta.dx < 0 && location.x < line + 1 && (from..<to).contains(location.y)
+            delta.dx < 0 && abs(location.x - line) <= 1 && (from..<to).contains(location.y)
         case .bottom:
-            delta.dy > 0 && location.y >= line - 1 && (from..<to).contains(location.x)
+            delta.dy > 0 && abs(location.y - line) <= 1 && (from..<to).contains(location.x)
         case .top:
-            delta.dy < 0 && location.y < line + 1 && (from..<to).contains(location.x)
+            delta.dy < 0 && abs(location.y - line) <= 1 && (from..<to).contains(location.x)
         }
     }
 
@@ -271,13 +271,14 @@ struct World: Equatable, Sendable {
 
     /// The device next to `from` toward `side`: the nearest whose middle
     /// lies that way, more that way than sideways.
-    func toward(from: Device, side: Side) -> Device? {
+    func toward(from: Device, side: Side, connected: Set<String>? = nil) -> Device? {
         guard let current = displays(of: from).map(Display.bounds(of:)), !current.isNull else {
             return nil
         }
         let candidates = [Device.local] + peers.map { Device.peer($0.id) }
         var best: (score: Double, device: Device)?
         for device in candidates where device != from {
+            if case let .peer(id) = device, let connected, !connected.contains(id) { continue }
             guard let bounds = displays(of: device).map(Display.bounds(of:)), !bounds.isNull else {
                 continue
             }
@@ -372,19 +373,19 @@ struct RemotePointer {
 
     /// Moves by `delta`: within the peer, back to this Mac through a portal,
     /// or on into a neighbouring peer.
-    mutating func step(by delta: CGVector) -> Motion {
+    mutating func step(by delta: CGVector, allowCrossing: Bool = true) -> Motion {
         let target = CGPoint(x: position.x + delta.dx, y: position.y + delta.dy)
         if peer.displays.contains(where: { $0.contains(target) }) {
             position = target
             return .stay
         }
-        for portal in portals {
+        for portal in portals where allowCrossing {
             if let exit = portal.localExit(for: target) {
                 return .home(exit)
             }
         }
         let local = CGPoint(x: target.x + peer.offset.x, y: target.y + peer.offset.y)
-        let neighbor = neighbors.first { $0.placed.contains { $0.contains(local) } }
+        let neighbor = allowCrossing ? neighbors.first { $0.placed.contains { $0.contains(local) } } : nil
         // Against an edge: slide along it, as the peer's own cursor does.
         let current = peer.displays.first { $0.contains(position) } ?? peer.displays[0]
         position = current.clamp(target)

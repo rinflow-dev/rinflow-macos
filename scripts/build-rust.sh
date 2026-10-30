@@ -45,7 +45,7 @@ mkdir -p "${OUTPUT_DIR}"
 TEMP_DIR="${DERIVED_FILE_DIR}/linkcursor-rust"
 mkdir -p "${TEMP_DIR}"
 
-LIBRARIES=""
+set --
 for ARCH in ${ARCHS:-$(uname -m)}; do
     case "${ARCH}" in
         arm64) RUST_TARGET="aarch64-apple-darwin" ;;
@@ -62,17 +62,18 @@ for ARCH in ${ARCHS:-$(uname -m)}; do
     fi
 
     cargo build \
+        --locked \
         --manifest-path "${CORE_DIR}/Cargo.toml" \
+        --target-dir "${CORE_DIR}/target" \
         --target "${RUST_TARGET}" \
         ${CARGO_MODE}
 
     SOURCE_LIBRARY="${CORE_DIR}/target/${RUST_TARGET}/${PROFILE}/liblinkcursor_core.a"
     ARCH_LIBRARY="${TEMP_DIR}/liblinkcursor_core-${ARCH}.a"
     cp "${SOURCE_LIBRARY}" "${ARCH_LIBRARY}"
-    LIBRARIES="${LIBRARIES} ${ARCH_LIBRARY}"
+    set -- "$@" "${ARCH_LIBRARY}"
 done
 
-set -- ${LIBRARIES}
 if [ "$#" -eq 1 ]; then
     cp "$1" "${OUTPUT_DIR}/liblinkcursor_core.a"
 else

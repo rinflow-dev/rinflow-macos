@@ -4,6 +4,8 @@
 # Xcode build output
 /build/
 /DerivedData/
+/DerivedDataUniversal/
+/releases/
 *.hmap
 *.ipa
 *.dSYM

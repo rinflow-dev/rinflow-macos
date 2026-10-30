@@ -16,6 +16,46 @@ struct ContentView: View {
 
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 18) {
+                    if case let .failed(reason) = model.coreState {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("连接服务未能启动", systemImage: "exclamationmark.triangle")
+                                .font(.headline)
+                            Text(reason).font(.callout).textSelection(.enabled)
+                            Text("请确认没有其他 LinkCursor 正在运行，然后重试。")
+                                .font(.caption).foregroundStyle(.secondary)
+                            Button("重试", action: model.startCore)
+                        }
+                    }
+                    HStack {
+                        Label(model.settings.sharing ? "键鼠共享已开启" : "键鼠共享已暂停",
+                              systemImage: model.settings.sharing ? "keyboard" : "pause.circle")
+                        Spacer()
+                        Button(model.settings.sharing ? "暂停共享" : "恢复共享") {
+                            model.updateSettings { $0.sharing.toggle() }
+                        }
+                        SettingsLink { Label("设置…", systemImage: "gearshape") }
+                    }
+                    if model.pointerLocked {
+                        HStack {
+                            Label("指针已锁定在当前屏幕", systemImage: "lock.fill")
+                            Spacer()
+                            Button("解锁（⌃⌥L）", action: model.togglePointerLock)
+                        }
+                        .foregroundStyle(.orange)
+                    }
+
+                    if let lastError = model.lastError {
+                        HStack(alignment: .firstTextBaseline) {
+                            Label(lastError, systemImage: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .font(.callout)
+                                .textSelection(.enabled)
+                            Spacer()
+                            Button("关闭", action: model.dismissError)
+                                .buttonStyle(.borderless)
+                        }
+                    }
+
                     PermissionCard(
                         isGranted: model.hasAccessibilityPermission,
                         requestPermission: model.requestPermission,
@@ -27,6 +67,8 @@ struct ContentView: View {
                         placement: model.connectionState.connectedPeer
                             .map(model.placement(for:)) ?? .disabled,
                         hasAccessibilityPermission: model.hasAccessibilityPermission,
+                        sharing: model.settings.sharing,
+                        pointerLocked: model.pointerLocked,
                         isControlling: model.isControlling,
                         stop: model.stopControlling
                     )
@@ -66,16 +108,6 @@ struct ContentView: View {
                         remove: model.removeManualAddress
                     )
 
-                    if let lastError = model.lastError {
-                        HStack(alignment: .firstTextBaseline) {
-                            Label(lastError, systemImage: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.orange)
-                                .font(.callout)
-                            Spacer()
-                            Button("关闭", action: model.dismissError)
-                                .buttonStyle(.borderless)
-                        }
-                    }
                 }
                 .padding(22)
             }
@@ -83,11 +115,9 @@ struct ContentView: View {
             Divider()
 
             HStack {
-                Text("已发送 \(model.sentEventCount) 个事件")
-                Text("·")
-                Text("已接收 \(model.receivedEventCount) 个事件")
+                Text("按 ⌃⌥⎋ 随时释放控制")
                 Spacer()
-                Text(verbatim: "Rust Core · QUIC · TLS 1.3")
+                Label("连接已加密", systemImage: "lock.shield")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -106,16 +136,16 @@ struct ContentView: View {
     private var peerSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("附近的设备")
+                Text("我的设备与附近设备")
                     .font(.headline)
                 Spacer()
-                if model.peers.isEmpty {
+                if model.visiblePeers.isEmpty {
                     ProgressView()
                         .controlSize(.small)
                 }
             }
 
-            if model.peers.isEmpty {
+            if model.visiblePeers.isEmpty {
                 ContentUnavailableView(
                     "正在发现设备",
                     systemImage: "network",
@@ -123,11 +153,12 @@ struct ContentView: View {
                 )
                 .frame(maxWidth: .infinity, minHeight: 150)
             } else {
-                ForEach(model.peers) { peer in
+                ForEach(model.visiblePeers) { peer in
                     PeerRow(
                         peer: peer,
                         isConnected: model.sessions[peer.id]?.peer != nil,
                         isConnecting: model.sessions[peer.id]?.status == .connecting,
+                        isOnline: model.peers.contains { $0.id == peer.id },
                         placement: model.placement(for: peer),
                         setPlacement: { model.setPlacement($0, for: peer) },
                         connect: { model.connect(to: peer) },
@@ -182,6 +213,7 @@ private struct StatusPill: View {
         if case let .connected(peer) = connectionState { return String(localized: "已连接 · \(peer.name)") }
         if case .connecting = connectionState { return String(localized: "正在连接") }
         if coreState == .running { return String(localized: "正在运行") }
+        if coreState == .stopped { return String(localized: "已停止") }
         if case .failed = coreState { return String(localized: "Core 异常") }
         return String(localized: "正在启动")
     }
@@ -216,7 +248,7 @@ private struct PermissionCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(isGranted ? "辅助功能权限已就绪" : "需要辅助功能权限")
                     .bold()
-                Text("用于捕获本机输入，并发送给当前控制设备。")
+                Text("用于共享本机键鼠，以及接收其他设备的控制。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -239,6 +271,8 @@ private struct ConnectedControlCard: View {
     let peer: Peer?
     let placement: PeerPlacement
     let hasAccessibilityPermission: Bool
+    let sharing: Bool
+    let pointerLocked: Bool
     let isControlling: Bool
     let stop: () -> Void
 
@@ -261,7 +295,7 @@ private struct ConnectedControlCard: View {
             if isControlling {
                 Button("释放控制", action: stop)
                     .buttonStyle(.borderedProminent)
-            } else if peer != nil, placement.isEnabled, hasAccessibilityPermission {
+            } else if sharing, !pointerLocked, peer != nil, placement.isEnabled, hasAccessibilityPermission {
                 Label("自动切换已启用", systemImage: "arrow.right.to.line.compact")
                     .font(.caption)
                     .foregroundStyle(.green)
@@ -272,6 +306,8 @@ private struct ConnectedControlCard: View {
     }
 
     private var detailText: String {
+        if !sharing { return String(localized: "键鼠共享已暂停，可在上方恢复。") }
+        if pointerLocked { return String(localized: "指针已锁定在当前屏幕") }
         if isControlling {
             return String(localized: "键鼠输入正在转发，按 ⌃⌥⎋ 释放")
         }

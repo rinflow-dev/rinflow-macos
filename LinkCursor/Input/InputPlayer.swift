@@ -32,18 +32,56 @@ final class InputPlayer {
 
     /// Sub-unit scroll carried to the next played event.
     private var scrollRest = CGVector.zero
+    private var lastScrollWasPrecise: Bool?
     private var pointerLocked = false
     /// The last relative move played that should have moved the cursor:
     /// where it was sent, and when.
     private var lastMove: (to: CGPoint, at: DispatchTime)?
+    /// CGEventPost is asynchronous. Events in the same burst must build on
+    /// the last posted position, not all on the still-old system cursor.
+    private var pendingPosition: (to: CGPoint, at: DispatchTime)?
     private var misses = 0
+    private var heldKeys: Set<UInt32> = []
+    private var heldButtons: Set<UInt32> = []
+    private var clicks = ClickTracker()
+    private let post: (CGEvent) -> Void
+    private let cursorPosition: () -> CGPoint
+    private let now: () -> DispatchTime
+
+    init(cursorPosition: @escaping () -> CGPoint = { CGEvent(source: nil)?.location ?? .zero },
+         now: @escaping () -> DispatchTime = { .now() },
+         post: @escaping (CGEvent) -> Void = { $0.post(tap: .cghidEventTap) }) {
+        self.post = post
+        self.cursorPosition = cursorPosition
+        self.now = now
+    }
+
+    /// Also used on quit, when the core's final callbacks will be discarded.
+    func releaseAll() {
+        for code in heldKeys {
+            var release = LcInputEvent()
+            release.kind = UInt32(LC_INPUT_KEY_UP)
+            release.code = code
+            play(release)
+        }
+        for code in heldButtons {
+            var release = LcInputEvent()
+            release.kind = UInt32(LC_INPUT_MOUSE_BUTTON_UP)
+            release.code = code
+            play(release)
+        }
+        setDriven(false)
+    }
 
     /// A peer drives this Mac (true) or none does any more.
     func setDriven(_ driven: Bool) {
         guard !driven else { return }
         lastMove = nil
+        pendingPosition = nil
         misses = 0
         scrollRest = .zero
+        lastScrollWasPrecise = nil
+        clicks = ClickTracker()
         setPointerLocked(false)
     }
 
@@ -55,20 +93,28 @@ final class InputPlayer {
             event = move(input, source: source)
         case UInt32(LC_INPUT_MOUSE_BUTTON_DOWN), UInt32(LC_INPUT_MOUSE_BUTTON_UP):
             let down = input.kind == UInt32(LC_INPUT_MOUSE_BUTTON_DOWN)
+            guard (1...32).contains(input.code) else { return }
+            let position = positionForNextEvent()
             let (button, downType, upType) = Self.mouseButton(for: input.code)
             event = CGEvent(
                 mouseEventSource: source,
                 mouseType: down ? downType : upType,
-                mouseCursorPosition: Self.cursorLocation,
+                mouseCursorPosition: position,
                 mouseButton: button
             )
             event?.setIntegerValueField(
                 .mouseEventButtonNumber,
                 value: Int64(max(input.code, 1) - 1)
             )
+            event?.setIntegerValueField(.mouseEventClickState, value: clicks.click(
+                button: input.code, down: down, at: position,
+                time: ProcessInfo.processInfo.systemUptime, interval: NSEvent.doubleClickInterval
+            ))
         case UInt32(LC_INPUT_SCROLL):
             // Wire: points; a notched wheel sends 10 points per line.
             let precise = input.flags & UInt32(LC_INPUT_FLAG_PRECISE_SCROLL) != 0
+            if lastScrollWasPrecise != precise { scrollRest = .zero }
+            lastScrollWasPrecise = precise
             let pointsPerUnit = precise ? 1.0 : 10.0
             let wantedX = scrollRest.dx + input.scroll_x / pointsPerUnit
             let wantedY = scrollRest.dy + input.scroll_y / pointsPerUnit
@@ -99,13 +145,20 @@ final class InputPlayer {
         }
 
         guard let event else { return }
+        switch input.kind {
+        case UInt32(LC_INPUT_KEY_DOWN): heldKeys.insert(input.code)
+        case UInt32(LC_INPUT_KEY_UP): heldKeys.remove(input.code)
+        case UInt32(LC_INPUT_MOUSE_BUTTON_DOWN): heldButtons.insert(input.code)
+        case UInt32(LC_INPUT_MOUSE_BUTTON_UP): heldButtons.remove(input.code)
+        default: break
+        }
         event.flags = Self.cgFlags(from: input.modifiers)
         event.setIntegerValueField(.eventSourceUserData, value: SyntheticInput.marker)
-        event.post(tap: .cghidEventTap)
+        post(event)
     }
 
     private func move(_ input: LcInputEvent, source: CGEventSource) -> CGEvent? {
-        let current = Self.cursorLocation
+        let current = positionForNextEvent()
         let destination: CGPoint
         if input.flags & UInt32(LC_INPUT_FLAG_ABSOLUTE_POSITION) != 0 {
             // Where the pointer arrives from the peer, or where the peer put
@@ -114,14 +167,15 @@ final class InputPlayer {
             destination = CGPoint(x: input.x, y: input.y)
             lastMove = nil
         } else {
-            checkLock(at: current)
+            checkLock(at: cursorPosition())
             destination = CGPoint(x: current.x + input.delta_x, y: current.y + input.delta_y)
             // Only a move that should get somewhere tells: one pushing
             // against a screen edge stays put anyway.
             lastMove = Self.isOnDisplay(destination) && hypot(input.delta_x, input.delta_y) >= 1
-                ? (destination, .now())
+                ? (destination, now())
                 : nil
         }
+        pendingPosition = Self.isOnDisplay(destination) ? (destination, now()) : nil
         let event = CGEvent(
             mouseEventSource: source,
             mouseType: Self.dragEventType(for: input.buttons),
@@ -131,6 +185,9 @@ final class InputPlayer {
         // What games read while they hold the pointer.
         event?.setDoubleValueField(.mouseEventDeltaX, value: destination.x - current.x)
         event?.setDoubleValueField(.mouseEventDeltaY, value: destination.y - current.y)
+        if input.buttons != 0 {
+            event?.setIntegerValueField(.mouseEventButtonNumber, value: Int64(input.buttons.trailingZeroBitCount))
+        }
         return event
     }
 
@@ -139,7 +196,7 @@ final class InputPlayer {
     /// delivered together.
     private func checkLock(at current: CGPoint) {
         guard let last = lastMove else { return }
-        let elapsed = DispatchTime.now().uptimeNanoseconds - last.at.uptimeNanoseconds
+        let elapsed = now().uptimeNanoseconds - last.at.uptimeNanoseconds
         guard elapsed >= 8_000_000 else { return }
         lastMove = nil
         guard elapsed <= 250_000_000 else { return }
@@ -161,8 +218,12 @@ final class InputPlayer {
         pointerLockChanged?(locked)
     }
 
-    private static var cursorLocation: CGPoint {
-        CGEvent(source: nil)?.location ?? .zero
+    private func positionForNextEvent() -> CGPoint {
+        if let pendingPosition,
+           now().uptimeNanoseconds - pendingPosition.at.uptimeNanoseconds < 8_000_000 {
+            return pendingPosition.to
+        }
+        return cursorPosition()
     }
 
     private static func isOnDisplay(_ point: CGPoint) -> Bool {

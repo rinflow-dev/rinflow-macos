@@ -29,6 +29,7 @@ bridging_group = app_group.groups.find { |group| group.display_name == 'Bridging
 bridging_group.new_file('LinkCursor-Bridging-Header.h')
 resources_group = app_group.groups.find { |group| group.display_name == 'Resources' } || app_group.new_group('Resources', 'Resources')
 resources_group.new_file('Info.plist')
+target.resources_build_phase.add_file_reference(resources_group.new_file('AppIcon.icns'))
 
 # Localizations: the keys are the Chinese text; en.lproj translates them, and
 # zh-Hans.lproj makes Chinese one of the app's languages. English is the
@@ -98,13 +99,15 @@ tests_group = project.main_group.new_group('LinkCursorTests', 'LinkCursorTests')
 Dir.glob(File.join(tests_root, '*.swift')).sort.each do |path|
   test_target.source_build_phase.add_file_reference(tests_group.new_file(File.basename(path)))
 end
-['Core/Layout.swift'].each do |relative|
+['Core/Layout.swift', 'Core/CoreTypes.swift', 'Core/CallbackRelay.swift', 'Model/AppSettings.swift', 'Input/ClipboardBridge.swift', 'Input/CrossingGate.swift', 'Input/ClickTracker.swift', 'Input/InputPlayer.swift', 'Input/HIDKeyMap.swift'].each do |relative|
   reference = app_group.recursive_children.find { |item| item.respond_to?(:real_path) && item.real_path.to_s == File.join(source_root, relative) }
   test_target.source_build_phase.add_file_reference(reference)
 end
 test_target.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.linkcursor.mac.tests'
+  settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'LinkCursor/Bridging/LinkCursor-Bridging-Header.h'
+  settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', '$(SRCROOT)/../linkcursor-core/include']
   settings['GENERATE_INFOPLIST_FILE'] = 'YES'
   settings['SWIFT_VERSION'] = '6.0'
   settings['SWIFT_STRICT_CONCURRENCY'] = 'complete'

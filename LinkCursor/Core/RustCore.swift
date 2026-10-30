@@ -12,12 +12,25 @@ final class RustCore {
     weak var delegate: (any RustCoreDelegate)?
 
     private var handle: OpaquePointer?
+    private var callbacks: CallbackRelay<RustCore>?
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "core")
 
     isolated deinit {
+        callbacks?.invalidate()
         if let handle {
             lc_core_destroy(handle)
         }
+    }
+
+    func stop() {
+        callbacks?.invalidate()
+        if let handle {
+            // destroy joins the Rust thread: no callback can borrow the relay
+            // after this returns. Queued deliveries own it independently.
+            lc_core_destroy(handle)
+        }
+        handle = nil
+        callbacks = nil
     }
 
     private struct Configuration: Encodable {
@@ -32,6 +45,10 @@ final class RustCore {
         let clipboard = true
         /// Copied files travel with the clipboard; received ones land here.
         let files = true
+        /// macOS has no native remote-file provider yet. Ask before saving
+        /// every offer; disabled clipboard sharing can then reject it before
+        /// any file contents are downloaded, even a zero-byte file.
+        let maxAutoReceiveBytes: UInt64 = 0
         let downloadDirectory: String
         /// This Mac's key and certificate; kept, so paired peers know it.
         let identityPath: String
@@ -53,6 +70,7 @@ final class RustCore {
             case placements
             case clipboard
             case files
+            case maxAutoReceiveBytes = "max_auto_receive_bytes"
             case downloadDirectory = "download_directory"
             case identityPath = "identity_path"
             case trustedPeers = "trusted_peers"
@@ -87,7 +105,9 @@ final class RustCore {
         )
         guard let json = Self.json(configuration) else { return false }
 
-        let context = Unmanaged.passUnretained(self).toOpaque()
+        let callbacks = CallbackRelay(self)
+        self.callbacks = callbacks
+        let context = Unmanaged.passUnretained(callbacks).toOpaque()
         handle = json.withCString { pointer in
             lc_core_create(pointer, linkCursorCoreEventCallback, linkCursorInputCallback, context)
         }
@@ -180,6 +200,11 @@ final class RustCore {
         _ = lc_core_set_shortcut_remap(handle, enabled)
     }
 
+    func setRemoteControlAllowed(_ allowed: Bool) {
+        guard let handle else { return }
+        _ = lc_core_set_remote_control_allowed(handle, allowed)
+    }
+
     /// Replaces the addresses to look for devices at.
     func setManualAddresses(_ addresses: [String]) {
         guard let handle, let json = Self.json(addresses) else { return }
@@ -263,14 +288,15 @@ final class RustCore {
     }
 
     fileprivate func receive(eventJSON: String) {
-        // A clipboard event carries the contents: keep the log short.
-        Self.log.info("\(eventJSON.prefix(400), privacy: .public)")
         guard
             let data = eventJSON.data(using: .utf8),
             let event = try? JSONDecoder().decode(CoreEventEnvelope.self, from: data)
         else {
             return
         }
+        // JSON may contain clipboard contents, pairing codes and file paths.
+        // Log only the event type, never any part of its payload.
+        Self.log.debug("core event: \(event.event, privacy: .public)")
         delegate?.rustCore(self, received: event)
     }
 
@@ -285,13 +311,8 @@ private func linkCursorCoreEventCallback(
 ) {
     guard let json, let context else { return }
     let message = String(cString: json)
-    let contextAddress = UInt(bitPattern: context)
-
-    Task { @MainActor in
-        guard let pointer = UnsafeMutableRawPointer(bitPattern: contextAddress) else { return }
-        let core = Unmanaged<RustCore>.fromOpaque(pointer).takeUnretainedValue()
-        core.receive(eventJSON: message)
-    }
+    let callbacks = Unmanaged<CallbackRelay<RustCore>>.fromOpaque(context).takeUnretainedValue()
+    callbacks.enqueue { $0.receive(eventJSON: message) }
 }
 
 private func linkCursorInputCallback(
@@ -300,11 +321,6 @@ private func linkCursorInputCallback(
 ) {
     guard let input, let context else { return }
     let value = input.pointee
-    let contextAddress = UInt(bitPattern: context)
-
-    Task { @MainActor in
-        guard let pointer = UnsafeMutableRawPointer(bitPattern: contextAddress) else { return }
-        let core = Unmanaged<RustCore>.fromOpaque(pointer).takeUnretainedValue()
-        core.receive(input: value)
-    }
+    let callbacks = Unmanaged<CallbackRelay<RustCore>>.fromOpaque(context).takeUnretainedValue()
+    callbacks.enqueue { $0.receive(input: value) }
 }

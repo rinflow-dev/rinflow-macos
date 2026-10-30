@@ -3,6 +3,7 @@ import Foundation
 import Network
 import Observation
 import OSLog
+import ServiceManagement
 
 @Observable
 @MainActor
@@ -33,6 +34,8 @@ final class AppModel: RustCoreDelegate {
     /// so placed devices keep their place on the canvas while offline.
     private(set) var knownPeers: [String: Peer]
     private(set) var localDisplays: [Display] = []
+    private(set) var loginStatus = SMAppService.mainApp.status
+    private(set) var pointerLocked = false
 
     let deviceName: String
 
@@ -46,13 +49,27 @@ final class AppModel: RustCoreDelegate {
     private let presence = Presence()
     private let cursorHider = CursorHider()
     private let notifications = TransferNotifications()
+    private let fullscreen = FullscreenMonitor()
     /// Reports network changes to the core (Wi-Fi, addresses, VPN).
     private let pathMonitor = NWPathMonitor()
     /// Network changes come in bursts; the core hears of them once settled.
     private var pendingNetworkChange: DispatchWorkItem?
+    private var shuttingDown = false
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "model")
 
     var isControlling: Bool { controlledPeerID != nil }
+
+    /// Discovery expires independently of sessions. Keep connected and paired
+    /// devices visible so an offline device can still be unpaired or arranged.
+    var visiblePeers: [Peer] {
+        let ids = Set(peers.map(\.id)).union(sessions.keys).union(trustedPeers.keys)
+        return ids.compactMap { id in
+            peers.first { $0.id == id } ?? knownPeers[id] ?? sessions[id]?.peer
+        }.sorted {
+            let order = $0.name.localizedStandardCompare($1.name)
+            return order == .orderedSame ? $0.id < $1.id : order == .orderedAscending
+        }
+    }
 
     /// A single connection for the UI, which still shows one.
     var connectionState: ConnectionState {
@@ -104,6 +121,9 @@ final class AppModel: RustCoreDelegate {
         hotkeys.pressed = { [weak self] side in
             self?.inputBridge.jumpFromHere(toward: side)
         }
+        hotkeys.togglePointerLock = { [weak self] in self?.togglePointerLock() }
+        inputBridge.togglePointerLock = { [weak self] in self?.togglePointerLock() }
+        fullscreen.changed = { [weak self] in self?.inputBridge.fullscreenBlocked = $0 }
         presence.reportActivity = { [weak self] in self?.core.reportUserActivity() }
         presence.lockPeers = { [weak self] in self?.core.lockPeers() }
         NotificationCenter.default.addObserver(
@@ -114,14 +134,28 @@ final class AppModel: RustCoreDelegate {
             MainActor.assumeIsolated { self?.screensChanged() }
         }
         observePowerAndNetwork()
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.shutdown() }
+        }
         applySettings(settings, previous: nil)
         presence.start()
-        notifications.start()
         startCore()
         refreshPermission()
     }
 
     func startCore() {
+        // A failed start can still own a handle whose Rust thread exited.
+        clipboard.stop()
+        inputBridge.stop()
+        player.releaseAll()
+        core.stop()
+        sessions.removeAll()
+        peers.removeAll()
+        transfers.removeAll()
+        pairing.dismissAll()
+        lastError = nil
         coreState = .starting
         localDisplays = Self.currentDisplays()
         guard core.start(
@@ -136,7 +170,43 @@ final class AppModel: RustCoreDelegate {
             return
         }
         migrateLegacyPlacements()
-        clipboard.start()
+        core.setRemoteControlAllowed(settings.sharing && inputBridge.hasAccessibilityPermission)
+        if settings.clipboard { clipboard.start() }
+    }
+
+    func shutdown() {
+        guard !shuttingDown else { return }
+        shuttingDown = true
+        pendingNetworkChange?.cancel()
+        pathMonitor.cancel()
+        clipboard.stop()
+        pairing.dismissAll()
+        inputBridge.stop()
+        _ = hotkeys.register(nil)
+        cursorHider.reveal()
+        player.releaseAll()
+        presence.stop()
+        fullscreen.setEnabled(false)
+        core.stop()
+    }
+
+    func togglePointerLock() {
+        pointerLocked.toggle()
+        inputBridge.crossingLocked = pointerLocked
+    }
+
+    func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled { try SMAppService.mainApp.register() }
+            else { try SMAppService.mainApp.unregister() }
+        } catch {
+            lastError = String(localized: "无法更改登录启动：\(error.localizedDescription)")
+        }
+        loginStatus = SMAppService.mainApp.status
+    }
+
+    func openLoginSettings() {
+        SMAppService.openSystemSettingsLoginItems()
     }
 
     // MARK: - Settings
@@ -153,6 +223,32 @@ final class AppModel: RustCoreDelegate {
     }
 
     private func applySettings(_ settings: AppSettings, previous: AppSettings?) {
+        if settings.pauseInFullscreen != previous?.pauseInFullscreen || settings.sharing != previous?.sharing {
+            fullscreen.setEnabled(settings.pauseInFullscreen && settings.sharing)
+        }
+        if settings.clipboard, previous?.clipboard != true { notifications.start() }
+        if settings.switchDelay != previous?.switchDelay || settings.cornerGuard != previous?.cornerGuard {
+            inputBridge.setCrossingOptions(delay: settings.switchDelay, cornerGuard: settings.cornerGuard)
+        }
+        if let previous, settings.clipboard != previous.clipboard {
+            if settings.clipboard {
+                clipboard.start()
+            } else {
+                clipboard.stop()
+                pairing.dismissFiles()
+                core.setClipboard([])
+                for transfer in transfers { core.cancelFiles(transfer.transfer) }
+            }
+        }
+        if let previous, settings.sharing != previous.sharing {
+            if !settings.sharing {
+                inputBridge.stop()
+                cursorHider.reveal()
+                player.releaseAll()
+            }
+            core.setRemoteControlAllowed(settings.sharing && hasAccessibilityPermission)
+            refreshArrangement()
+        }
         if previous != nil {
             // At start-up these go into the core's configuration.
             if settings.pairedOnly != previous?.pairedOnly {
@@ -167,9 +263,10 @@ final class AppModel: RustCoreDelegate {
         }
         if settings.switchHotkeys != previous?.switchHotkeys
             || settings.switchModifiers != previous?.switchModifiers
+            || settings.sharing != previous?.sharing
         {
-            let modifiers = settings.switchHotkeys ? settings.switchModifiers : nil
-            switchHotkeysBlocked = !hotkeys.register(modifiers)
+            let modifiers = settings.switchHotkeys && settings.sharing ? settings.switchModifiers : nil
+            switchHotkeysBlocked = !hotkeys.register(modifiers, lockEnabled: settings.sharing)
             inputBridge.setSwitchShortcuts(modifiers)
         }
         if settings.language != previous?.language {
@@ -198,6 +295,7 @@ final class AppModel: RustCoreDelegate {
 
     func setInput(_ input: PeerInput, for peerID: String) {
         updateSettings { $0.peerInput[peerID] = input.isDefault ? nil : input }
+        inputBridge.refreshInputSettings()
     }
 
     /// What the UI shows for an address: the core's report, or searching.
@@ -243,7 +341,7 @@ final class AppModel: RustCoreDelegate {
     var arrangedDevices: [ArrangedDevice] {
         let online = Set(peers.map(\.id))
         let placed = placements.values.filter { $0.offset != nil }.map(\.peerID)
-        return online.union(placed).sorted().map { id in
+        return online.union(placed).union(sessions.keys).sorted().map { id in
             let peer = peers.first { $0.id == id } ?? knownPeers[id]
             let state: ArrangedDevice.State =
                 sessions[id]?.peer != nil ? .connected : online.contains(id) ? .online : .offline
@@ -269,7 +367,7 @@ final class AppModel: RustCoreDelegate {
     func setPlacement(_ placement: PeerPlacement, for peer: Peer) {
         guard placement != .chained else { return }
         core.place(peer.id, beside: placement.side)
-        if placement.isEnabled, sessions[peer.id] == nil {
+        if placement.isEnabled, sessions[peer.id] == nil, peers.contains(where: { $0.id == peer.id }) {
             connect(to: peer)
         }
     }
@@ -280,12 +378,18 @@ final class AppModel: RustCoreDelegate {
     }
 
     func refreshPermission() {
+        loginStatus = SMAppService.mainApp.status
         hasAccessibilityPermission = inputBridge.hasAccessibilityPermission
+        core.setRemoteControlAllowed(settings.sharing && hasAccessibilityPermission)
         if hasAccessibilityPermission {
             if lastError == Self.permissionNeeded {
                 lastError = nil
             }
             refreshArrangement()
+        } else {
+            inputBridge.stop()
+            cursorHider.reveal()
+            player.releaseAll()
         }
     }
 
@@ -305,11 +409,15 @@ final class AppModel: RustCoreDelegate {
     // MARK: - Core events
 
     func rustCore(_ core: RustCore, received event: CoreEventEnvelope) {
+        guard !shuttingDown else { return }
         switch event.event {
         case "started":
             coreState = .running
         case "stopped":
             coreState = .stopped
+            inputBridge.stop()
+            player.releaseAll()
+            sessions.removeAll()
         case "peer_up":
             guard let peer = event.peer else { break }
             peers.removeAll { $0.id == peer.id }
@@ -326,7 +434,8 @@ final class AppModel: RustCoreDelegate {
             }
         case "connected":
             guard let peer = event.peer else { break }
-            sessions[peer.id, default: PeerSession(status: .connecting)].status = .connected(peer)
+            remember(peer)
+            sessions[peer.id, default: PeerSession(status: .connecting)].status = .connected(knownPeers[peer.id] ?? peer)
             lastError = nil
             refreshArrangement()
         case "disconnected":
@@ -388,6 +497,7 @@ final class AppModel: RustCoreDelegate {
             Self.savePlacements(placements)
             refreshArrangement()
         case "clipboard":
+            guard settings.clipboard else { break }
             // A peer's clipboard, handed over with the control.
             let items = (event.formats ?? []).compactMap { format in
                 Data(base64Encoded: format.data).map { ClipboardItem(mime: format.mime, data: $0) }
@@ -420,17 +530,26 @@ final class AppModel: RustCoreDelegate {
             Self.saveTrustedPeers(trustedPeers)
         case "files_offered":
             guard let transfer = event.transfer else { break }
+            guard settings.clipboard else {
+                core.cancelFiles(transfer)
+                break
+            }
             askToReceiveFiles(transfer, from: event.peerID, count: event.count ?? 0, size: event.totalSize ?? 0)
         case "files_receiving", "files_progress", "files_sending":
+            guard settings.clipboard else {
+                if let transfer = event.transfer { core.cancelFiles(transfer) }
+                break
+            }
             updateTransfer(with: event)
         case "files_received":
             guard let transfer = event.transfer else { break }
             transfers.removeAll { $0.direction == .receiving && $0.transfer == transfer }
             notifications.filesReceived(from: name(of: event.peerID), paths: event.paths ?? [])
-            Self.log.info("received files: \(event.paths ?? [], privacy: .public)")
+            Self.log.info("received \(event.paths?.count ?? 0) file items")
         case "files_failed", "files_send_ended":
             guard let transfer = event.transfer else { break }
             let sending = event.event == "files_send_ended"
+            pairing.dismiss(id: "file-\(transfer)")
             transfers.removeAll { $0.direction == (sending ? .sending : .receiving) && $0.transfer == transfer }
             if let reason = event.reason, !Self.quietTransferEnds.contains(reason) {
                 lastError = sending
@@ -439,12 +558,21 @@ final class AppModel: RustCoreDelegate {
             }
         case "error":
             lastError = event.message
+            if coreState == .starting {
+                coreState = .failed(event.message ?? String(localized: "无法启动 Rust Core"))
+            }
         default:
             break
         }
     }
 
     func rustCore(_ core: RustCore, received input: LcInputEvent) {
+        // Reset releases must still be played after pausing. New presses and
+        // motion already queued before the pause must not take effect.
+        guard !shuttingDown,
+              settings.sharing || input.kind == UInt32(LC_INPUT_KEY_UP)
+                || input.kind == UInt32(LC_INPUT_MOUSE_BUTTON_UP)
+        else { return }
         player.play(input)
         receivedEventCount += 1
     }
@@ -552,18 +680,15 @@ final class AppModel: RustCoreDelegate {
 
     /// Over the automatic limit, the user decides.
     private func askToReceiveFiles(_ transfer: UInt32, from peerID: String?, count: Int, size: UInt64) {
-        let alert = NSAlert()
-        alert.messageText = String(localized: "\(name(of: peerID)) 想发送 \(count) 个文件")
-        alert.informativeText = String(
-            localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))，将保存到“下载/LinkCursor”。"
-        )
-        alert.addButton(withTitle: String(localized: "接收"))
-        alert.addButton(withTitle: String(localized: "取消"))
-        NSApp.activate()
-        if alert.runModal() == .alertFirstButtonReturn {
-            core.acceptFiles(transfer)
-        } else {
-            core.cancelFiles(transfer)
+        pairing.show(
+            id: "file-\(transfer)",
+            title: String(localized: "\(name(of: peerID)) 想发送 \(count) 个文件"),
+            message: String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: size), countStyle: .file))，将保存到“下载/LinkCursor”。"),
+            accept: String(localized: "接收")
+        ) { [weak self] accepted in
+            guard let self else { return }
+            if accepted && self.settings.clipboard { self.core.acceptFiles(transfer) }
+            else { self.core.cancelFiles(transfer) }
         }
     }
 
@@ -630,6 +755,10 @@ final class AppModel: RustCoreDelegate {
 
     /// Hands the arrangement and the connected peers to the input bridge.
     private func refreshArrangement() {
+        guard settings.sharing, !shuttingDown else {
+            inputBridge.stop()
+            return
+        }
         let connected = Set(sessions.filter { $0.value.peer != nil }.keys)
         if !inputBridge.setArrangement(world, connected: connected) {
             lastError = Self.permissionNeeded
@@ -637,10 +766,7 @@ final class AppModel: RustCoreDelegate {
     }
 
     private func remember(_ peer: Peer) {
-        var peer = peer
-        if peer.displays?.isEmpty ?? true {
-            peer.displays = knownPeers[peer.id]?.displays
-        }
+        let peer = peer.mergingKnown(knownPeers[peer.id])
         guard knownPeers[peer.id] != peer else { return }
         knownPeers[peer.id] = peer
         guard let data = try? JSONEncoder().encode(Array(knownPeers.values)) else { return }

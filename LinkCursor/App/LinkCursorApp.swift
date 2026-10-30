@@ -5,7 +5,7 @@ struct LinkCursorApp: App {
     @State private var model = AppModel()
 
     var body: some Scene {
-        WindowGroup {
+        Window("LinkCursor", id: "main") {
             ContentView(model: model)
         }
         .windowResizability(.contentMinSize)
@@ -22,14 +22,32 @@ struct LinkCursorApp: App {
 
 
 private struct MenuBarContent: View {
+    @Environment(\.openWindow) private var openWindow
     let model: AppModel
 
     var body: some View {
+        Button("打开主窗口") {
+            openWindow(id: "main")
+            NSApp.activate()
+        }
+
+        Toggle("共享键盘与鼠标", isOn: Binding(
+            get: { model.settings.sharing },
+            set: { enabled in model.updateSettings { $0.sharing = enabled } }
+        ))
+        Toggle("同步剪贴板与文件", isOn: Binding(
+            get: { model.settings.clipboard },
+            set: { enabled in model.updateSettings { $0.clipboard = enabled } }
+        ))
+        Divider()
+
+        Button(model.pointerLocked ? "解锁当前屏幕（⌃⌥L）" : "锁定当前屏幕（⌃⌥L）", action: model.togglePointerLock)
+
         if let peer = model.connectionState.connectedPeer {
             Text("已连接：\(peer.name)")
             if model.isControlling {
                 Button("释放控制", action: model.stopControlling)
-            } else {
+            } else if model.settings.sharing {
                 let placement = model.placement(for: peer)
                 Text(
                     placement.isEnabled
@@ -37,9 +55,12 @@ private struct MenuBarContent: View {
                         : String(localized: "请选择设备位置以启用自动切换")
                 )
             }
-            Button("断开连接") { model.disconnect(peer) }
         } else {
             Text("未连接")
+        }
+
+        ForEach(model.sessions.values.compactMap(\.peer).sorted { $0.id < $1.id }) { peer in
+            Button(String(localized: "断开：\(peer.name)")) { model.disconnect(peer) }
         }
 
         Divider()

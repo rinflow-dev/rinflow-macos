@@ -1,40 +1,91 @@
 import AppKit
 
-/// Asks the user to confirm a pairing code (`pairing_requested`). Both
-/// devices show the same six digits; the user compares them. The prompt goes
-/// away by itself when the core ends the pairing (`pairing_ended`).
+/// One nonblocking confirmation at a time. Keeping the main run loop free
+/// lets pairing timeouts, disconnects and incoming input continue to arrive.
 @MainActor
-final class PairingPrompt {
-    private var peerID: String?
+final class PairingPrompt: NSObject, NSWindowDelegate {
+    private struct Request {
+        let id: String
+        let alert: NSAlert
+        let answer: (Bool) -> Void
+    }
+    private var pending: [Request] = []
+    private var active: Request?
 
-    /// Shows the code and reports the answer; nothing when the prompt was
-    /// dismissed because the pairing ended elsewhere.
-    func ask(peerID: String, name: String, code: String, answer: (Bool) -> Void) {
-        let alert = NSAlert()
-        alert.messageText = String(localized: "与 \(name) 配对")
-        alert.informativeText = String(
-            localized: "请确认两台设备上显示的数字相同：\n\n\(Self.grouped(code))\n\n数字一致时点“配对”，并在对方设备上也确认。"
+    func ask(peerID: String, name: String, code: String, answer: @escaping (Bool) -> Void) {
+        show(
+            id: "pair-\(peerID)",
+            title: String(localized: "与 \(name) 配对"),
+            message: String(localized: "请确认两台设备上显示的数字相同：\n\n\(Self.grouped(code))\n\n数字一致时点“配对”，并在对方设备上也确认。"),
+            accept: String(localized: "配对"), answer: answer
         )
-        alert.addButton(withTitle: String(localized: "配对"))
+    }
+
+    func show(id: String, title: String, message: String, accept: String, answer: @escaping (Bool) -> Void) {
+        guard active?.id != id, !pending.contains(where: { $0.id == id }) else { return }
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: accept)
         alert.addButton(withTitle: String(localized: "取消"))
-        self.peerID = peerID
-        NSApp.activate()
-        let response = alert.runModal()
-        self.peerID = nil
-        switch response {
-        case .alertFirstButtonReturn: answer(true)
-        case .alertSecondButtonReturn: answer(false)
-        default: break // Dismissed: the pairing ended without this answer.
+        for (index, button) in alert.buttons.enumerated() {
+            button.tag = index
+            button.target = self
+            button.action = #selector(answerPrompt(_:))
         }
+        alert.buttons[1].keyEquivalent = "\u{1b}"
+        pending.append(Request(id: id, alert: alert, answer: answer))
+        showNext()
     }
 
-    /// Closes the prompt for `peerID` if it is open.
-    func dismiss(peerID: String) {
-        guard self.peerID == peerID else { return }
-        NSApp.abortModal()
+    func dismiss(peerID: String) { dismiss(id: "pair-\(peerID)") }
+
+    func dismiss(id: String) {
+        pending.removeAll { $0.id == id }
+        if active?.id == id { finish(answer: nil) }
     }
 
-    /// "482917" → "482 917", easier to compare.
+    func dismissFiles() {
+        let cancelled = pending.filter { $0.id.hasPrefix("file-") }
+        pending.removeAll { $0.id.hasPrefix("file-") }
+        for request in cancelled { request.answer(false) }
+        if active?.id.hasPrefix("file-") == true { finish(answer: false) }
+    }
+
+    func dismissAll() {
+        pending.removeAll()
+        finish(answer: nil)
+    }
+
+    private func showNext() {
+        guard active == nil, !pending.isEmpty else { return }
+        let request = pending.removeFirst()
+        active = request
+        request.alert.layout()
+        request.alert.window.delegate = self
+        request.alert.window.center()
+        request.alert.window.makeKeyAndOrderFront(nil)
+        NSApp.activate()
+    }
+
+    @objc private func answerPrompt(_ button: NSButton) {
+        finish(answer: button.tag == 0)
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        finish(answer: false)
+        return false
+    }
+
+    private func finish(answer: Bool?) {
+        guard let request = active else { return }
+        active = nil
+        request.alert.window.delegate = nil
+        request.alert.window.orderOut(nil)
+        if let answer { request.answer(answer) }
+        showNext()
+    }
+
     private static func grouped(_ code: String) -> String {
         guard code.count == 6 else { return code }
         return "\(code.prefix(3)) \(code.suffix(3))"

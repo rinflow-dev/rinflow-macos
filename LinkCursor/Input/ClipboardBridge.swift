@@ -31,22 +31,31 @@ final class ClipboardBridge {
     ]
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "clipboard")
 
-    private let pasteboard = NSPasteboard.general
+    private let pasteboard: NSPasteboard
     /// The change count last reported (or written by this bridge).
     private var reportedCount: Int
     private var pendingRead: DispatchWorkItem?
     private var timer: Timer?
 
-    init() {
+    init(pasteboard: NSPasteboard = .general) {
+        self.pasteboard = pasteboard
         reportedCount = pasteboard.changeCount
     }
 
     func start() {
+        guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.poll() }
         }
         // What is on the pasteboard already counts as this Mac's clipboard.
         report()
+    }
+
+    func stop() {
+        timer?.invalidate()
+        timer = nil
+        pendingRead?.cancel()
+        pendingRead = nil
     }
 
     /// Writes a peer's clipboard. The change this makes is not reported back.
@@ -88,6 +97,7 @@ final class ClipboardBridge {
     /// Reports a change not reported yet. Called when the pointer leaves for
     /// a peer, so a copy made just before is not left behind by the polling.
     func reportIfChanged() {
+        guard timer != nil else { return }
         guard pasteboard.changeCount != reportedCount else { return }
         pendingRead?.cancel()
         pendingRead = nil

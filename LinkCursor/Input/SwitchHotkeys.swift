@@ -8,6 +8,7 @@ import OSLog
 final class SwitchHotkeys {
     /// An arrow key with the modifiers went down.
     var pressed: ((Side) -> Void)?
+    var togglePointerLock: (() -> Void)?
 
     private static let log = Logger(subsystem: "com.linkcursor.mac", category: "hotkeys")
     /// "LCHK"
@@ -19,18 +20,32 @@ final class SwitchHotkeys {
     private var hotKeys: [EventHotKeyRef] = []
     private var handler: EventHandlerRef?
 
+    isolated deinit {
+        for reference in hotKeys { UnregisterEventHotKey(reference) }
+        if let handler { RemoveEventHandler(handler) }
+    }
+
     /// Registers the shortcuts with `modifiers`, or none with nil. False when
     /// another program holds one of the combinations.
     @discardableResult
-    func register(_ modifiers: SwitchModifiers?) -> Bool {
+    func register(_ modifiers: SwitchModifiers?, lockEnabled: Bool = false) -> Bool {
         unregister()
-        guard let modifiers else { return true }
+        guard modifiers != nil || lockEnabled else { return true }
         installHandler()
+        var registered = true
+        if lockEnabled {
+            var reference: EventHotKeyRef?
+            let id = EventHotKeyID(signature: Self.signature, id: 4)
+            let status = RegisterEventHotKey(UInt32(kVK_ANSI_L), UInt32(controlKey | optionKey), id,
+                                            GetEventDispatcherTarget(), 0, &reference)
+            if status == noErr, let reference { hotKeys.append(reference) }
+            else { registered = false }
+        }
+        guard let modifiers else { return registered }
         var carbonModifiers = UInt32(controlKey | optionKey)
         if modifiers == .controlOptionShift {
             carbonModifiers |= UInt32(shiftKey)
         }
-        var registered = true
         for (index, arrow) in Self.arrows.enumerated() {
             var reference: EventHotKeyRef?
             let id = EventHotKeyID(signature: Self.signature, id: UInt32(index))
@@ -62,6 +77,7 @@ final class SwitchHotkeys {
     }
 
     fileprivate func fire(_ id: UInt32) {
+        if id == 4 { togglePointerLock?(); return }
         guard Int(id) < Self.arrows.count else { return }
         pressed?(Self.arrows[Int(id)].side)
     }
