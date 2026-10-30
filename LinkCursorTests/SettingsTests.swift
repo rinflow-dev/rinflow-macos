@@ -33,6 +33,22 @@ final class SettingsTests: XCTestCase {
         let restored = try JSONDecoder().decode(AppSettings.self, from: JSONEncoder().encode(settings))
         XCTAssertEqual(restored, settings)
     }
+
+    func testThemeFollowsTheSystemUntilChosenAndUsesTheWindowsValues() throws {
+        XCTAssertEqual(try JSONDecoder().decode(AppSettings.self, from: Data("{}".utf8)).theme, .system)
+        var settings = AppSettings()
+        settings.theme = .dark
+        let encoded = try JSONEncoder().encode(settings)
+        XCTAssertTrue(String(decoding: encoded, as: UTF8.self).contains(#""theme":"dark""#))
+        XCTAssertEqual(try JSONDecoder().decode(AppSettings.self, from: encoded).theme, .dark)
+    }
+
+    func testAnUnknownThemeFallsBackWithoutResettingOtherSettings() throws {
+        let newer = Data(#"{"theme":"sepia","clipboard":true}"#.utf8)
+        let settings = try JSONDecoder().decode(AppSettings.self, from: newer)
+        XCTAssertEqual(settings.theme, .system)
+        XCTAssertTrue(settings.clipboard)
+    }
 }
 
 final class ModifierMapTests: XCTestCase {

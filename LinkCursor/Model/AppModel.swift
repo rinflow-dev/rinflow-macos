@@ -181,6 +181,7 @@ final class AppModel: RustCoreDelegate {
             return
         }
         migrateLegacyPlacements()
+        dropUnknownPlacements()
         core.setRemoteControlAllowed(settings.sharing && inputBridge.hasAccessibilityPermission)
         if settings.clipboard { clipboard.start() }
     }
@@ -234,6 +235,13 @@ final class AppModel: RustCoreDelegate {
     }
 
     private func applySettings(_ settings: AppSettings, previous: AppSettings?) {
+        if settings.theme != previous?.theme {
+            NSApplication.shared.appearance = switch settings.theme {
+            case .system: nil
+            case .light: NSAppearance(named: .aqua)
+            case .dark: NSAppearance(named: .darkAqua)
+            }
+        }
         if settings.pauseInFullscreen != previous?.pauseInFullscreen || settings.sharing != previous?.sharing {
             fullscreen.setEnabled(settings.pauseInFullscreen && settings.sharing)
         }
@@ -893,6 +901,18 @@ final class AppModel: RustCoreDelegate {
 
     /// Earlier builds saved only a side per peer. Hand those to the core
     /// once; it turns each into a real placement.
+    /// A placed device never paired whose name was never learned (say, the
+    /// old identity of a device LinkCursor was reinstalled on) can only be
+    /// drawn as an ID, and with pairing required never connects again. It is
+    /// unplaced, as dropping it in the canvas's strip would.
+    private func dropUnknownPlacements() {
+        for record in placements.values
+            where record.offset != nil && trustedPeers[record.peerID] == nil && knownPeers[record.peerID] == nil
+        {
+            core.place(record.peerID, at: nil)
+        }
+    }
+
     private func migrateLegacyPlacements() {
         let legacyKey = "linkcursor.peer-placements"
         guard let legacy = UserDefaults.standard.dictionary(forKey: legacyKey) as? [String: String]

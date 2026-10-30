@@ -8,9 +8,12 @@ struct ArrangementView: View {
     let deviceName: String
     let local: [Display]
     let devices: [ArrangedDevice]
+    /// The peer the mouse is on now, if any.
+    let pointerOn: String?
     let place: @MainActor (String, Offset?) -> Void
 
     @State private var dragging: Dragging?
+    @Environment(\.colorScheme) private var scheme
 
     private struct Dragging: Equatable {
         let id: String
@@ -20,23 +23,24 @@ struct ArrangementView: View {
     }
 
     private static let space = "arrangement"
-    private static let trayHeight: CGFloat = 48
-    private static let gap: CGFloat = 8
+    private static let trayHeight: CGFloat = 40
 
     var body: some View {
         GeometryReader { geometry in
-            let canvas = CGRect(
-                x: 0,
-                y: 0,
-                width: geometry.size.width,
-                height: geometry.size.height - Self.trayHeight - Self.gap
-            )
-            let scale = CanvasScale(local: local, devices: devices, in: canvas.insetBy(dx: 12, dy: 12))
+            // Above: where devices are placed. Below, a strip of its own:
+            // devices not placed yet, and where a placed one is dropped to
+            // unplace it.
+            let canvas = CGRect(x: 0, y: 0, width: geometry.size.width,
+                                height: geometry.size.height - Self.trayHeight)
+            let strip = CGRect(x: 0, y: canvas.maxY, width: geometry.size.width, height: Self.trayHeight)
+            let scale = CanvasScale(local: local, devices: devices, in: canvas.insetBy(dx: 16, dy: 14))
 
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.secondary.opacity(0.08))
-                    .frame(width: canvas.width, height: canvas.height)
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(scheme == .dark ? Color.black.opacity(0.25) : Color.secondary.opacity(0.1))
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+
+                tray(scale: scale, canvas: canvas, strip: strip)
 
                 ForEach(Array(local.enumerated()), id: \.offset) { _, display in
                     localTile(display, scale: scale)
@@ -46,14 +50,11 @@ struct ArrangementView: View {
                     placedTile(device, scale: scale, canvas: canvas)
                 }
 
-                tray(width: geometry.size.width, scale: scale, canvas: canvas)
-                    .offset(y: canvas.maxY + Self.gap)
-
                 if let dragging, let device = devices.first(where: { $0.id == dragging.id }),
                    device.offset == nil
                 {
                     // An unplaced device is drawn to scale under the pointer.
-                    DeviceTile(device: device, scale: scale.scale)
+                    DeviceTile(device: device, scale: scale.scale, pointerHere: false)
                         .opacity(canvas.contains(dragging.location) ? 0.9 : 0.5)
                         .position(dragging.location)
                         .allowsHitTesting(false)
@@ -61,24 +62,22 @@ struct ArrangementView: View {
             }
             .coordinateSpace(name: Self.space)
         }
-        .frame(height: 220)
+        .frame(height: 260)
     }
 
+    /// This Mac's displays, plain like a desktop; the main one carries the
+    /// Mac's name.
     private func localTile(_ display: Display, scale: CanvasScale) -> some View {
         let rect = scale.view(display.rect)
         let isMain = display.x == 0 && display.y == 0
         return RoundedRectangle(cornerRadius: 4)
-            .fill(Color.accentColor.opacity(0.8))
+            .fill(scheme == .dark ? Color(white: 0.24) : .white)
             .overlay {
-                RoundedRectangle(cornerRadius: 4).strokeBorder(.white.opacity(0.6), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 4).strokeBorder(Color.secondary.opacity(0.35), lineWidth: 1)
             }
             .overlay {
                 if isMain {
-                    Text(deviceName)
-                        .font(.caption2.bold())
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .padding(4)
+                    TileLabel(title: deviceName, detail: Text("本机"))
                 }
             }
             .frame(width: rect.width, height: rect.height)
@@ -89,7 +88,7 @@ struct ArrangementView: View {
         let offset = device.offset ?? Offset(x: 0, y: 0)
         let rect = scale.view(device.bounds.offsetBy(dx: offset.x, dy: offset.y))
         let shift = dragging?.id == device.id ? dragging?.translation ?? .zero : .zero
-        return DeviceTile(device: device, scale: scale.scale)
+        return DeviceTile(device: device, scale: scale.scale, pointerHere: device.id == pointerOn)
             .position(x: rect.midX + shift.width, y: rect.midY + shift.height)
             .gesture(
                 DragGesture(coordinateSpace: .named(Self.space))
@@ -114,12 +113,21 @@ struct ArrangementView: View {
             )
     }
 
-    private func tray(width: CGFloat, scale: CanvasScale, canvas: CGRect) -> some View {
+    /// The strip under the canvas: devices not placed yet, dragged from
+    /// here beside a screen; a placed device dropped here is unplaced.
+    private func tray(scale: CanvasScale, canvas: CGRect, strip: CGRect) -> some View {
         let unplaced = devices.filter { $0.offset == nil }
-        return VStack(alignment: .leading, spacing: 6) {
-            Text(unplaced.isEmpty ? "所有设备都已放置" : "未放置的设备 · 拖到本机屏幕旁边")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        let unplacing = dragging.map { drag in
+            strip.contains(drag.location) && devices.contains { $0.id == drag.id && $0.offset != nil }
+        } ?? false
+        return ZStack(alignment: .leading) {
+            UnevenRoundedRectangle(bottomLeadingRadius: 10, bottomTrailingRadius: 10)
+                .fill(unplacing ? Color.accentColor.opacity(0.2)
+                      : Color.black.opacity(scheme == .dark ? 0.2 : 0.04))
+                .overlay(alignment: .top) {
+                    Rectangle().fill(Color.secondary.opacity(0.25)).frame(height: 1)
+                }
+
             HStack(spacing: 8) {
                 ForEach(unplaced) { device in
                     DeviceChip(device: device)
@@ -146,9 +154,16 @@ struct ArrangementView: View {
                                 }
                         )
                 }
+                if unplaced.isEmpty || unplacing {
+                    Text(unplacing ? "松开以取消放置" : "拖到这里可取消放置")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .padding(.horizontal, 10)
         }
-        .frame(width: width, height: Self.trayHeight, alignment: .topLeading)
+        .frame(width: strip.width, height: strip.height)
+        .offset(y: strip.minY)
     }
 }
 
@@ -200,17 +215,20 @@ private struct CanvasScale {
     }
 }
 
-/// A peer's displays at canvas scale, outlined by its state.
+/// A peer's displays at canvas scale: filled where the mouse is, outlined
+/// when connected, dashed when offline.
 private struct DeviceTile: View {
     let device: ArrangedDevice
     let scale: CGFloat
+    let pointerHere: Bool
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         let bounds = device.bounds
         ZStack(alignment: .topLeading) {
             ForEach(Array(device.displays.enumerated()), id: \.offset) { _, display in
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(Color(nsColor: .controlBackgroundColor))
+                    .fill(pointerHere ? Color.accentColor : scheme == .dark ? Color(white: 0.17) : .white)
                     .overlay {
                         RoundedRectangle(cornerRadius: 4)
                             .strokeBorder(device.state.color, style: device.state.stroke)
@@ -221,34 +239,62 @@ private struct DeviceTile: View {
                         y: (display.y - bounds.minY) * scale
                     )
             }
-            VStack(spacing: 2) {
-                Image(systemName: device.symbol)
-                Text(device.name)
-                    .lineLimit(1)
-            }
-            .font(.caption2)
-            .foregroundStyle(device.state == .offline ? .secondary : .primary)
-            .padding(2)
-            .frame(width: bounds.width * scale, height: bounds.height * scale)
+            TileLabel(title: device.name, detail: detail, symbol: device.symbol)
+                .foregroundStyle(pointerHere ? AnyShapeStyle(.white)
+                                 : device.state == .offline ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+                .frame(width: bounds.width * scale, height: bounds.height * scale)
         }
         .frame(width: bounds.width * scale, height: bounds.height * scale, alignment: .topLeading)
         .contentShape(.rect)
     }
+
+    private var detail: Text {
+        if pointerHere { return Text(Image(systemName: "cursorarrow")) + Text(" ") + Text("鼠标在这里") }
+        switch device.state {
+        case .connected: return Text("已连接")
+        case .online: return Text("未连接")
+        case .offline: return Text("离线")
+        }
+    }
 }
 
+/// A tile's name and state, shrunk to fit small tiles.
+private struct TileLabel: View {
+    let title: String
+    let detail: Text
+    /// Shown instead when the name does not fit (a phone standing upright).
+    var symbol = "desktopcomputer"
+
+    var body: some View {
+        ViewThatFits {
+            VStack(spacing: 1) {
+                Text(title).font(.subheadline.weight(.semibold))
+                detail.font(.caption).opacity(0.75)
+            }
+            .fixedSize()
+            Image(systemName: symbol).font(.subheadline)
+        }
+        .padding(4)
+        .help(title)
+    }
+}
+
+/// A device waiting in the strip: its icon and name.
 private struct DeviceChip: View {
     let device: ArrangedDevice
 
     var body: some View {
         Label(device.name, systemImage: device.symbol)
-            .font(.caption)
+            .font(.subheadline.weight(.medium))
+            .lineLimit(1)
             .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(Color(nsColor: .controlBackgroundColor), in: .capsule)
+            .padding(.vertical, 4)
+            .background(Color(nsColor: .controlBackgroundColor), in: .rect(cornerRadius: 6))
             .overlay {
-                Capsule().strokeBorder(device.state.color, style: device.state.stroke)
+                RoundedRectangle(cornerRadius: 6).strokeBorder(Color.secondary.opacity(0.4))
             }
-            .contentShape(.capsule)
+            .contentShape(.rect)
+            .help("拖到屏幕旁边")
     }
 }
 
@@ -267,7 +313,7 @@ private extension ArrangedDevice.State {
     var color: Color {
         switch self {
         case .connected: .accentColor
-        case .online: .primary.opacity(0.6)
+        case .online: .secondary.opacity(0.6)
         case .offline: .secondary
         }
     }

@@ -36,7 +36,7 @@ private struct TransferCard: View {
                     .truncationMode(.middle)
                 ProgressView(value: transfer.fraction)
                 Text(detail)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
             }

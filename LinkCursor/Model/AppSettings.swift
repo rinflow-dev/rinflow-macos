@@ -32,6 +32,8 @@ struct AppSettings: Codable, Equatable, Sendable {
     /// How this Mac's mouse feels on each peer it drives, by device ID.
     var peerInput: [String: PeerInput] = [:]
     var language: AppLanguage = .system
+    /// Light, dark, or as the system is (`theme` on Windows too).
+    var theme: AppTheme = .system
 
     init() {}
 
@@ -56,6 +58,9 @@ struct AppSettings: Codable, Equatable, Sendable {
         manualAddresses = try values.decodeIfPresent([String].self, forKey: .manualAddresses) ?? []
         peerInput = try values.decodeIfPresent([String: PeerInput].self, forKey: .peerInput) ?? [:]
         language = try values.decodeIfPresent(AppLanguage.self, forKey: .language) ?? defaults.language
+        // A value this version does not know (a newer one wrote it) falls
+        // back to the system's, instead of resetting every setting.
+        theme = (try? values.decodeIfPresent(AppTheme.self, forKey: .theme)) ?? defaults.theme
     }
 
     func input(for peerID: String) -> PeerInput {
@@ -130,6 +135,17 @@ struct PeerInput: Codable, Equatable, Sendable {
 }
 
 /// The language of LinkCursor's own text; applies after a restart.
+/// The app's appearance. Applied to the whole app through
+/// `NSApplication.appearance` (all windows, menus, sheets and alerts);
+/// `system` leaves it nil so the app follows System Settings live.
+enum AppTheme: String, Codable, CaseIterable, Identifiable, Sendable {
+    case system
+    case light
+    case dark
+
+    var id: String { rawValue }
+}
+
 enum AppLanguage: String, Codable, CaseIterable, Identifiable, Sendable {
     case system
     case chinese = "zh-CN"

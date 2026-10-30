@@ -1,12 +1,13 @@
 import SwiftUI
 
+/// One device: what it is, where it is, connect or disconnect. Its pointer
+/// settings and unpairing are in the More menu (and the context menu).
+/// Where it sits is set by dragging it on the arrangement canvas.
 struct PeerRow: View {
     let peer: Peer
     let isConnected: Bool
     let isConnecting: Bool
     let isOnline: Bool
-    let placement: PeerPlacement
-    let setPlacement: (PeerPlacement) -> Void
     let connect: () -> Void
     let disconnect: () -> Void
     let isPaired: Bool
@@ -19,29 +20,16 @@ struct PeerRow: View {
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: peer.platform == "android" ? "iphone" : "desktopcomputer")
-                .font(.body)
-                .foregroundStyle(isConnected ? Color.accentColor : .secondary)
-                .frame(width: 26, height: 26)
-                .background(.quaternary, in: .rect(cornerRadius: 6))
+                .font(.title3)
+                .foregroundStyle(.secondary)
+                .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 1) {
-                HStack(spacing: 4) {
-                    Text(peer.name)
-                        .font(.callout.weight(.medium))
-                        .lineLimit(1)
-                    if isPaired {
-                        Image(systemName: "lock.fill")
-                            .font(.caption2)
-                            .foregroundStyle(.green)
-                            .help("已配对")
-                            .accessibilityLabel("已配对")
-                    }
-                }
-                Text(!isOnline && !isConnected
-                     ? String(localized: "离线 · 设备回来后自动重连")
-                     : peer.address == "incoming"
-                     ? String(localized: "由对方发起的连接") : "\(peer.address):\(peer.port)")
-                    .font(.caption)
+                Text(peer.name)
+                    .font(.headline)
+                    .lineLimit(1)
+                Text(detail)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .textSelection(.enabled)
@@ -49,56 +37,50 @@ struct PeerRow: View {
 
             Spacer(minLength: 8)
 
-            Button {
-                showsInput = true
-            } label: {
-                Image(systemName: input.isDefault ? "computermouse" : "computermouse.fill")
-            }
-            .buttonStyle(.borderless)
-            .help("指针与滚动")
-            .accessibilityLabel("指针与滚动")
-            .popover(isPresented: $showsInput, arrowEdge: .bottom) {
-                PeerInputView(peerName: peer.name, input: input, setInput: setInput)
-            }
-
-            HStack(spacing: 6) {
-                Picker(
-                    "位置",
-                    selection: Binding(
-                        get: { placement },
-                        set: { newValue in setPlacement(newValue) }
-                    )
-                ) {
-                    ForEach(placement == .chained ? PeerPlacement.choices + [.chained] : PeerPlacement.choices) {
-                        Label($0.label, systemImage: $0.systemImage)
-                            .tag($0)
-                    }
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                .frame(width: 130)
-
+            Group {
                 if isConnecting {
-                    ProgressView()
-                        .controlSize(.small)
-                        .frame(width: 56)
+                    ProgressView().controlSize(.small)
                 } else if isConnected {
-                    Button("断开", action: disconnect)
-                        .buttonStyle(.bordered)
+                    Button("断开连接", action: disconnect)
                 } else {
-                    Button("连接", systemImage: "link", action: connect)
-                        .buttonStyle(.borderedProminent)
+                    Button("连接", action: connect)
                         .disabled(!isOnline)
                 }
             }
-            .controlSize(.small)
-        }
-        .padding(.vertical, 5)
-        .contextMenu {
-            if isPaired {
-                Button("取消配对", role: .destructive, action: unpair)
+
+            Menu {
+                menuItems
+            } label: {
+                Image(systemName: "ellipsis")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("更多")
+            .accessibilityLabel("更多")
+            .popover(isPresented: $showsInput, arrowEdge: .bottom) {
+                PeerInputView(peerName: peer.name, input: input, setInput: setInput)
             }
         }
+        .card()
+        .contextMenu { menuItems }
+    }
+
+    @ViewBuilder private var menuItems: some View {
+        Button("指针与滚动…") { showsInput = true }
+        if isPaired {
+            Divider()
+            Button("取消配对", role: .destructive, action: unpair)
+        }
+    }
+
+    private var detail: String {
+        let address = peer.address == "incoming"
+            ? String(localized: "由对方发起的连接") : peer.address
+        if isConnected { return address + " · " + String(localized: "已连接") }
+        if isConnecting { return address + " · " + String(localized: "正在连接") }
+        if isOnline { return address + " · " + String(localized: "未连接") }
+        return String(localized: "离线 · 设备回来后自动重连")
     }
 }
 

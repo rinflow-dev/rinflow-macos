@@ -2,8 +2,10 @@ import SwiftUI
 
 /// Adding a device by its address, for networks that do not carry the
 /// discovery multicast (guest and company Wi-Fi, other subnets, VPNs). Only
-/// one of the two devices needs the other's address.
-struct ManualAddressesView: View {
+/// one of the two devices needs the other's address. The addresses added
+/// earlier are listed with how the search for each is going.
+struct AddDeviceSheet: View {
+    @Environment(\.dismiss) private var dismiss
     let addresses: [String]
     let status: (String) -> ManualAddressStatus
     /// Returns why the address cannot be added, or nil when it was.
@@ -12,47 +14,53 @@ struct ManualAddressesView: View {
 
     @State private var text = ""
     @State private var problem: String?
-    /// A fallback: folded away until it holds an address.
-    @State private var expanded: Bool?
 
     var body: some View {
-        DisclosureGroup(isExpanded: Binding(
-            get: { expanded ?? !addresses.isEmpty },
-            set: { expanded = $0 }
-        )) {
-            VStack(alignment: .leading, spacing: 6) {
-            Text("设备没有自动出现时（访客或公司网络、不同网段、VPN），输入它的 IP 地址或设备名称。只需在其中一台设备上添加。")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("添加设备").font(.headline)
+                Text("设备没出现在列表里？输入它的 IP 地址或设备名称。只需在其中一台设备上添加。")
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
-            HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("IP 地址或设备名称").font(.headline)
                 TextField("例如 192.168.1.20 或 mac-mini.local", text: $text)
                     .textFieldStyle(.roundedBorder)
                     .onSubmit(submit)
-                Button("添加", action: submit)
-                    .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
-            if let problem {
-                Text(problem)
-                    .font(.caption)
-                    .foregroundStyle(.red)
+                if let problem {
+                    Text(problem).font(.subheadline).foregroundStyle(.red)
+                }
             }
 
-            ForEach(addresses, id: \.self) { address in
-                AddressRow(status: status(address)) { remove(address) }
+            if !addresses.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(addresses, id: \.self) { address in
+                        AddressRow(status: status(address)) { remove(address) }
+                    }
+                }
             }
+
+            HStack {
+                Spacer()
+                Button("取消") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+                Button("添加", action: submit)
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
             }
-            .controlSize(.small)
-            .padding(.top, 4)
-        } label: {
-            Text("通过地址添加设备").font(.callout)
+            .padding(.top, 8)
         }
+        .padding(20)
+        .frame(width: 400)
     }
 
     private func submit() {
         problem = add(text)
         if problem == nil {
-            text = ""
+            dismiss()
         }
     }
 }
