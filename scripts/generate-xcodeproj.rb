@@ -34,6 +34,7 @@ bridging_group.new_file('LinkCursor-Bridging-Header.h')
 resources_group = app_group.groups.find { |group| group.display_name == 'Resources' } || app_group.new_group('Resources', 'Resources')
 resources_group.new_file('Info.plist')
 target.resources_build_phase.add_file_reference(resources_group.new_file('AppIcon.icns'))
+target.resources_build_phase.add_file_reference(resources_group.new_file('THIRD_PARTY_NOTICES.txt'))
 
 # Localizations: the keys are the Chinese text; en.lproj translates them, and
 # zh-Hans.lproj makes Chinese one of the app's languages. English is the
