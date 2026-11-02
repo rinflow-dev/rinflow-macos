@@ -5,7 +5,7 @@
 # make stop    退出正在运行的 Rinflow
 # make clean   删除构建产物
 # make candidate  Developer ID 签名的通用版（未公证，其他 Mac 需手动放行）
-# make release    签名 + 公证，可以公开分发（需要 notarytool 配置，见 README）
+# make release    签名 + 公证，可以公开分发（需要 notarytool 配置，见 docs/release-checklist.md）
 #
 # CONFIG=Release make run 构建 Release；TEAM=XXXXXXXXXX 指定签名团队。
 

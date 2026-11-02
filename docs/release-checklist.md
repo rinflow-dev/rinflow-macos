@@ -1,6 +1,33 @@
 # Release checklist
 
-What has to be checked by hand before a macOS release. Unit tests and a passing build do not cover any of this.
+What a macOS release needs. Unit tests and a passing build do not cover the manual checks.
+
+## Building a release
+
+| Purpose | Certificate | Command |
+| --- | --- | --- |
+| Everyday development | Apple Development | `make run` |
+| Testers who can allow the app by hand | Developer ID Application | `make candidate` |
+| Public distribution | Developer ID Application and notarization | `make release` |
+
+The project's team ID is set in the Xcode project; pass `TEAM=XXXXXXXXXX` to use your own.
+
+Before the first release, once:
+
+```sh
+rustup target add aarch64-apple-darwin x86_64-apple-darwin
+# Create an app-specific password at https://account.apple.com. The command
+# asks for it and stores it in the keychain.
+xcrun notarytool store-credentials rinflow-notary --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM_ID
+```
+
+The release script packages committed code only (both `rinflow-macos` and `rinflow-core` must be clean) and always builds from clean. The build number is the commit count. It checks for the Developer ID signature, hardened runtime, secure timestamp and absence of debug entitlements, and prints the reason if notarization is rejected. Results land in `releases/`; after notarization only the distributable zip and its SHA-256 remain.
+
+Development and release builds have different signatures, and macOS records the Accessibility permission separately for each. If sharing stops working after switching, reset and grant it again:
+
+```sh
+tccutil reset Accessibility com.rinflow.mac
+```
 
 ## Signing
 
