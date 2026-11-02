@@ -1,6 +1,6 @@
 # Contributing to LinkCursor for macOS
 
-Thanks for your interest. You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [linkcursor-core](https://github.com/akarineren/linkcursor-core) next to this repository, because Xcode builds it from source.
+Thanks for your interest. You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [rinflow-core](https://github.com/rinflow-dev/rinflow-core) next to this repository, into a folder named `linkcursor-core`, because Xcode builds it from source.
 
 ## Building and testing
 
@@ -16,7 +16,7 @@ The Xcode project is generated. After adding or removing files, or to change a b
 
 UI text is in `LinkCursor/Resources`, in English and Chinese; add both.
 
-If `linkcursor-core/Cargo.lock` changes, regenerate `LinkCursor/Resources/THIRD_PARTY_NOTICES.txt` as shown in [its script](https://github.com/akarineren/linkcursor-core/blob/main/scripts/third-party-notices.ps1).
+If `linkcursor-core/Cargo.lock` changes, regenerate `LinkCursor/Resources/THIRD_PARTY_NOTICES.txt` as shown in [its script](https://github.com/rinflow-dev/rinflow-core/blob/main/scripts/third-party-notices.ps1).
 
 ## Commits and pull requests
 
@@ -26,7 +26,7 @@ If `linkcursor-core/Cargo.lock` changes, regenerate `LinkCursor/Resources/THIRD_
 
 ## Protocol and ABI changes
 
-The clients link `linkcursor-core` from source. A change to the wire protocol or the C ABI affects every client, so bump the versions as described in [the core README](https://github.com/akarineren/linkcursor-core#changing-the-protocol-or-abi) and update the clients in step.
+The clients link `linkcursor-core` from source. A change to the wire protocol or the C ABI affects every client, so bump the versions as described in [the core README](https://github.com/rinflow-dev/rinflow-core#changing-the-protocol-or-abi) and update the clients in step.
 
 ## License
 

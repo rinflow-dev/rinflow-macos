@@ -1,8 +1,8 @@
 LinkCursor for macOS
 Copyright (c) LinkCursor contributors
 Licensed under the Mozilla Public License 2.0: https://mozilla.org/MPL/2.0/
-Source code: https://github.com/akarineren/linkcursor-macos
-             https://github.com/akarineren/linkcursor-core
+Source code: https://github.com/rinflow-dev/rinflow-macos
+             https://github.com/rinflow-dev/rinflow-core
 
 LinkCursor includes the third-party software listed below.
 

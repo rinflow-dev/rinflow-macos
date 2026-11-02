@@ -1,17 +1,22 @@
 # LinkCursor for macOS
 
-[![CI](https://github.com/akarineren/linkcursor-macos/actions/workflows/ci.yml/badge.svg)](https://github.com/akarineren/linkcursor-macos/actions/workflows/ci.yml)
+[![CI](https://github.com/rinflow-dev/rinflow-macos/actions/workflows/ci.yml/badge.svg)](https://github.com/rinflow-dev/rinflow-macos/actions/workflows/ci.yml)
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 
 English | [简体中文](README.zh-CN.md)
 
-Share one keyboard and mouse between nearby computers: push the pointer past a screen edge and your input goes to the other device. This is the SwiftUI/AppKit client, for macOS 14 or newer. It works with the [Windows client](https://github.com/akarineren/linkcursor-windows), and both build on [linkcursor-core](https://github.com/akarineren/linkcursor-core).
+Share one keyboard and mouse between nearby computers: push the pointer past a screen edge and your input goes to the other device. This is the SwiftUI/AppKit client, for macOS 14 or newer. It works with the [Windows client](https://github.com/rinflow-dev/rinflow-windows), and both build on [linkcursor-core](https://github.com/rinflow-dev/rinflow-core).
 
 > **Status: early MVP (0.1.0).** See the [changelog](CHANGELOG.md) for known issues.
 
 ## Development
 
-You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone `linkcursor-core` next to this repository, because Xcode builds it from `../linkcursor-core`.
+You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [rinflow-core](https://github.com/rinflow-dev/rinflow-core) next to this repository, into a folder named `linkcursor-core`, because Xcode builds it from `../linkcursor-core`:
+
+```sh
+git clone https://github.com/rinflow-dev/rinflow-core.git linkcursor-core
+git clone https://github.com/rinflow-dev/rinflow-macos.git linkcursor-macos
+```
 
 ```sh
 make build

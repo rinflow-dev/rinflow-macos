@@ -21,6 +21,6 @@ jobs:
       # Xcode builds the core from source, from a sibling folder.
       - uses: actions/checkout@v4
         with:
-          repository: akarineren/linkcursor-core
+          repository: rinflow-dev/rinflow-core
           path: linkcursor-core
       - run: make test

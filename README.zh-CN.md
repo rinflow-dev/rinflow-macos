@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-SwiftUI/AppKit 客户端，macOS 14 及以上；Rust Core 与本工程并列放在 `../linkcursor-core`。
+SwiftUI/AppKit 客户端，macOS 14 及以上；Rust Core（[rinflow-core](https://github.com/rinflow-dev/rinflow-core)）需克隆到本工程旁边，文件夹名为 `linkcursor-core`（即 `../linkcursor-core`）。
 
 ## 本地开发
 
