@@ -33,7 +33,13 @@ bridging_group = app_group.groups.find { |group| group.display_name == 'Bridging
 bridging_group.new_file('Rinflow-Bridging-Header.h')
 resources_group = app_group.groups.find { |group| group.display_name == 'Resources' } || app_group.new_group('Resources', 'Resources')
 resources_group.new_file('Info.plist')
-target.resources_build_phase.add_file_reference(resources_group.new_file('AppIcon.icns'))
+# The app icon is an Icon Composer document (light / dark / tinted from one glyph);
+# Xcode also derives the AppIcon.icns that macOS before 26 reads. MenuBarIcon is
+# a template image, so the menu bar tints it for light, dark and wallpaper.
+app_icon = resources_group.new_file('AppIcon.icon')
+app_icon.last_known_file_type = 'folder.iconcomposer.icon'
+target.resources_build_phase.add_file_reference(app_icon)
+target.resources_build_phase.add_file_reference(resources_group.new_file('Assets.xcassets'))
 target.resources_build_phase.add_file_reference(resources_group.new_file('THIRD_PARTY_NOTICES.txt'))
 
 # Localizations: the keys are the Chinese text; en.lproj translates them, and

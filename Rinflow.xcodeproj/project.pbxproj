@@ -38,7 +38,8 @@
 		A55D61656C59DAEF4E897A69 /* CallbackRelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */; };
 		B034EA978CDF65FFA3B8A4CD /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1928FAEC6395FB471D58A2B /* SettingsTests.swift */; };
 		B10077A576A891F0D1A651A0 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18208A3B73430CF37166FB8D /* ClickTracker.swift */; };
-		B393A0D2DF7E7EE076002838 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 6C0979C172D2E2ED442BA7B1 /* AppIcon.icns */; };
+		A1C0DE0000000000000000B1 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000000F1 /* AppIcon.icon */; };
+		A1C0DE0000000000000000B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000000F2 /* Assets.xcassets */; };
 		A1F3C2D47B8E4F60912C3D5E /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */; };
 		B7AAD61A4B98C0A21AF8CF7B /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC0BB257C309D663E812C2A /* Layout.swift */; };
 		BCB0D990114B107462251289 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E965AF35CD5089962AD18469 /* CallbackRelay.swift */; };
@@ -74,7 +75,8 @@
 		48C8D336CAE0F8662C7C04A1 /* zh-Hans */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		4A5519AFE1156C2ADDCB5536 /* TransferNotifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransferNotifications.swift; sourceTree = "<group>"; };
 		54C419B569EF18D91B03FD3F /* zh-Hans */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		6C0979C172D2E2ED442BA7B1 /* AppIcon.icns */ = {isa = PBXFileReference; includeInIndex = 1; path = AppIcon.icns; sourceTree = "<group>"; };
+		A1C0DE0000000000000000F1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		A1C0DE0000000000000000F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
 		78B85F1FFAEFBC7DA4B95E78 /* RinflowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RinflowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayer.swift; sourceTree = "<group>"; };
@@ -174,7 +176,8 @@
 				A7CB9E8692A1A9FBB97BB20E /* Info.plist */,
 				B53A234B1936934BA28B8851 /* Localizable.strings */,
 				CD65928BBD03A08F38867664 /* InfoPlist.strings */,
-				6C0979C172D2E2ED442BA7B1 /* AppIcon.icns */,
+				A1C0DE0000000000000000F1 /* AppIcon.icon */,
+				A1C0DE0000000000000000F2 /* Assets.xcassets */,
 				C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */,
 			);
 			name = Resources;
@@ -387,7 +390,8 @@
 			files = (
 				71CD2D7F0083C0509C48C08E /* Localizable.strings in Resources */,
 				E271BA5E65C67FA83FC33767 /* InfoPlist.strings in Resources */,
-				B393A0D2DF7E7EE076002838 /* AppIcon.icns in Resources */,
+				A1C0DE0000000000000000B1 /* AppIcon.icon in Resources */,
+				A1C0DE0000000000000000B2 /* Assets.xcassets in Resources */,
 				A1F3C2D47B8E4F60912C3D5E /* THIRD_PARTY_NOTICES.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

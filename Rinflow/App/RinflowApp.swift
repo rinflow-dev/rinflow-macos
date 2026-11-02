@@ -14,7 +14,7 @@ struct RinflowApp: App {
         }
         .windowResizability(.contentSize)
 
-        MenuBarExtra("Rinflow", systemImage: "cursorarrow.rays") {
+        MenuBarExtra("Rinflow", image: "MenuBarIcon") {
             MenuBarContent(model: model)
         }
 
