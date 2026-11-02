@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: linkcursor-macos
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: linkcursor-macos
+      # Xcode builds the core from source, from a sibling folder.
+      - uses: actions/checkout@v4
+        with:
+          repository: akarineren/linkcursor-core
+          path: linkcursor-core
+      - run: make test
