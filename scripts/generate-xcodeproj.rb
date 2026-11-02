@@ -84,6 +84,7 @@ target.build_configurations.each do |configuration|
   settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
   settings['ENABLE_HARDENED_RUNTIME'] = 'YES'
   settings['CODE_SIGN_STYLE'] = 'Automatic'
+  settings['DEVELOPMENT_TEAM'] = '998ZTJV2HQ'
   settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
   settings['LD_RUNPATH_SEARCH_PATHS'] = ['$(inherited)', '@executable_path/../Frameworks']
   # Keep local Debug/Release builds self-contained on the developer's Mac.
@@ -113,6 +114,7 @@ test_target.build_configurations.each do |configuration|
   settings['SWIFT_STRICT_CONCURRENCY'] = 'complete'
   settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
   settings['CODE_SIGN_STYLE'] = 'Automatic'
+  settings['DEVELOPMENT_TEAM'] = '998ZTJV2HQ'
   settings['ONLY_ACTIVE_ARCH'] = 'YES'
 end
 

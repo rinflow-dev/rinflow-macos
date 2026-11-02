@@ -4,6 +4,8 @@
 # make log     实时查看 app 的日志
 # make stop    退出正在运行的 LinkCursor
 # make clean   删除构建产物
+# make candidate  Developer ID 签名的通用版（未公证，其他 Mac 需手动放行）
+# make release    签名 + 公证，可以公开分发（需要 notarytool 配置，见 README）
 #
 # CONFIG=Release make run 构建 Release；TEAM=XXXXXXXXXX 指定签名团队。
 
@@ -23,13 +25,17 @@ TEAM := $(shell security find-certificate -c "Apple Development" -p 2>/dev/null 
 endif
 ifneq ($(TEAM),)
 SIGNING := CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Development" DEVELOPMENT_TEAM=$(TEAM)
+else
+SIGNING := CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM=
 endif
 
 XCODEBUILD := xcodebuild -project $(PROJECT) -scheme $(SCHEME) \
 	-configuration $(CONFIG) -derivedDataPath $(DERIVED) $(SIGNING) \
 	-destination "platform=macOS,arch=$(shell uname -m)"
 
-.PHONY: run build test log stop clean
+NOTARY_PROFILE ?= linkcursor-notary
+
+.PHONY: run build test log stop clean candidate release
 
 run: build
 	@$(MAKE) --no-print-directory stop
@@ -57,3 +63,9 @@ stop:
 
 clean:
 	rm -rf $(DERIVED)
+
+candidate:
+	scripts/package-release.sh
+
+release:
+	NOTARY_PROFILE=$(NOTARY_PROFILE) scripts/package-release.sh

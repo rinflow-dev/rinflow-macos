@@ -28,26 +28,33 @@ make test
 
 设置中提供登录启动、快捷键组合、屏幕角落保护、全屏时暂停边缘切换、每设备指针/滚动速度、保持唤醒、一起锁定及中英文界面。语言切换在重新启动后生效。
 
-## 发布候选包
+## 签名与发布
 
-先安装两个 Rust 编译目标：
+| 用途 | 证书 | 命令 |
+| --- | --- | --- |
+| 日常开发 | Apple Development | `make run` |
+| 给能手动放行的测试者 | Developer ID Application | `make candidate` |
+| 公开分发 | Developer ID Application + 公证 | `make release` |
+
+团队 ID 写在工程里（`998ZTJV2HQ`），平时不用传。没有证书的机器上 `make run` 自动改用临时签名。
+
+首次发布前准备一次：
 
 ```sh
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
-TEAM=YOUR_TEAM_ID scripts/package-release.sh
+# 在 https://account.apple.com 生成 App 专用密码；命令会提示输入，密码存进钥匙串
+xcrun notarytool store-credentials linkcursor-notary --apple-id 你的AppleID --team-id 998ZTJV2HQ
 ```
 
-脚本构建 Apple Silicon + Intel 通用版本，启用 Hardened Runtime 和安全时间戳，不注入调试权限，验证签名与两种架构，然后输出 `releases/*-unnotarized.zip` 和 SHA-256 校验值。
+发布脚本只打包已提交的代码（`linkcursor-macos` 和 `linkcursor-core` 都要干净），每次干净构建；构建号取提交数，版本之间可以区分。脚本会检查 Developer ID、Hardened Runtime、安全时间戳和无调试权限，公证被拒时打印原因。产物在 `releases/`，公证成功后只保留可分发的 zip 和 SHA-256。
 
-公开发布前，使用已经配置好的 notarytool Keychain profile：
+开发版和发布版的签名不同，macOS 把辅助功能权限分开记录。切换后如果键鼠共享不工作，重置后重新授权：
 
 ```sh
-TEAM=YOUR_TEAM_ID NOTARY_PROFILE=YOUR_PROFILE scripts/package-release.sh
+tccutil reset Accessibility com.linkcursor.mac
 ```
 
-脚本会提交公证、staple 并验证 Gatekeeper，通过后生成不带 `unnotarized` 后缀的发布 ZIP。不要将密码或 App Store Connect 私钥写进仓库。
-
-应用图标复用 Windows 的品牌图形，源文件为 `LinkCursor/Resources/AppIcon.svg`；安装 librsvg 后可用 `scripts/generate-icon.sh` 重新生成 `.icns`。正常构建不需要图标工具。
+Developer ID 证书 2027-02-01 到期。已发布的版本带时间戳，不受影响；到期前在 Xcode › Settings › Accounts 或开发者后台续签，否则签不了新版本。
 
 ## 验收状态
 

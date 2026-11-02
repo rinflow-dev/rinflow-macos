@@ -74,13 +74,11 @@ struct PeerRow: View {
         }
     }
 
+    /// Where it is, or that it is not there. Whether it is connected is
+    /// the button's to say.
     private var detail: String {
-        let address = peer.address == "incoming"
-            ? String(localized: "由对方发起的连接") : peer.address
-        if isConnected { return address + " · " + String(localized: "已连接") }
-        if isConnecting { return address + " · " + String(localized: "正在连接") }
-        if isOnline { return address + " · " + String(localized: "未连接") }
-        return String(localized: "离线 · 设备回来后自动重连")
+        guard isConnected || isConnecting || isOnline else { return String(localized: "离线") }
+        return peer.address == "incoming" ? String(localized: "由对方发起的连接") : peer.address
     }
 }
 

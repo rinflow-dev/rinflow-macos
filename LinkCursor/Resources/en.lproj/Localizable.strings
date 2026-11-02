@@ -8,7 +8,6 @@
 "LinkCursor" = "LinkCursor";
 "Rust Core 拒绝了输入事件" = "Rust Core refused an input event";
 "Windows 控制这台 Mac 时，Ctrl 当作 ⌘ 使用（Ctrl+C 就是 ⌘C）。" = "When a PC controls this Mac, Ctrl works as ⌘ (Ctrl+C is ⌘C).";
-"·" = "·";
 "“%@”不是有效的地址：请输入 IP 地址或设备名称" = "“%@” isn’t a valid address. Enter an IP address or a device name.";
 "一起锁定" = "Lock together";
 "与 %@ 配对" = "Pair with %@";
@@ -48,7 +47,6 @@
 "已找到 %@" = "Found %@";
 "已接收 %lld 个事件" = "%lld events received";
 "已收到来自 %@ 的文件" = "Files received from %@";
-"已连接 · %@" = "Connected · %@";
 "已连接：%@" = "Connected: %@";
 "已配对" = "Paired";
 "恢复默认" = "Restore Defaults";
@@ -73,7 +71,6 @@
 "无法启动 Rust Core" = "Rust Core couldn’t start";
 "无法解析这个名称：%@" = "Couldn’t look up this name: %@";
 "最多添加 %lld 个地址" = "You can add up to %lld addresses";
-"未放置的设备 · 拖到本机屏幕旁边" = "Unplaced devices · drag one next to this Mac’s screens";
 "未连接" = "Not connected";
 "未配对的设备已断开（已开启“仅允许已配对的设备”）。" = "An unpaired device was disconnected (“Only paired devices” is on).";
 "未配置" = "Not placed";
@@ -149,7 +146,6 @@
 "键鼠共享已暂停，可在上方恢复。" = "Keyboard and mouse sharing is paused. Resume it above.";
 "无法更改登录启动：%@" = "Couldn’t change login launch: %@";
 "我的设备与附近设备" = "My Devices and Nearby Devices";
-"离线 · 设备回来后自动重连" = "Offline · Reconnects when available";
 "连接服务未能启动" = "Connection service couldn’t start";
 "请确认没有其他 LinkCursor 正在运行，然后重试。" = "Make sure another copy of LinkCursor isn’t running, then try again.";
 "重试" = "Try Again";
