@@ -5,7 +5,7 @@
 
 set -eu
 
-CORE_DIR="${SRCROOT}/../linkcursor-core"
+CORE_DIR="${SRCROOT}/../rinflow-core"
 OUTPUT_DIR="${BUILT_PRODUCTS_DIR}"
 
 # Xcode launched from Finder does not inherit the shell startup PATH. Add the
@@ -33,7 +33,7 @@ if ! command -v cargo >/dev/null 2>&1; then
 fi
 
 if [ ! -f "${CORE_DIR}/Cargo.toml" ]; then
-    echo "error: LinkCursor Core was not found at ${CORE_DIR}. Keep linkcursor-core next to linkcursor-macos."
+    echo "error: Rinflow Core was not found at ${CORE_DIR}. Keep rinflow-core next to rinflow-macos."
     exit 1
 fi
 
@@ -46,7 +46,7 @@ else
 fi
 
 mkdir -p "${OUTPUT_DIR}"
-TEMP_DIR="${DERIVED_FILE_DIR}/linkcursor-rust"
+TEMP_DIR="${DERIVED_FILE_DIR}/rinflow-rust"
 mkdir -p "${TEMP_DIR}"
 
 set --
@@ -72,14 +72,14 @@ for ARCH in ${ARCHS:-$(uname -m)}; do
         --target "${RUST_TARGET}" \
         ${CARGO_MODE}
 
-    SOURCE_LIBRARY="${CORE_DIR}/target/${RUST_TARGET}/${PROFILE}/liblinkcursor_core.a"
-    ARCH_LIBRARY="${TEMP_DIR}/liblinkcursor_core-${ARCH}.a"
+    SOURCE_LIBRARY="${CORE_DIR}/target/${RUST_TARGET}/${PROFILE}/librinflow_core.a"
+    ARCH_LIBRARY="${TEMP_DIR}/librinflow_core-${ARCH}.a"
     cp "${SOURCE_LIBRARY}" "${ARCH_LIBRARY}"
     set -- "$@" "${ARCH_LIBRARY}"
 done
 
 if [ "$#" -eq 1 ]; then
-    cp "$1" "${OUTPUT_DIR}/liblinkcursor_core.a"
+    cp "$1" "${OUTPUT_DIR}/librinflow_core.a"
 else
-    xcrun lipo -create "$@" -output "${OUTPUT_DIR}/liblinkcursor_core.a"
+    xcrun lipo -create "$@" -output "${OUTPUT_DIR}/librinflow_core.a"
 fi

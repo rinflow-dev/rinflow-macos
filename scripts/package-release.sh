@@ -6,7 +6,7 @@
 # Builds the Developer ID signed universal app from committed sources.
 #
 #   scripts/package-release.sh                                  signed only
-#   NOTARY_PROFILE=linkcursor-notary scripts/package-release.sh notarized too
+#   NOTARY_PROFILE=rinflow-notary scripts/package-release.sh notarized too
 #
 # Only a notarized zip opens normally on other Macs. Other settings:
 #   TEAM              overrides the project's DEVELOPMENT_TEAM
@@ -15,11 +15,11 @@
 #   ALLOW_DIRTY=1     builds uncommitted changes, for trying the script only
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-CORE="${ROOT}/../linkcursor-core"
+CORE="${ROOT}/../rinflow-core"
 signingIdentity=${SIGNING_IDENTITY:-Developer ID Application}
 releaseDir=${RELEASE_DIR:-"${ROOT}/releases"}
 derivedDir="${ROOT}/DerivedDataUniversal"
-app="${derivedDir}/Build/Products/Release/LinkCursor.app"
+app="${derivedDir}/Build/Products/Release/Rinflow.app"
 
 fail() {
     echo "error: $1" >&2
@@ -38,7 +38,7 @@ done
 build=$(git -C "$ROOT" rev-list --count HEAD)
 
 # shellcheck disable=SC2086 # the team setting is one word or none
-xcodebuild -quiet -project "${ROOT}/LinkCursor.xcodeproj" -scheme LinkCursor \
+xcodebuild -quiet -project "${ROOT}/Rinflow.xcodeproj" -scheme Rinflow \
     -configuration Release -derivedDataPath "$derivedDir" \
     -destination 'generic/platform=macOS' ONLY_ACTIVE_ARCH=NO 'ARCHS=arm64 x86_64' \
     CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="$signingIdentity" ${TEAM:+DEVELOPMENT_TEAM="$TEAM"} \
@@ -48,7 +48,7 @@ xcodebuild -quiet -project "${ROOT}/LinkCursor.xcodeproj" -scheme LinkCursor \
 # What notarization requires, checked here so a mistake fails in seconds.
 codesign --verify --deep --strict "$app"
 for arch in arm64 x86_64; do
-    lipo "$app/Contents/MacOS/LinkCursor" -verify_arch "$arch"
+    lipo "$app/Contents/MacOS/Rinflow" -verify_arch "$arch"
 done
 signature=$(codesign -dvv --entitlements - "$app" 2>&1)
 case "$signature" in
@@ -68,7 +68,7 @@ case "$signature" in
 esac
 
 version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")
-name="LinkCursor-${version}-${build}-macOS-universal"
+name="Rinflow-${version}-${build}-macOS-universal"
 mkdir -p "$releaseDir"
 candidate="$releaseDir/${name}-unnotarized.zip"
 rm -f "$candidate" "$candidate.sha256"

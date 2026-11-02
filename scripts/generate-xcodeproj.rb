@@ -9,16 +9,16 @@ require 'fileutils'
 require 'xcodeproj'
 
 root = File.expand_path('..', __dir__)
-project_path = File.join(root, 'LinkCursor.xcodeproj')
-source_root = File.join(root, 'LinkCursor')
+project_path = File.join(root, 'Rinflow.xcodeproj')
+source_root = File.join(root, 'Rinflow')
 
 FileUtils.rm_rf(project_path)
 project = Xcodeproj::Project.new(project_path)
 project.root_object.attributes['LastSwiftUpdateCheck'] = '2660'
 project.root_object.attributes['LastUpgradeCheck'] = '2660'
 
-target = project.new_target(:application, 'LinkCursor', :osx, '14.0')
-app_group = project.main_group.new_group('LinkCursor', 'LinkCursor')
+target = project.new_target(:application, 'Rinflow', :osx, '14.0')
+app_group = project.main_group.new_group('Rinflow', 'Rinflow')
 
 Dir.glob(File.join(source_root, '**', '*.swift')).sort.each do |path|
   relative = path.delete_prefix("#{source_root}/")
@@ -30,7 +30,7 @@ Dir.glob(File.join(source_root, '**', '*.swift')).sort.each do |path|
 end
 
 bridging_group = app_group.groups.find { |group| group.display_name == 'Bridging' } || app_group.new_group('Bridging', 'Bridging')
-bridging_group.new_file('LinkCursor-Bridging-Header.h')
+bridging_group.new_file('Rinflow-Bridging-Header.h')
 resources_group = app_group.groups.find { |group| group.display_name == 'Resources' } || app_group.new_group('Resources', 'Resources')
 resources_group.new_file('Info.plist')
 target.resources_build_phase.add_file_reference(resources_group.new_file('AppIcon.icns'))
@@ -57,7 +57,7 @@ scripts_group.new_file('generate-xcodeproj.rb')
 rust_phase = target.new_shell_script_build_phase('Build Rust Core')
 rust_phase.shell_path = '/bin/sh'
 rust_phase.shell_script = '"${SRCROOT}/scripts/build-rust.sh"'
-rust_phase.output_paths = ['$(BUILT_PRODUCTS_DIR)/liblinkcursor_core.a']
+rust_phase.output_paths = ['$(BUILT_PRODUCTS_DIR)/librinflow_core.a']
 # The Rust source tree lives outside the Xcode project and can gain new files,
 # which cannot be represented by a stable list of script-phase input paths.
 # Always invoke the phase and let Cargo's incremental build decide what changed.
@@ -67,18 +67,18 @@ target.build_phases.insert(0, rust_phase)
 
 target.build_configurations.each do |configuration|
   settings = configuration.build_settings
-  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.linkcursor.mac'
-  settings['PRODUCT_NAME'] = 'LinkCursor'
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac'
+  settings['PRODUCT_NAME'] = 'Rinflow'
   settings['MARKETING_VERSION'] = '0.1.0'
   settings['CURRENT_PROJECT_VERSION'] = '1'
-  settings['INFOPLIST_FILE'] = 'LinkCursor/Resources/Info.plist'
-  settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'LinkCursor/Bridging/LinkCursor-Bridging-Header.h'
-  settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', '$(SRCROOT)/../linkcursor-core/include']
+  settings['INFOPLIST_FILE'] = 'Rinflow/Resources/Info.plist'
+  settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'Rinflow/Bridging/Rinflow-Bridging-Header.h'
+  settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', '$(SRCROOT)/../rinflow-core/include']
   settings['LIBRARY_SEARCH_PATHS'] = ['$(inherited)', '$(BUILT_PRODUCTS_DIR)']
   settings['OTHER_LDFLAGS'] = [
     '$(inherited)',
     '-force_load',
-    '$(BUILT_PRODUCTS_DIR)/liblinkcursor_core.a',
+    '$(BUILT_PRODUCTS_DIR)/librinflow_core.a',
     '-liconv'
   ]
   settings['SWIFT_VERSION'] = '6.0'
@@ -99,9 +99,9 @@ end
 
 # Unit tests of the pure geometry, without the app (no host): it starts the
 # core and asks for permissions, which tests have no business doing.
-tests_root = File.join(root, 'LinkCursorTests')
-test_target = project.new_target(:unit_test_bundle, 'LinkCursorTests', :osx, '14.0')
-tests_group = project.main_group.new_group('LinkCursorTests', 'LinkCursorTests')
+tests_root = File.join(root, 'RinflowTests')
+test_target = project.new_target(:unit_test_bundle, 'RinflowTests', :osx, '14.0')
+tests_group = project.main_group.new_group('RinflowTests', 'RinflowTests')
 Dir.glob(File.join(tests_root, '*.swift')).sort.each do |path|
   test_target.source_build_phase.add_file_reference(tests_group.new_file(File.basename(path)))
 end
@@ -111,9 +111,9 @@ end
 end
 test_target.build_configurations.each do |configuration|
   settings = configuration.build_settings
-  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.linkcursor.mac.tests'
-  settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'LinkCursor/Bridging/LinkCursor-Bridging-Header.h'
-  settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', '$(SRCROOT)/../linkcursor-core/include']
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac.tests'
+  settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'Rinflow/Bridging/Rinflow-Bridging-Header.h'
+  settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', '$(SRCROOT)/../rinflow-core/include']
   settings['GENERATE_INFOPLIST_FILE'] = 'YES'
   settings['SWIFT_VERSION'] = '6.0'
   settings['SWIFT_STRICT_CONCURRENCY'] = 'complete'
@@ -127,7 +127,7 @@ scheme = Xcodeproj::XCScheme.new
 scheme.add_build_target(target)
 scheme.add_test_target(test_target)
 scheme.set_launch_target(target)
-scheme.save_as(project_path, 'LinkCursor', true)
+scheme.save_as(project_path, 'Rinflow', true)
 
 project.save
 puts "Generated #{project_path}"
