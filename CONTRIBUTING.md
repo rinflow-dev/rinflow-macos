@@ -1,6 +1,6 @@
 # Contributing to Rinflow for macOS
 
-Thanks for your interest. You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [rinflow-core](https://github.com/rinflow-dev/rinflow-core) next to this repository, into a folder named `rinflow-core`, because Xcode builds it from source.
+Thanks for your interest. You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [rinflow-core](https://github.com/rinflow-dev/rinflow-core) next to this repository, because Xcode builds it from source.
 
 ## Building and testing
 

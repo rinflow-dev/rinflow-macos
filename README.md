@@ -10,11 +10,11 @@ Share one keyboard and mouse between nearby computers: push the pointer past a s
 
 ## Development
 
-You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [rinflow-core](https://github.com/rinflow-dev/rinflow-core) next to this repository, into a folder named `rinflow-core`, because Xcode builds it from `../rinflow-core`:
+You need Xcode 26 or newer and [Rust](https://rustup.rs). Clone [rinflow-core](https://github.com/rinflow-dev/rinflow-core) next to this repository, because Xcode builds it from `../rinflow-core`:
 
 ```sh
-git clone https://github.com/rinflow-dev/rinflow-core.git rinflow-core
-git clone https://github.com/rinflow-dev/rinflow-macos.git rinflow-macos
+git clone https://github.com/rinflow-dev/rinflow-core.git
+git clone https://github.com/rinflow-dev/rinflow-macos.git
 ```
 
 ```sh
