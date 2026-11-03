@@ -107,7 +107,7 @@ struct ContentView: View {
             }
         }
         if let lastError = model.lastError {
-            Notice(symbol: "exclamationmark.triangle.fill", tint: .orange, title: lastError) {
+            Notice(symbol: "exclamationmark.triangle.fill", tint: .orange, verbatim: lastError) {
                 Button("关闭", action: model.dismissError).buttonStyle(.borderless)
             }
         }
@@ -281,10 +281,12 @@ private struct Notice<Actions: View>: View {
 
     init(symbol: String, tint: Color, title: LocalizedStringResource, detail: String? = nil,
          @ViewBuilder actions: () -> Actions) {
-        self.init(symbol: symbol, tint: tint, title: String(localized: title), detail: detail, actions: actions)
+        self.init(symbol: symbol, tint: tint, verbatim: String(localized: title), detail: detail, actions: actions)
     }
 
-    init(symbol: String, tint: Color, title: String, detail: String? = nil,
+    /// A title that is already text to show. A separate label, because a
+    /// literal would pick a `String` overload and never be translated.
+    init(symbol: String, tint: Color, verbatim title: String, detail: String? = nil,
          @ViewBuilder actions: () -> Actions) {
         self.symbol = symbol
         self.tint = tint

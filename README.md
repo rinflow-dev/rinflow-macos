@@ -15,6 +15,7 @@ This is the macOS client. It works with the [Windows client](https://github.com/
 - Encrypted connections, with six-digit pairing
 - Optional clipboard and file sync, off by default
 - Launch at login, shortcuts for switching devices, and locking to the current screen
+- English, Simplified Chinese and Japanese interface
 
 ## Building
 

@@ -1,0 +1,2543 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "%@ 想发送 %lld 个文件" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ wants to send a file"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ wants to send %2$lld files"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@が%2$lld個のファイルを送ろうとしています"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ 想发送 %2$lld 个文件"
+          }
+        }
+      }
+    },
+    "%@ 等 %lld 项，已保存到“下载/Rinflow”" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ and more (%2$lld items), saved to Downloads/Rinflow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ほか%2$lld項目を「ダウンロード/Rinflow」に保存しました"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ 等 %2$lld 项，已保存到“下载/Rinflow”"
+          }
+        }
+      }
+    },
+    "%@：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@：%2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@：%2$@"
+          }
+        }
+      }
+    },
+    "IP 地址或设备名称" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IP address or device name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IPアドレスまたはデバイス名"
+          }
+        }
+      }
+    },
+    "Rinflow" : {
+      "shouldTranslate" : false
+    },
+    "Rust Core 拒绝了输入事件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust Core refused an input event"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust Coreが入力イベントを拒否しました"
+          }
+        }
+      }
+    },
+    "Windows 控制这台 Mac 时，Ctrl 当作 ⌘ 使用（Ctrl+C 就是 ⌘C）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When a PC controls this Mac, Ctrl works as ⌘ (Ctrl+C is ⌘C)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WindowsからこのMacを操作するとき、Ctrlを⌘として使います（Ctrl+Cは⌘C）。"
+          }
+        }
+      }
+    },
+    "“%@”不是有效的地址：请输入 IP 地址或设备名称" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn’t a valid address. Enter an IP address or a device name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」は有効なアドレスではありません。IPアドレスまたはデバイス名を入力してください"
+          }
+        }
+      }
+    },
+    "一起锁定" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock together"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一緒にロック"
+          }
+        }
+      }
+    },
+    "与 %@ 配对" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pair with %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@とペアリング"
+          }
+        }
+      }
+    },
+    "中（300 毫秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium (300 ms)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中（300ミリ秒）"
+          }
+        }
+      }
+    },
+    "仅允许已配对的设备" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only paired devices"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリング済みのデバイスのみ許可"
+          }
+        }
+      }
+    },
+    "位于上方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Above"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上側"
+          }
+        }
+      }
+    },
+    "位于下方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Below"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下側"
+          }
+        }
+      }
+    },
+    "位于右侧" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On the right"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右側"
+          }
+        }
+      }
+    },
+    "位于左侧" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On the left"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左側"
+          }
+        }
+      }
+    },
+    "例如 192.168.1.20 或 mac-mini.local" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For example 192.168.1.20 or mac-mini.local"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例：192.168.1.20、mac-mini.local"
+          }
+        }
+      }
+    },
+    "保护屏幕角落" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protect screen corners"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の隅を保護"
+          }
+        }
+      }
+    },
+    "停止" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
+          }
+        }
+      }
+    },
+    "光标只显示在指针所在的设备上；动一下这台 Mac 的鼠标或触控板就会出现。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The cursor shows only on the device the pointer is on. Move this Mac’s mouse or trackpad to bring it back."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルはポインタがあるデバイスにだけ表示されます。このMacのマウスやトラックパッドを動かすと再び表示されます。"
+          }
+        }
+      }
+    },
+    "全屏时暂停自动切换" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause edge switching in full screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フルスクリーン中は自動切り替えを停止"
+          }
+        }
+      }
+    },
+    "共 %@，将保存到“下载/Rinflow”。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in all, saved to Downloads/Rinflow."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合計%@。「ダウンロード/Rinflow」に保存されます。"
+          }
+        }
+      }
+    },
+    "共享键盘与鼠标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share keyboard and mouse"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボードとマウスを共有"
+          }
+        }
+      }
+    },
+    "关闭" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じる"
+          }
+        }
+      }
+    },
+    "其他设备在使用时保持唤醒" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay awake while another device is in use"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのデバイスの使用中はスリープしない"
+          }
+        }
+      }
+    },
+    "其他设备的指针离开后隐藏光标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide the cursor when another device’s pointer leaves"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのデバイスのポインタが離れたらカーソルを隠す"
+          }
+        }
+      }
+    },
+    "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A switch or lock shortcut is used by another app. Change the combination or close the conflicting app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切り替えまたはロックのショートカットがほかのアプリで使われています。組み合わせを変更するか、競合しているアプリを終了してください。"
+          }
+        }
+      }
+    },
+    "切换设备时同步复制的文字、图片和文件。仅在信任对方设备时开启。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share copied text, images and files when switching devices. Enable only for devices you trust."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスを切り替えるときに、コピーしたテキスト、画像、ファイルを同期します。信頼できるデバイスの場合のみオンにしてください。"
+          }
+        }
+      }
+    },
+    "刷新" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        }
+      }
+    },
+    "反转滚动方向" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverse scrolling"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スクロール方向を反転"
+          }
+        }
+      }
+    },
+    "发送文件失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t send files: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルを送信できませんでした：%@"
+          }
+        }
+      }
+    },
+    "取消" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        }
+      }
+    },
+    "取消配对" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unpair"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリングを解除"
+          }
+        }
+      }
+    },
+    "同步剪贴板与文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync clipboard and files"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クリップボードとファイルを同期"
+          }
+        }
+      }
+    },
+    "在 %@ 上" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@での設定"
+          }
+        }
+      }
+    },
+    "在另一台设备上工作时，这台 Mac 不会因闲置而熄屏或锁定。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While you work on another device, this Mac doesn’t turn off its display or lock for being idle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのデバイスで作業している間、このMacはアイドル状態でもディスプレイをオフにしたりロックしたりしません。"
+          }
+        }
+      }
+    },
+    "在系统设置中允许登录启动" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow login launch in System Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム設定でログイン時の起動を許可"
+          }
+        }
+      }
+    },
+    "复制的文件太多，文件未共享。请先压缩后再复制。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many files were copied, so they weren’t shared. Compress them first, then copy again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピーしたファイルが多すぎるため、共有されませんでした。圧縮してからもう一度コピーしてください。"
+          }
+        }
+      }
+    },
+    "复制的文件夹层级太深，文件未共享。请先压缩后再复制。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The copied folders are nested too deeply, so the files weren’t shared. Compress them first, then copy again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピーしたフォルダの階層が深すぎるため、ファイルは共有されませんでした。圧縮してからもう一度コピーしてください。"
+          }
+        }
+      }
+    },
+    "外观" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外観"
+          }
+        }
+      }
+    },
+    "安全" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Security"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セキュリティ"
+          }
+        }
+      }
+    },
+    "对方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のデバイス"
+          }
+        }
+      }
+    },
+    "对方拒绝了连接：对方可能移除了本机，或只允许已配对的设备。点“连接”可以重新配对。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device refused the connection. It may have removed this Mac, or it only allows paired devices. Click Connect to pair again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のデバイスが接続を拒否しました。このMacが削除されたか、ペアリング済みのデバイスのみ許可されている可能性があります。「接続」をクリックすると再度ペアリングできます。"
+          }
+        }
+      }
+    },
+    "对方拒绝了配对。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device declined pairing."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のデバイスがペアリングを拒否しました。"
+          }
+        }
+      }
+    },
+    "对方没有响应（可能睡眠了或断网），回来后会自动重新连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device stopped responding (it may be asleep or offline). Rinflow reconnects when it’s back."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のデバイスが応答しません（スリープ中かオフラインの可能性があります）。復帰すると自動的に再接続します。"
+          }
+        }
+      }
+    },
+    "对方的 Rinflow 版本太旧，无法配对，请先更新。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device needs a newer Rinflow to pair. Update it first."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のRinflowが古いためペアリングできません。先にアップデートしてください。"
+          }
+        }
+      }
+    },
+    "屏幕上边缘" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "top edge of the screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の上端"
+          }
+        }
+      }
+    },
+    "屏幕下边缘" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bottom edge of the screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の下端"
+          }
+        }
+      }
+    },
+    "屏幕右边缘" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "right edge of the screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の右端"
+          }
+        }
+      }
+    },
+    "屏幕左边缘" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "left edge of the screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の左端"
+          }
+        }
+      }
+    },
+    "屏幕排列" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrangement"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の配置"
+          }
+        }
+      }
+    },
+    "已取消配对。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unpaired."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリングを解除しました。"
+          }
+        }
+      }
+    },
+    "已找到 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Found %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@が見つかりました"
+          }
+        }
+      }
+    },
+    "已收到来自 %@ 的文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files received from %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@からファイルを受信しました"
+          }
+        }
+      }
+    },
+    "已连接" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続済み"
+          }
+        }
+      }
+    },
+    "已连接：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続中：%@"
+          }
+        }
+      }
+    },
+    "恢复默认" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Defaults"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトに戻す"
+          }
+        }
+      }
+    },
+    "打开主窗口" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Main Window"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メインウインドウを開く"
+          }
+        }
+      }
+    },
+    "把设备拖到屏幕旁边即可切换" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag a device beside a screen to switch to it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスを画面の横にドラッグすると切り替えられます"
+          }
+        }
+      }
+    },
+    "拖到屏幕旁边" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag beside a screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の横にドラッグ"
+          }
+        }
+      }
+    },
+    "拖到这里可取消放置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag a device here to unplace it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここにドラッグすると配置を解除します"
+          }
+        }
+      }
+    },
+    "拖动设备，按实际位置摆放" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag devices to match where they sit"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実際の位置に合わせてデバイスをドラッグ"
+          }
+        }
+      }
+    },
+    "指针" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポインタ"
+          }
+        }
+      }
+    },
+    "指针与滚动…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointer & Scrolling…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポインタとスクロール…"
+          }
+        }
+      }
+    },
+    "指针已锁定在当前屏幕" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointer locked to the current screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポインタを現在の画面にロック中"
+          }
+        }
+      }
+    },
+    "指针速度" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointer speed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポインタの速度"
+          }
+        }
+      }
+    },
+    "按 ⌃⌥Esc 可随时回到本机。连接已加密。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press ⌃⌥Esc to come back to this Mac at any time. Connections are encrypted."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃⌥EscでいつでもこのMacに戻れます。接続は暗号化されています。"
+          }
+        }
+      }
+    },
+    "按 ⌃⌥L 锁定或解锁当前屏幕；按 ⌃⌥⎋ 始终可以释放控制。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press ⌃⌥L to lock or unlock the current screen. ⌃⌥⎋ always releases control."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃⌥Lで現在の画面をロック／ロック解除します。⌃⌥⎋でいつでも操作を解除できます。"
+          }
+        }
+      }
+    },
+    "按 ⌃⌥⎋ 随时释放输入" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press ⌃⌥⎋ to take input back at any time"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃⌥⎋でいつでも入力を戻せます"
+          }
+        }
+      }
+    },
+    "授权" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可"
+          }
+        }
+      }
+    },
+    "接在其他设备旁" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next to another device"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのデバイスの隣"
+          }
+        }
+      }
+    },
+    "接收" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receive"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受信"
+          }
+        }
+      }
+    },
+    "接收文件失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t receive files: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルを受信できませんでした：%@"
+          }
+        }
+      }
+    },
+    "文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイル"
+          }
+        }
+      }
+    },
+    "文件传输" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File Transfers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイル転送"
+          }
+        }
+      }
+    },
+    "断开连接" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続解除"
+          }
+        }
+      }
+    },
+    "断开：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続解除：%@"
+          }
+        }
+      }
+    },
+    "新设备需要两边核对六位配对码后才能连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A new device connects only after both sides confirm a six-digit code."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいデバイスは、双方で6桁のペアリングコードを確認してから接続します。"
+          }
+        }
+      }
+    },
+    "方向键" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrow Keys"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矢印キー"
+          }
+        }
+      }
+    },
+    "无延迟" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No delay"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        }
+      }
+    },
+    "无法向 Rust Core 发送连接请求" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t send the connection request to Rust Core"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust Coreに接続要求を送信できませんでした"
+          }
+        }
+      }
+    },
+    "无法启动 Rust Core" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust Core couldn’t start"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust Coreを起動できませんでした"
+          }
+        }
+      }
+    },
+    "无法更改登录启动：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t change login launch: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログイン時の起動を変更できませんでした：%@"
+          }
+        }
+      }
+    },
+    "无法解析这个名称：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t look up this name: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この名前を解決できません：%@"
+          }
+        }
+      }
+    },
+    "更多" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
+          }
+        }
+      }
+    },
+    "最多添加 %lld 个地址" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can add up to %lld addresses"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加できるアドレスは最大%lld個です"
+          }
+        }
+      }
+    },
+    "未连接" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未接続"
+          }
+        }
+      }
+    },
+    "未配对的设备已断开（已开启“仅允许已配对的设备”）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An unpaired device was disconnected (“Only paired devices” is on)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリングされていないデバイスを切断しました（「ペアリング済みのデバイスのみ許可」がオン）。"
+          }
+        }
+      }
+    },
+    "未配置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not placed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置"
+          }
+        }
+      }
+    },
+    "本机" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このMac"
+          }
+        }
+      }
+    },
+    "松开以取消放置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Release to unplace"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放すと配置を解除"
+          }
+        }
+      }
+    },
+    "正在从 %@ 接收 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receiving %2$@ from %1$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@から%2$@を受信中"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "正在从 %1$@ 接收 %2$@"
+          }
+        }
+      }
+    },
+    "正在从 %@ 接收 %@ 等 %lld 项" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receiving %2$@ and more (%3$lld items) from %1$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@から%2$@ほか%3$lld項目を受信中"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "正在从 %1$@ 接收 %2$@ 等 %3$lld 项"
+          }
+        }
+      }
+    },
+    "正在发现设备" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking for devices"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスを検索中"
+          }
+        }
+      }
+    },
+    "正在发送 %@ 到 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending %1$@ to %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@を%2$@に送信中"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "正在发送 %1$@ 到 %2$@"
+          }
+        }
+      }
+    },
+    "正在发送 %@ 等 %lld 项到 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending %1$@ and more (%2$lld items) to %3$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ほか%2$lld項目を%3$@に送信中"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "正在发送 %1$@ 等 %2$lld 项到 %3$@"
+          }
+        }
+      }
+    },
+    "正在控制 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlling %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を操作中"
+          }
+        }
+      }
+    },
+    "正在查找…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索中…"
+          }
+        }
+      }
+    },
+    "没有响应：确认对方已打开 Rinflow，且防火墙允许 UDP 42420–42421" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No response. Check that Rinflow is open there and the firewall allows UDP 42420–42421."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "応答がありません。相手側でRinflowが開いていること、ファイアウォールでUDP 42420–42421が許可されていることを確認してください"
+          }
+        }
+      }
+    },
+    "沿用 Mac 的快捷键" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Mac shortcuts"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Macのショートカットを使う"
+          }
+        }
+      }
+    },
+    "浅色" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライト"
+          }
+        }
+      }
+    },
+    "深色" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダーク"
+          }
+        }
+      }
+    },
+    "添加" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
+          }
+        }
+      }
+    },
+    "添加设备" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Device"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスを追加"
+          }
+        }
+      }
+    },
+    "游戏或演示全屏时，指针不会从本机屏幕边缘切出。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the pointer on this Mac during full-screen games and presentations."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ゲームやプレゼンテーションをフルスクリーンで表示している間は、ポインタがこのMacの画面の端から出ません。"
+          }
+        }
+      }
+    },
+    "滚动速度" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrolling speed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スクロールの速度"
+          }
+        }
+      }
+    },
+    "用于共享本机键鼠，以及接收其他设备的控制。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required to share this Mac’s keyboard and mouse and receive control from other devices."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このMacのキーボードとマウスを共有し、ほかのデバイスから操作を受けるために必要です。"
+          }
+        }
+      }
+    },
+    "用快捷键切换设备" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch devices with shortcuts"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカットでデバイスを切り替える"
+          }
+        }
+      }
+    },
+    "由对方发起的连接" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incoming connection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手からの接続"
+          }
+        }
+      }
+    },
+    "登录时启动" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open at login"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログイン時に開く"
+          }
+        }
+      }
+    },
+    "相邻设备的边缘" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "edge of the neighbouring device"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隣のデバイスの端"
+          }
+        }
+      }
+    },
+    "短（150 毫秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short (150 ms)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短（150ミリ秒）"
+          }
+        }
+      }
+    },
+    "离线" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフライン"
+          }
+        }
+      }
+    },
+    "移除这个地址" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove this address"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアドレスを削除"
+          }
+        }
+      }
+    },
+    "等待其他设备连接" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for another device to connect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのデバイスの接続を待っています"
+          }
+        }
+      }
+    },
+    "组合键" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifiers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修飾キー"
+          }
+        }
+      }
+    },
+    "组合键加方向键，把鼠标移到那一侧的设备上。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The modifiers with an arrow key move the mouse to the device on that side."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修飾キーと矢印キーで、その方向にあるデバイスへマウスを移動します。"
+          }
+        }
+      }
+    },
+    "自动切换：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edge switching: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動切り替え：%@"
+          }
+        }
+      }
+    },
+    "解锁当前屏幕（⌃⌥L）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock Current Screen (⌃⌥L)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の画面のロックを解除（⌃⌥L）"
+          }
+        }
+      }
+    },
+    "解锁（⌃⌥L）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock (⌃⌥L)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック解除（⌃⌥L）"
+          }
+        }
+      }
+    },
+    "设备位置已保存；授予辅助功能权限后即可从屏幕边缘切换" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device positions are saved. Grant Accessibility access to switch at the screen edges."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスの位置を保存しました。アクセシビリティを許可すると、画面の端で切り替えられます"
+          }
+        }
+      }
+    },
+    "设备没出现在列表里？输入它的 IP 地址或设备名称。只需在其中一台设备上添加。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device not in the list? Enter its IP address or name. Adding it on one of the two devices is enough."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスが一覧に表示されませんか？IPアドレスまたはデバイス名を入力してください。どちらか一方のデバイスで追加するだけで構いません。"
+          }
+        }
+      }
+    },
+    "设备的身份证书变了，已拒绝连接。如果对方重装过，请取消配对后重新配对。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The device’s identity certificate changed, so the connection was refused. If it was reinstalled, unpair it and pair again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスの識別証明書が変わったため、接続を拒否しました。相手のデバイスを再インストールした場合は、ペアリングを解除してからもう一度ペアリングしてください。"
+          }
+        }
+      }
+    },
+    "设置…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定…"
+          }
+        }
+      }
+    },
+    "语言" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語"
+          }
+        }
+      }
+    },
+    "语言在重新打开 Rinflow 后生效。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The language changes after Rinflow is reopened."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語はRinflowを開き直すと切り替わります。"
+          }
+        }
+      }
+    },
+    "请在另一台设备上启动 Rinflow，并保持在同一局域网；没有出现时可以点“添加设备”。如果曾拒绝“本地网络”权限，请在“系统设置 › 隐私与安全性 › 本地网络”中允许 Rinflow。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Rinflow on the other device and keep both on the same network. If it doesn’t show up, click Add Device. If you declined Local Network access, allow Rinflow in System Settings › Privacy & Security › Local Network."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一方のデバイスでRinflowを起動し、同じネットワークに接続してください。表示されない場合は「デバイスを追加」をクリックします。「ローカルネットワーク」へのアクセスを拒否した場合は、「システム設定」›「プライバシーとセキュリティ」›「ローカルネットワーク」でRinflowを許可してください。"
+          }
+        }
+      }
+    },
+    "请确认两台设备上显示的数字相同：\n\n%@\n\n数字一致时点“配对”，并在对方设备上也确认。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check that both devices show the same number:\n\n%@\n\nIf they match, click Pair, and confirm on the other device too."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "両方のデバイスに同じ数字が表示されていることを確認してください：\n\n%@\n\n一致していれば「ペアリング」をクリックし、相手のデバイスでも確認してください。"
+          }
+        }
+      }
+    },
+    "请确认没有其他 Rinflow 正在运行，然后重试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make sure another copy of Rinflow isn’t running, then try again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのRinflowが実行されていないことを確認してから、もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "请输入 IP 地址或设备名称" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter an IP address or a device name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IPアドレスまたはデバイス名を入力してください"
+          }
+        }
+      }
+    },
+    "请选择设备位置以启用自动切换" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the device’s position to switch at an edge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動切り替えを使うには、デバイスの位置を選択してください"
+          }
+        }
+      }
+    },
+    "跟随系统" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム"
+          }
+        }
+      }
+    },
+    "边缘切换延迟" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edge switch delay"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端での切り替えの遅延"
+          }
+        }
+      }
+    },
+    "这个地址已经添加过了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This address is already added"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアドレスはすでに追加されています"
+          }
+        }
+      }
+    },
+    "连接" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続"
+          }
+        }
+      }
+    },
+    "连接服务未能启动" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection service couldn’t start"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続サービスを開始できませんでした"
+          }
+        }
+      }
+    },
+    "退出 Rinflow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit Rinflow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinflowを終了"
+          }
+        }
+      }
+    },
+    "通用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一般"
+          }
+        }
+      }
+    },
+    "配对" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pair"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリング"
+          }
+        }
+      }
+    },
+    "配对未完成：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pairing didn’t finish: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリングが完了しませんでした：%@"
+          }
+        }
+      }
+    },
+    "配对超时，没有在两分钟内确认。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pairing timed out. It wasn’t confirmed within two minutes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリングがタイムアウトしました。2分以内に確認されませんでした。"
+          }
+        }
+      }
+    },
+    "释放控制" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take Input Back"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作を解除"
+          }
+        }
+      }
+    },
+    "重试" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再試行"
+          }
+        }
+      }
+    },
+    "锁定当前屏幕（⌃⌥L）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock to Current Screen (⌃⌥L)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の画面にロック（⌃⌥L）"
+          }
+        }
+      }
+    },
+    "锁定这台 Mac 时其他设备一起锁定，其他设备锁定时这台 Mac 也锁定。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locking this Mac locks the other devices, and locking them locks this Mac."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このMacをロックするとほかのデバイスもロックされ、ほかのデバイスをロックするとこのMacもロックされます。"
+          }
+        }
+      }
+    },
+    "锁屏" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック"
+          }
+        }
+      }
+    },
+    "键盘" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyboard"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボード"
+          }
+        }
+      }
+    },
+    "键鼠共享" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyboard & Mouse Sharing"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボードとマウスの共有"
+          }
+        }
+      }
+    },
+    "键鼠共享已暂停" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyboard and mouse sharing is paused"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボードとマウスの共有を一時停止中"
+          }
+        }
+      }
+    },
+    "长（500 毫秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long (500 ms)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "長（500ミリ秒）"
+          }
+        }
+      }
+    },
+    "需要辅助功能权限" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility access needed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセシビリティの許可が必要です"
+          }
+        }
+      }
+    },
+    "靠近屏幕角落时不自动切换，方便使用菜单和触发角。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the pointer on this Mac near screen corners, so menus and Hot Corners remain accessible."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の隅の近くでは自動で切り替えず、メニューやホットコーナーを使いやすくします。"
+          }
+        }
+      }
+    },
+    "鼠标只在本机移动" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The mouse stays on this Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マウスはこのMacの中だけで動きます"
+          }
+        }
+      }
+    },
+    "鼠标在本机，越过屏幕边缘即可切换" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The mouse is on this Mac; move past a screen edge to switch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マウスはこのMacにあります。画面の端を越えると切り替わります"
+          }
+        }
+      }
+    },
+    "鼠标在这里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mouse is here"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マウスはここ"
+          }
+        }
+      }
+    },
+    "鼠标正在 %@ 上" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The mouse is on %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マウスは%@にあります"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

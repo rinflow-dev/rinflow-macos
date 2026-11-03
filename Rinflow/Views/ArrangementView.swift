@@ -253,7 +253,7 @@ private struct DeviceTile: View {
     }
 
     private var detail: Text {
-        if pointerHere { return Text(Image(systemName: "cursorarrow")) + Text(" ") + Text("鼠标在这里") }
+        if pointerHere { return Text(Image(systemName: "cursorarrow")) + Text(verbatim: " ") + Text("鼠标在这里") }
         switch device.state {
         case .connected: return Text("已连接")
         case .online: return Text("未连接")

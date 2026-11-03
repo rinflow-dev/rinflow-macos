@@ -66,6 +66,7 @@ struct SettingsView: View {
                     Text("跟随系统").tag(AppLanguage.system)
                     Text(verbatim: "简体中文").tag(AppLanguage.chinese)
                     Text(verbatim: "English").tag(AppLanguage.english)
+                    Text(verbatim: "日本語").tag(AppLanguage.japanese)
                 }
             } footer: {
                 Text("语言在重新打开 Rinflow 后生效。")

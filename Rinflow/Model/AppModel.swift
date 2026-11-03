@@ -283,6 +283,11 @@ final class AppModel: RustCoreDelegate {
             if settings.manualAddresses != previous?.manualAddresses {
                 core.setManualAddresses(settings.manualAddresses)
             }
+            // Only when changed here: at start-up this would undo a language
+            // chosen for Rinflow in System Settings, which uses the same default.
+            if settings.language != previous?.language {
+                settings.language.apply()
+            }
         }
         if settings.switchHotkeys != previous?.switchHotkeys
             || settings.switchModifiers != previous?.switchModifiers
@@ -291,9 +296,6 @@ final class AppModel: RustCoreDelegate {
             let modifiers = settings.switchHotkeys && settings.sharing ? settings.switchModifiers : nil
             switchHotkeysBlocked = !hotkeys.register(modifiers, lockEnabled: settings.sharing)
             inputBridge.setSwitchShortcuts(modifiers)
-        }
-        if settings.language != previous?.language {
-            settings.language.apply()
         }
         if !settings.hideCursorOnLeave {
             cursorHider.reveal()
@@ -481,7 +483,7 @@ final class AppModel: RustCoreDelegate {
             refreshArrangement()
             updateDriven()
             if let message = event.reason.flatMap(Self.disconnectMessage) {
-                lastError = "\(name)：\(message)"
+                lastError = String(localized: "\(name)：\(message)")
             }
         case "remote_control_started", "remote_control_ended":
             guard let peerID = event.peerID else { break }

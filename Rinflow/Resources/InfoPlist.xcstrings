@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Privacy - Local Network Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinflow uses the local network to find and connect to nearby computers."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinflowは、近くのコンピュータを検出して接続するためにローカルネットワークを使用します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinflow 需要访问本地网络，以发现并连接附近的电脑。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

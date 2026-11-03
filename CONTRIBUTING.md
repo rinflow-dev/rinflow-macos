@@ -14,7 +14,7 @@ Without an Apple Development certificate the app is signed ad hoc, which is enou
 
 The Xcode project is generated. After adding or removing files, or to change a build setting, edit [scripts/generate-xcodeproj.rb](scripts/generate-xcodeproj.rb) and run it (this needs the Ruby `xcodeproj` gem); changes made by hand in Xcode are lost.
 
-UI text is in `Rinflow/Resources`, in English and Chinese; add both.
+UI text is in String Catalogs: `Rinflow/Resources/Localizable.xcstrings`, and `InfoPlist.xcstrings` for the Info.plist. Write new text in Chinese in the code (`Text("…")`, `String(localized: "…")`), build in Xcode or run `make i18n` to add it to the catalog, then translate it into English and Japanese. `make test` fails while a string is untranslated or no longer used. Pass a `LocalizedStringResource` or `LocalizedStringKey`, not a `String`, to views that show a literal: a literal given as a `String` is never translated.
 
 If `rinflow-core/Cargo.lock` changes, regenerate `Rinflow/Resources/THIRD_PARTY_NOTICES.txt` as shown in [its script](https://github.com/rinflow-dev/rinflow-core/blob/main/scripts/third-party-notices.ps1).
 

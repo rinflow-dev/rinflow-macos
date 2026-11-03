@@ -1,6 +1,7 @@
 # make run     构建并启动 Rinflow（先退出正在运行的那个）
 # make build   只构建（Rust Core 由 Xcode 的构建阶段一起编译）
-# make test    跑单元测试
+# make test    同步界面文字后跑单元测试（缺翻译时失败）
+# make i18n    构建，并把代码里的界面文字同步进 String Catalog（Xcode 构建时会自动同步）
 # make log     实时查看 app 的日志
 # make stop    退出正在运行的 Rinflow
 # make clean   删除构建产物
@@ -35,7 +36,7 @@ XCODEBUILD := xcodebuild -project $(PROJECT) -scheme $(SCHEME) \
 
 NOTARY_PROFILE ?= rinflow-notary
 
-.PHONY: run build test log stop clean candidate release
+.PHONY: run build test i18n log stop clean candidate release
 
 run: build
 	@$(MAKE) --no-print-directory stop
@@ -47,7 +48,15 @@ ifeq ($(TEAM),)
 endif
 	$(XCODEBUILD) -quiet build
 
-test:
+# The compiler lists the strings each file uses (SWIFT_EMIT_LOC_STRINGS);
+# xcodebuild leaves merging them into the catalog to the Xcode app, so do it here.
+STRINGSDATA := $(DERIVED)/Build/Intermediates.noindex/Rinflow.build/$(CONFIG)/Rinflow.build/Objects-normal
+
+i18n: build
+	xcrun xcstringstool sync Rinflow/Resources/Localizable.xcstrings \
+		$$(find "$(STRINGSDATA)" -name '*.stringsdata' | sed 's/^/--stringsdata /')
+
+test: i18n
 	$(XCODEBUILD) -quiet test
 
 log:

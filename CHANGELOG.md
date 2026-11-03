@@ -13,7 +13,7 @@ First public version.
 - Pairing with a six-digit code, and encrypted connections
 - Optional clipboard and file sync (off by default)
 - Launch at login, corner protection and pausing during full-screen apps
-- English and Simplified Chinese interface
+- English, Simplified Chinese and Japanese interface
 
 ### Known issues
 
@@ -22,7 +22,7 @@ First public version.
 - While a peer expires from the core mid-connection, "Connecting" may not be cancellable (a narrow race).
 - An edge entrance shorter than about 50 points in a screen corner is fully blocked by corner protection.
 - A clipboard holding only unknown types, such as RTF, clears this Mac's clipboard before writing.
-- Error reasons from the core appear in English in the Chinese interface.
+- Error reasons from the core appear in English in the Chinese and Japanese interfaces.
 - There are no usage descriptions for the Desktop, Documents and Downloads folders yet.
 - A file copied in Finder is sent as a file, not as an image, so it cannot be pasted as a picture on the other device.
 - Modifier mapping: Windows can choose per key; macOS only has a switch to keep or swap the Mac's shortcuts.

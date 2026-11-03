@@ -154,6 +154,7 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable, Sendable {
     case system
     case chinese = "zh-CN"
     case english = "en-US"
+    case japanese = "ja-JP"
 
     var id: String { rawValue }
 
@@ -163,6 +164,7 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable, Sendable {
         case .system: nil
         case .chinese: ["zh-Hans"]
         case .english: ["en"]
+        case .japanese: ["ja"]
         }
     }
 

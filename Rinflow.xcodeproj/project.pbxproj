@@ -21,10 +21,11 @@
 		36A41A13E39B69669F322459 /* CrossingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23388D7C3C6C43085F04B08E /* CrossingGate.swift */; };
 		3BAE1E64461D55C1F69E0121 /* PairingPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBCE0DB83240142C4AC10A09 /* PairingPrompt.swift */; };
 		3BF7F5092E395BE0657C494B /* CrossingGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5104A37FAFCF18AECE5588 /* CrossingGateTests.swift */; };
+		424E025F30CC91CBCF2C079C /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5C32AFC47EE4A444E071D1 /* LocalizationTests.swift */; };
 		4EC669084B5705BE7DCDC116 /* InputPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */; };
 		639C0717432791A968114CBA /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC0BB257C309D663E812C2A /* Layout.swift */; };
 		6FD5A8737E092243FAE60089 /* InputPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE85185ED5451129E4204D /* InputPlayerTests.swift */; };
-		71CD2D7F0083C0509C48C08E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B53A234B1936934BA28B8851 /* Localizable.strings */; };
+		71CD2D7F0083C0509C48C08E /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B53A234B1936934BA28B8851 /* Localizable.xcstrings */; };
 		75E0F3D43E4E33E0C78FF294 /* LayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48302E6149A6D41B3AF7E3BE /* LayoutTests.swift */; };
 		7824D54158074ED81D7CC9B0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB31A34F494AACE455E77E49 /* Cocoa.framework */; };
 		7B04552700765C63CA6016BE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E095C998B3FED6D7227F2639 /* ContentView.swift */; };
@@ -35,12 +36,12 @@
 		9392DF99F2797026E917189B /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE8B40D78B357AA16998AE5 /* HIDKeyMap.swift */; };
 		95FC9F7CAD55E7BCE7C2F6D5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE9C3D415E1E3A527C155A /* SettingsView.swift */; };
 		971326DE2C70B7C2CF47D69F /* InputBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4D768D9D70633CBC4B3F69 /* InputBridge.swift */; };
-		A55D61656C59DAEF4E897A69 /* CallbackRelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */; };
-		B034EA978CDF65FFA3B8A4CD /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1928FAEC6395FB471D58A2B /* SettingsTests.swift */; };
-		B10077A576A891F0D1A651A0 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18208A3B73430CF37166FB8D /* ClickTracker.swift */; };
 		A1C0DE0000000000000000B1 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000000F1 /* AppIcon.icon */; };
 		A1C0DE0000000000000000B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000000F2 /* Assets.xcassets */; };
 		A1F3C2D47B8E4F60912C3D5E /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */; };
+		A55D61656C59DAEF4E897A69 /* CallbackRelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */; };
+		B034EA978CDF65FFA3B8A4CD /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1928FAEC6395FB471D58A2B /* SettingsTests.swift */; };
+		B10077A576A891F0D1A651A0 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18208A3B73430CF37166FB8D /* ClickTracker.swift */; };
 		B7AAD61A4B98C0A21AF8CF7B /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC0BB257C309D663E812C2A /* Layout.swift */; };
 		BCB0D990114B107462251289 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E965AF35CD5089962AD18469 /* CallbackRelay.swift */; };
 		C3A6AA359AB08B3B720327DA /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184F7F74A206A9A9C8DB577D /* AppSettings.swift */; };
@@ -49,7 +50,7 @@
 		C83890765264774C95674D39 /* RinflowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5928610448FD3D374F3CC85 /* RinflowApp.swift */; };
 		C975F6CB1B9AA89ED990425D /* PeerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE68F1D5E72A3AD24D80EE6D /* PeerTests.swift */; };
 		D5BD07B25B8DC38E2CD91187 /* CrossingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23388D7C3C6C43085F04B08E /* CrossingGate.swift */; };
-		E271BA5E65C67FA83FC33767 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD65928BBD03A08F38867664 /* InfoPlist.strings */; };
+		E271BA5E65C67FA83FC33767 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CD65928BBD03A08F38867664 /* InfoPlist.xcstrings */; };
 		E6D7888661433B4B76BC7E13 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E965AF35CD5089962AD18469 /* CallbackRelay.swift */; };
 		E766C0FF9EA47966AC204E7C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184F7F74A206A9A9C8DB577D /* AppSettings.swift */; };
 		EC44ECE5CB5DCB4EEA62E575 /* PeerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421B90DC8DBE757706B25427 /* PeerRow.swift */; };
@@ -72,34 +73,33 @@
 		421B90DC8DBE757706B25427 /* PeerRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PeerRow.swift; sourceTree = "<group>"; };
 		435F07A6EB9B70257668D7D2 /* FullscreenMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FullscreenMonitor.swift; sourceTree = "<group>"; };
 		48302E6149A6D41B3AF7E3BE /* LayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LayoutTests.swift; sourceTree = "<group>"; };
-		48C8D336CAE0F8662C7C04A1 /* zh-Hans */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		4A5519AFE1156C2ADDCB5536 /* TransferNotifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransferNotifications.swift; sourceTree = "<group>"; };
-		54C419B569EF18D91B03FD3F /* zh-Hans */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		A1C0DE0000000000000000F1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		A1C0DE0000000000000000F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
 		78B85F1FFAEFBC7DA4B95E78 /* RinflowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RinflowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayer.swift; sourceTree = "<group>"; };
 		7AB1E8043042721809774106 /* ControlHUDController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlHUDController.swift; sourceTree = "<group>"; };
 		7BD38437C550C6775A3EE5CC /* generate-xcodeproj.rb */ = {isa = PBXFileReference; includeInIndex = 1; path = "generate-xcodeproj.rb"; sourceTree = "<group>"; };
 		7C18BACCB69845E74D906E83 /* RustCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RustCore.swift; sourceTree = "<group>"; };
 		8442FF04CA26D8E34E3A37F8 /* Rinflow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rinflow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B5C32AFC47EE4A444E071D1 /* LocalizationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		8C5104A37FAFCF18AECE5588 /* CrossingGateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CrossingGateTests.swift; sourceTree = "<group>"; };
 		96F6F1C1AFC96089E557FB18 /* ArrangementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ArrangementView.swift; sourceTree = "<group>"; };
-		A44AB498E7BE3B5C78318CC9 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A1C0DE0000000000000000F1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		A1C0DE0000000000000000F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A7CB9E8692A1A9FBB97BB20E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B2EC8DCD635189A0586C28BF /* ClipboardBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardBridge.swift; sourceTree = "<group>"; };
+		B53A234B1936934BA28B8851 /* Localizable.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		BDC0BB257C309D663E812C2A /* Layout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		BF513D8253246C4D0D3640D6 /* Presence.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Presence.swift; sourceTree = "<group>"; };
 		BF9328FED96B4C1105286DB9 /* ClickTrackerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClickTrackerTests.swift; sourceTree = "<group>"; };
+		C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
 		CBAE9C3D415E1E3A527C155A /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		CD65928BBD03A08F38867664 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		DB5C0635656F2D558749A9B9 /* build-rust.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "build-rust.sh"; sourceTree = "<group>"; };
 		DE68F1D5E72A3AD24D80EE6D /* PeerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PeerTests.swift; sourceTree = "<group>"; };
 		E095C998B3FED6D7227F2639 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E965AF35CD5089962AD18469 /* CallbackRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallbackRelay.swift; sourceTree = "<group>"; };
 		EBCE0DB83240142C4AC10A09 /* PairingPrompt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PairingPrompt.swift; sourceTree = "<group>"; };
 		EC579B0A56647F8F099EE5B7 /* Rinflow-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rinflow-Bridging-Header.h"; sourceTree = "<group>"; };
-		EDAE9FA4F990371B2147D978 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F1928FAEC6395FB471D58A2B /* SettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
 		F2644F56E3D41563A1E7C336 /* PointerVisibility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PointerVisibility.swift; sourceTree = "<group>"; };
 		F5928610448FD3D374F3CC85 /* RinflowApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RinflowApp.swift; sourceTree = "<group>"; };
@@ -174,8 +174,8 @@
 			isa = PBXGroup;
 			children = (
 				A7CB9E8692A1A9FBB97BB20E /* Info.plist */,
-				B53A234B1936934BA28B8851 /* Localizable.strings */,
-				CD65928BBD03A08F38867664 /* InfoPlist.strings */,
+				B53A234B1936934BA28B8851 /* Localizable.xcstrings */,
+				CD65928BBD03A08F38867664 /* InfoPlist.xcstrings */,
 				A1C0DE0000000000000000F1 /* AppIcon.icon */,
 				A1C0DE0000000000000000F2 /* Assets.xcassets */,
 				C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */,
@@ -256,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				48302E6149A6D41B3AF7E3BE /* LayoutTests.swift */,
+				8B5C32AFC47EE4A444E071D1 /* LocalizationTests.swift */,
 				FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */,
 				BF9328FED96B4C1105286DB9 /* ClickTrackerTests.swift */,
 				0919A208CD8DB63705BC6E51 /* ClipboardTests.swift */,
@@ -368,6 +369,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
 				"zh-Hans",
 			);
 			mainGroup = 8A57327319887B904AFD2738;
@@ -388,8 +390,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71CD2D7F0083C0509C48C08E /* Localizable.strings in Resources */,
-				E271BA5E65C67FA83FC33767 /* InfoPlist.strings in Resources */,
+				71CD2D7F0083C0509C48C08E /* Localizable.xcstrings in Resources */,
+				E271BA5E65C67FA83FC33767 /* InfoPlist.xcstrings in Resources */,
 				A1C0DE0000000000000000B1 /* AppIcon.icon in Resources */,
 				A1C0DE0000000000000000B2 /* Assets.xcassets in Resources */,
 				A1F3C2D47B8E4F60912C3D5E /* THIRD_PARTY_NOTICES.txt in Resources */,
@@ -434,6 +436,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				75E0F3D43E4E33E0C78FF294 /* LayoutTests.swift in Sources */,
+				424E025F30CC91CBCF2C079C /* LocalizationTests.swift in Sources */,
 				B7AAD61A4B98C0A21AF8CF7B /* Layout.swift in Sources */,
 				A55D61656C59DAEF4E897A69 /* CallbackRelayTests.swift in Sources */,
 				7BC701AA196B96139E384C80 /* ClickTrackerTests.swift in Sources */,
@@ -488,27 +491,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		B53A234B1936934BA28B8851 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				EDAE9FA4F990371B2147D978 /* en */,
-				54C419B569EF18D91B03FD3F /* zh-Hans */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		CD65928BBD03A08F38867664 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A44AB498E7BE3B5C78318CC9 /* en */,
-				48C8D336CAE0F8662C7C04A1 /* zh-Hans */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		3D92E0CB8C70992AC41EA309 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -532,6 +514,7 @@
 					"$(inherited)",
 					"$(BUILT_PRODUCTS_DIR)",
 				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -544,6 +527,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
 				PRODUCT_NAME = Rinflow;
 				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
@@ -727,6 +711,7 @@
 					"$(inherited)",
 					"$(BUILT_PRODUCTS_DIR)",
 				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -739,6 +724,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
 				PRODUCT_NAME = Rinflow;
 				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;

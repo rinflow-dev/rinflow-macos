@@ -42,18 +42,15 @@ target.resources_build_phase.add_file_reference(app_icon)
 target.resources_build_phase.add_file_reference(resources_group.new_file('Assets.xcassets'))
 target.resources_build_phase.add_file_reference(resources_group.new_file('THIRD_PARTY_NOTICES.txt'))
 
-# Localizations: the keys are the Chinese text; en.lproj translates them, and
-# zh-Hans.lproj makes Chinese one of the app's languages. English is the
-# development region, so every other system language gets English.
+# Localizations: String Catalogs whose source language is Simplified Chinese,
+# the language the code is written in. English stays the development region,
+# so a system language Rinflow doesn't have gets English, not Chinese.
 project.root_object.development_region = 'en'
-project.root_object.known_regions = %w[en Base zh-Hans]
-%w[Localizable.strings InfoPlist.strings].each do |name|
-  variant = resources_group.new_variant_group(name)
-  %w[en zh-Hans].each do |language|
-    reference = variant.new_reference("#{language}.lproj/#{name}")
-    reference.name = language
-  end
-  target.resources_build_phase.add_file_reference(variant)
+project.root_object.known_regions = %w[en Base ja zh-Hans]
+%w[Localizable.xcstrings InfoPlist.xcstrings].each do |name|
+  catalog = resources_group.new_file(name)
+  catalog.last_known_file_type = 'text.json.xcstrings'
+  target.resources_build_phase.add_file_reference(catalog)
 end
 
 scripts_group = project.main_group.new_group('scripts', 'scripts')
@@ -89,6 +86,9 @@ target.build_configurations.each do |configuration|
   ]
   settings['SWIFT_VERSION'] = '6.0'
   settings['SWIFT_STRICT_CONCURRENCY'] = 'complete'
+  # The compiler lists the strings the code uses; the catalog is synced from that.
+  settings['SWIFT_EMIT_LOC_STRINGS'] = 'YES'
+  settings['LOCALIZATION_PREFERS_STRING_CATALOGS'] = 'YES'
   settings['CLANG_ENABLE_MODULES'] = 'YES'
   # Cargo reads the sibling Core project and the user's rustup toolchain.
   # Xcode's script sandbox cannot express those dynamic inputs reliably.

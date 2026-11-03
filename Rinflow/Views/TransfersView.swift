@@ -52,10 +52,15 @@ private struct TransferCard: View {
 
     private var title: String {
         let name = transfer.name.isEmpty ? String(localized: "文件") : transfer.name
-        let more = transfer.items > 1 ? String(localized: " 等 \(transfer.items) 项") : ""
-        return transfer.direction == .receiving
-            ? String(localized: "正在从 \(peerName) 接收 \(name)\(more)")
-            : String(localized: "正在发送 \(name)\(more) 到 \(peerName)")
+        // Whole sentences: word order differs too much between languages to
+        // assemble one from pieces.
+        let items = transfer.items
+        return switch (transfer.direction, items > 1) {
+        case (.receiving, false): String(localized: "正在从 \(peerName) 接收 \(name)")
+        case (.receiving, true): String(localized: "正在从 \(peerName) 接收 \(name) 等 \(items) 项")
+        case (.sending, false): String(localized: "正在发送 \(name) 到 \(peerName)")
+        case (.sending, true): String(localized: "正在发送 \(name) 等 \(items) 项到 \(peerName)")
+        }
     }
 
     private var detail: String {
