@@ -26,6 +26,11 @@ fail() {
     exit 1
 }
 
+# Names the file only, so `shasum -c` works where it is downloaded.
+checksum() {
+    (cd "$releaseDir" && shasum -a 256 "${1##*/}" > "${1##*/}.sha256")
+}
+
 # A release that cannot be traced to commits cannot be reproduced. The app
 # links the sibling Core, so its tree counts too.
 for repo in "$ROOT" "$CORE"; do
@@ -75,7 +80,7 @@ rm -f "$candidate" "$candidate.sha256"
 ditto -c -k --sequesterRsrc --keepParent "$app" "$candidate"
 
 if [ -z "${NOTARY_PROFILE:-}" ]; then
-    shasum -a 256 "$candidate" > "$candidate.sha256"
+    checksum "$candidate"
     echo "Signed, not notarized: $candidate"
     echo 'Gatekeeper blocks this on other Macs. Set NOTARY_PROFILE to publish.'
     exit 0
@@ -96,7 +101,7 @@ xcrun stapler validate "$app"
 spctl --assess --type execute --verbose "$app"
 final="$releaseDir/${name}.zip"
 ditto -c -k --sequesterRsrc --keepParent "$app" "$final"
-shasum -a 256 "$final" > "$final.sha256"
+checksum "$final"
 # Only the notarized zip stays, so the wrong one cannot be sent out.
 rm -f "$candidate"
 echo "Notarized release: $final"
