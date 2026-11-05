@@ -1,0 +1,162 @@
+# Builds the disk images for a version tag (v0.0.1, ...) and publishes them
+# as a GitHub release. Run by hand, it only builds, to try the workflow.
+#
+# Secrets:
+#   MACOS_CERTIFICATE           the Developer ID Application certificate and
+#                               its private key, as a base64 .p12
+#   MACOS_CERTIFICATE_PASSWORD  the .p12's password
+#   NOTARY_KEY                  an App Store Connect API key (.p8 contents)
+#   NOTARY_KEY_ID               its key ID
+#   NOTARY_ISSUER_ID            its issuer ID
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # The rinflow-core commit this version is built with. Update it when the
+  # macOS client moves to a newer core.
+  CORE_REF: 01602547e66e9e31ca3d21fbab4677dcd04a2f98
+
+jobs:
+  build:
+    name: Disk images
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: rinflow-macos
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: rinflow-macos
+          # The build number is the commit count.
+          fetch-depth: 0
+      # The app builds the core from source, from a sibling folder.
+      - uses: actions/checkout@v4
+        with:
+          repository: rinflow-dev/rinflow-core
+          ref: ${{ env.CORE_REF }}
+          path: rinflow-core
+
+      - name: Check the version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(xcodebuild -project Rinflow.xcodeproj -scheme Rinflow -configuration Release -showBuildSettings \
+            | awk '$1 == "MARKETING_VERSION" { print $3; exit }')
+          if [ "${GITHUB_REF_NAME#v}" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match version $version in the Xcode project." >&2
+            exit 1
+          fi
+
+      - name: Install Rust
+        run: |
+          rustup update stable --no-self-update
+          rustup default stable
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
+          xcodebuild -version
+
+      # A keychain of its own for the certificate and the notary profile,
+      # deleted at the end.
+      - name: Set up signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          NOTARY_KEY: ${{ secrets.NOTARY_KEY }}
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER_ID: ${{ secrets.NOTARY_ISSUER_ID }}
+        run: |
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          password=$(openssl rand -base64 24)
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          # The intermediates the certificate chains to, the original and G2.
+          for ca in DeveloperIDCA DeveloperIDG2CA; do
+            curl -fsSL "https://www.apple.com/certificateauthority/$ca.cer" -o "$RUNNER_TEMP/$ca.cer"
+            security import "$RUNNER_TEMP/$ca.cer" -k "$keychain"
+          done
+          printf '%s' "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security import "$RUNNER_TEMP/certificate.p12" -k "$keychain" -P "$MACOS_CERTIFICATE_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          rm "$RUNNER_TEMP/certificate.p12"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$password" "$keychain" > /dev/null
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          security find-identity -v -p codesigning "$keychain"
+          printf '%s' "$NOTARY_KEY" > "$RUNNER_TEMP/notary.p8"
+          xcrun notarytool store-credentials rinflow-notary --key "$RUNNER_TEMP/notary.p8" \
+            --key-id "$NOTARY_KEY_ID" --issuer "$NOTARY_ISSUER_ID" --keychain "$keychain"
+          rm "$RUNNER_TEMP/notary.p8"
+          echo "NOTARY_KEYCHAIN=$keychain" >> "$GITHUB_ENV"
+
+      - name: Build, sign and notarize
+        run: NOTARY_PROFILE=rinflow-notary scripts/package-release.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: disk-images
+          path: rinflow-macos/releases/Rinflow-*.dmg
+          if-no-files-found: error
+
+      - name: Remove the keychain
+        if: always()
+        run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
+
+  release:
+    name: Publish
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Write the release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # The version's section of the changelog, without its heading.
+          awk -v v="$version" '
+            index($0, "## [" v "]") == 1 { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes.md
+          if ! grep -q '[^[:space:]]' notes.md; then
+            echo "CHANGELOG.md has no section for $version" >&2
+            exit 1
+          fi
+          {
+            echo
+            echo '### Downloads'
+            echo
+            echo '- Macs with Apple silicon (M1 and later): `-arm64.dmg`'
+            echo '- Macs with an Intel processor: `-x64.dmg`'
+            echo
+            echo 'Open the disk image and drag Rinflow into Applications. macOS 14 or later.'
+            echo
+            echo '### Checksums (SHA-256)'
+            echo
+            echo '```'
+            (cd dist && sha256sum Rinflow-*.dmg)
+            echo '```'
+          } >> notes.md
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prerelease=()
+          case "$GITHUB_REF_NAME" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "$GITHUB_REF_NAME" dist/Rinflow-*.dmg \
+            --title "Rinflow for macOS ${GITHUB_REF_NAME#v}" \
+            --notes-file notes.md \
+            "${prerelease[@]}"

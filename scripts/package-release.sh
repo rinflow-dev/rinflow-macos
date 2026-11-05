@@ -14,6 +14,7 @@
 #   TEAM              overrides the project's DEVELOPMENT_TEAM
 #   SIGNING_IDENTITY  defaults to "Developer ID Application"
 #   RELEASE_DIR       defaults to releases/
+#   NOTARY_KEYCHAIN   the keychain holding NOTARY_PROFILE, if not the login one
 #   ALLOW_DIRTY=1     builds uncommitted changes, for trying the script only
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
@@ -93,13 +94,16 @@ image() {
 }
 
 # notarytool can report a rejection without failing, so read the verdict.
+# shellcheck disable=SC2086 # the keychain setting is one word or none
 notarize() {
-    result=$(xcrun notarytool submit "$1" --keychain-profile "$NOTARY_PROFILE" --wait --output-format json) \
+    result=$(xcrun notarytool submit "$1" --keychain-profile "$NOTARY_PROFILE" \
+        ${NOTARY_KEYCHAIN:+--keychain "$NOTARY_KEYCHAIN"} --wait --output-format json) \
         || fail "could not submit $1 to the notary service: $result"
     status=$(printf '%s' "$result" | plutil -extract status raw -o - -)
     if [ "$status" != "Accepted" ]; then
         id=$(printf '%s' "$result" | plutil -extract id raw -o - -)
-        xcrun notarytool log "$id" --keychain-profile "$NOTARY_PROFILE" >&2 || true
+        xcrun notarytool log "$id" --keychain-profile "$NOTARY_PROFILE" \
+            ${NOTARY_KEYCHAIN:+--keychain "$NOTARY_KEYCHAIN"} >&2 || true
         fail "notarization of $1 ended as: $status"
     fi
 }
