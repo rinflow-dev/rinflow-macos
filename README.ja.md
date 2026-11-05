@@ -13,7 +13,7 @@ Rinflow は、ローカルネットワーク上の複数のコンピューター
   </picture>
 </p>
 
-**状態：** 開発初期の段階です。バイナリのリリースはまだありません。既知の問題は[変更履歴](CHANGELOG.md)をご覧ください。
+**状態：** 開発初期の段階です。ディスクイメージは [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest) からダウンロードできます。Apple シリコン搭載の Mac は `arm64`、Intel の Mac は `x64` を選んでください。既知の問題は[変更履歴](CHANGELOG.md)をご覧ください。
 
 ## 機能
 

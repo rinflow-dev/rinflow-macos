@@ -13,7 +13,7 @@ Rinflow 让局域网内的多台电脑共用一套键盘和鼠标：把指针移
   </picture>
 </p>
 
-**状态：** 早期开发阶段，暂无二进制发布版本。已知问题见[变更日志](CHANGELOG.md)。
+**状态：** 早期开发阶段。从 [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest) 下载 DMG：Apple 芯片的 Mac 选 `arm64`，Intel 的 Mac 选 `x64`。已知问题见[变更日志](CHANGELOG.md)。
 
 ## 功能
 

@@ -72,7 +72,7 @@ target.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac'
   settings['PRODUCT_NAME'] = 'Rinflow'
-  settings['MARKETING_VERSION'] = '0.1.0'
+  settings['MARKETING_VERSION'] = '0.0.1'
   settings['CURRENT_PROJECT_VERSION'] = '1'
   settings['INFOPLIST_FILE'] = 'Rinflow/Resources/Info.plist'
   settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'Rinflow/Bridging/Rinflow-Bridging-Header.h'
