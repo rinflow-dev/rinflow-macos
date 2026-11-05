@@ -6,6 +6,9 @@ import XCTest
 
 /// The String Catalogs. Xcode (on build) and `make i18n` sync them with the
 /// strings the code uses; these tests make sure each one is translated.
+/// The source language needs its own translated entries too: without them
+/// Xcode builds no Chinese table, and Chinese falls back to English, the
+/// development region. `make i18n` adds them.
 final class LocalizationTests: XCTestCase {
     private static let resources = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent()
@@ -26,7 +29,7 @@ final class LocalizationTests: XCTestCase {
                 let original = entry.localizations?[Self.source]?.units.first?.value ?? key
                 let expected = Self.placeholders(in: original)
 
-                for language in Self.translations {
+                for language in [Self.source] + Self.translations {
                     let units = entry.localizations?[language]?.units ?? []
                     XCTAssertFalse(units.isEmpty, "\(name): no \(language) for \(key)")
                     var used = Set<String>()

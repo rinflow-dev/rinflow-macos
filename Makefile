@@ -1,7 +1,8 @@
 # make run     构建并启动 Rinflow（先退出正在运行的那个）
 # make build   只构建（Rust Core 由 Xcode 的构建阶段一起编译）
 # make test    同步界面文字后跑单元测试（缺翻译时失败）
-# make i18n    构建，并把代码里的界面文字同步进 String Catalog（Xcode 构建时会自动同步）
+# make i18n    构建，并把代码里的界面文字同步进 String Catalog（Xcode 构建时会自动同步），
+#              再给每条补上中文（源语言）条目，否则中文系统会回退成英文
 # make log     实时查看 app 的日志
 # make stop    退出正在运行的 Rinflow
 # make clean   删除构建产物
@@ -55,6 +56,7 @@ STRINGSDATA := $(DERIVED)/Build/Intermediates.noindex/Rinflow.build/$(CONFIG)/Ri
 i18n: build
 	xcrun xcstringstool sync Rinflow/Resources/Localizable.xcstrings \
 		$$(find "$(STRINGSDATA)" -name '*.stringsdata' | sed 's/^/--stringsdata /')
+	scripts/source-strings.py Rinflow/Resources/*.xcstrings
 
 test: i18n
 	$(XCODEBUILD) -quiet test

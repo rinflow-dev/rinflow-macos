@@ -29,7 +29,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@ 想发送 %2$lld 个文件"
           }
         }
@@ -51,7 +51,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@ 等 %2$lld 项，已保存到“下载/Rinflow”"
           }
         }
@@ -73,7 +73,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@：%2$@"
           }
         }
@@ -91,6 +91,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "IPアドレスまたはデバイス名"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IP 地址或设备名称"
           }
         }
       }
@@ -111,6 +117,12 @@
             "state" : "translated",
             "value" : "Rust Coreが入力イベントを拒否しました"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust Core 拒绝了输入事件"
+          }
         }
       }
     },
@@ -126,6 +138,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "WindowsからこのMacを操作するとき、Ctrlを⌘として使います（Ctrl+Cは⌘C）。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Windows 控制这台 Mac 时，Ctrl 当作 ⌘ 使用（Ctrl+C 就是 ⌘C）。"
           }
         }
       }
@@ -143,6 +161,12 @@
             "state" : "translated",
             "value" : "「%@」は有効なアドレスではありません。IPアドレスまたはデバイス名を入力してください"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”不是有效的地址：请输入 IP 地址或设备名称"
+          }
         }
       }
     },
@@ -158,6 +182,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一緒にロック"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一起锁定"
           }
         }
       }
@@ -175,6 +205,12 @@
             "state" : "translated",
             "value" : "%@とペアリング"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与 %@ 配对"
+          }
         }
       }
     },
@@ -190,6 +226,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中（300ミリ秒）"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中（300 毫秒）"
           }
         }
       }
@@ -207,6 +249,12 @@
             "state" : "translated",
             "value" : "ペアリング済みのデバイスのみ許可"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅允许已配对的设备"
+          }
         }
       }
     },
@@ -222,6 +270,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上側"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位于上方"
           }
         }
       }
@@ -239,6 +293,12 @@
             "state" : "translated",
             "value" : "下側"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位于下方"
+          }
         }
       }
     },
@@ -254,6 +314,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "右側"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位于右侧"
           }
         }
       }
@@ -271,6 +337,12 @@
             "state" : "translated",
             "value" : "左側"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位于左侧"
+          }
         }
       }
     },
@@ -286,6 +358,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "例：192.168.1.20、mac-mini.local"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例如 192.168.1.20 或 mac-mini.local"
           }
         }
       }
@@ -303,6 +381,12 @@
             "state" : "translated",
             "value" : "画面の隅を保護"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保护屏幕角落"
+          }
         }
       }
     },
@@ -315,6 +399,12 @@
           }
         },
         "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "停止"
@@ -335,6 +425,12 @@
             "state" : "translated",
             "value" : "カーソルはポインタがあるデバイスにだけ表示されます。このMacのマウスやトラックパッドを動かすと再び表示されます。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "光标只显示在指针所在的设备上；动一下这台 Mac 的鼠标或触控板就会出现。"
+          }
         }
       }
     },
@@ -350,6 +446,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "フルスクリーン中は自動切り替えを停止"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全屏时暂停自动切换"
           }
         }
       }
@@ -367,6 +469,12 @@
             "state" : "translated",
             "value" : "合計%@。「ダウンロード/Rinflow」に保存されます。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共 %@，将保存到“下载/Rinflow”。"
+          }
         }
       }
     },
@@ -382,6 +490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "キーボードとマウスを共有"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享键盘与鼠标"
           }
         }
       }
@@ -399,6 +513,12 @@
             "state" : "translated",
             "value" : "閉じる"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
         }
       }
     },
@@ -414,6 +534,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ほかのデバイスの使用中はスリープしない"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他设备在使用时保持唤醒"
           }
         }
       }
@@ -431,6 +557,12 @@
             "state" : "translated",
             "value" : "ほかのデバイスのポインタが離れたらカーソルを隠す"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他设备的指针离开后隐藏光标"
+          }
         }
       }
     },
@@ -446,6 +578,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切り替えまたはロックのショートカットがほかのアプリで使われています。組み合わせを変更するか、競合しているアプリを終了してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。"
           }
         }
       }
@@ -463,6 +601,12 @@
             "state" : "translated",
             "value" : "デバイスを切り替えるときに、コピーしたテキスト、画像、ファイルを同期します。信頼できるデバイスの場合のみオンにしてください。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换设备时同步复制的文字、图片和文件。仅在信任对方设备时开启。"
+          }
         }
       }
     },
@@ -478,6 +622,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新"
           }
         }
       }
@@ -495,6 +645,12 @@
             "state" : "translated",
             "value" : "スクロール方向を反転"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反转滚动方向"
+          }
         }
       }
     },
@@ -510,6 +666,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ファイルを送信できませんでした：%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送文件失败：%@"
           }
         }
       }
@@ -527,6 +689,12 @@
             "state" : "translated",
             "value" : "キャンセル"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -542,6 +710,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ペアリングを解除"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消配对"
           }
         }
       }
@@ -559,6 +733,12 @@
             "state" : "translated",
             "value" : "クリップボードとファイルを同期"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步剪贴板与文件"
+          }
         }
       }
     },
@@ -574,6 +754,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@での設定"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 %@ 上"
           }
         }
       }
@@ -591,6 +777,12 @@
             "state" : "translated",
             "value" : "ほかのデバイスで作業している間、このMacはアイドル状態でもディスプレイをオフにしたりロックしたりしません。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在另一台设备上工作时，这台 Mac 不会因闲置而熄屏或锁定。"
+          }
         }
       }
     },
@@ -606,6 +798,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "システム設定でログイン時の起動を許可"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在系统设置中允许登录启动"
           }
         }
       }
@@ -623,6 +821,12 @@
             "state" : "translated",
             "value" : "コピーしたファイルが多すぎるため、共有されませんでした。圧縮してからもう一度コピーしてください。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制的文件太多，文件未共享。请先压缩后再复制。"
+          }
         }
       }
     },
@@ -638,6 +842,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コピーしたフォルダの階層が深すぎるため、ファイルは共有されませんでした。圧縮してからもう一度コピーしてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制的文件夹层级太深，文件未共享。请先压缩后再复制。"
           }
         }
       }
@@ -655,6 +865,12 @@
             "state" : "translated",
             "value" : "外観"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外观"
+          }
         }
       }
     },
@@ -670,6 +886,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "セキュリティ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安全"
           }
         }
       }
@@ -687,6 +909,12 @@
             "state" : "translated",
             "value" : "相手のデバイス"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方"
+          }
         }
       }
     },
@@ -702,6 +930,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "相手のデバイスが接続を拒否しました。このMacが削除されたか、ペアリング済みのデバイスのみ許可されている可能性があります。「接続」をクリックすると再度ペアリングできます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方拒绝了连接：对方可能移除了本机，或只允许已配对的设备。点“连接”可以重新配对。"
           }
         }
       }
@@ -719,6 +953,12 @@
             "state" : "translated",
             "value" : "相手のデバイスがペアリングを拒否しました。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方拒绝了配对。"
+          }
         }
       }
     },
@@ -734,6 +974,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "相手のデバイスが応答しません（スリープ中かオフラインの可能性があります）。復帰すると自動的に再接続します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方没有响应（可能睡眠了或断网），回来后会自动重新连接。"
           }
         }
       }
@@ -751,6 +997,12 @@
             "state" : "translated",
             "value" : "相手のRinflowが古いためペアリングできません。先にアップデートしてください。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方的 Rinflow 版本太旧，无法配对，请先更新。"
+          }
         }
       }
     },
@@ -766,6 +1018,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画面の上端"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕上边缘"
           }
         }
       }
@@ -783,6 +1041,12 @@
             "state" : "translated",
             "value" : "画面の下端"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕下边缘"
+          }
         }
       }
     },
@@ -798,6 +1062,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画面の右端"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕右边缘"
           }
         }
       }
@@ -815,6 +1085,12 @@
             "state" : "translated",
             "value" : "画面の左端"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕左边缘"
+          }
         }
       }
     },
@@ -830,6 +1106,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画面の配置"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕排列"
           }
         }
       }
@@ -847,6 +1129,12 @@
             "state" : "translated",
             "value" : "ペアリングを解除しました。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已取消配对。"
+          }
         }
       }
     },
@@ -862,6 +1150,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@が見つかりました"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已找到 %@"
           }
         }
       }
@@ -879,6 +1173,12 @@
             "state" : "translated",
             "value" : "%@からファイルを受信しました"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已收到来自 %@ 的文件"
+          }
         }
       }
     },
@@ -894,6 +1194,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接続済み"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接"
           }
         }
       }
@@ -911,6 +1217,12 @@
             "state" : "translated",
             "value" : "接続中：%@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接：%@"
+          }
         }
       }
     },
@@ -926,6 +1238,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "デフォルトに戻す"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复默认"
           }
         }
       }
@@ -943,6 +1261,12 @@
             "state" : "translated",
             "value" : "メインウインドウを開く"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开主窗口"
+          }
         }
       }
     },
@@ -958,6 +1282,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "デバイスを画面の横にドラッグすると切り替えられます"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把设备拖到屏幕旁边即可切换"
           }
         }
       }
@@ -975,6 +1305,12 @@
             "state" : "translated",
             "value" : "画面の横にドラッグ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖到屏幕旁边"
+          }
         }
       }
     },
@@ -990,6 +1326,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ここにドラッグすると配置を解除します"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖到这里可取消放置"
           }
         }
       }
@@ -1007,6 +1349,12 @@
             "state" : "translated",
             "value" : "実際の位置に合わせてデバイスをドラッグ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖动设备，按实际位置摆放"
+          }
         }
       }
     },
@@ -1022,6 +1370,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ポインタ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指针"
           }
         }
       }
@@ -1039,6 +1393,12 @@
             "state" : "translated",
             "value" : "ポインタとスクロール…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指针与滚动…"
+          }
         }
       }
     },
@@ -1054,6 +1414,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ポインタを現在の画面にロック中"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指针已锁定在当前屏幕"
           }
         }
       }
@@ -1071,6 +1437,12 @@
             "state" : "translated",
             "value" : "ポインタの速度"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指针速度"
+          }
         }
       }
     },
@@ -1086,6 +1458,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "⌃⌥EscでいつでもこのMacに戻れます。接続は暗号化されています。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按 ⌃⌥Esc 可随时回到本机。连接已加密。"
           }
         }
       }
@@ -1103,6 +1481,12 @@
             "state" : "translated",
             "value" : "⌃⌥Lで現在の画面をロック／ロック解除します。⌃⌥⎋でいつでも操作を解除できます。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按 ⌃⌥L 锁定或解锁当前屏幕；按 ⌃⌥⎋ 始终可以释放控制。"
+          }
         }
       }
     },
@@ -1118,6 +1502,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "⌃⌥⎋でいつでも入力を戻せます"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按 ⌃⌥⎋ 随时释放输入"
           }
         }
       }
@@ -1135,6 +1525,12 @@
             "state" : "translated",
             "value" : "許可"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授权"
+          }
         }
       }
     },
@@ -1150,6 +1546,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ほかのデバイスの隣"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接在其他设备旁"
           }
         }
       }
@@ -1167,6 +1569,12 @@
             "state" : "translated",
             "value" : "受信"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接收"
+          }
         }
       }
     },
@@ -1182,6 +1590,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ファイルを受信できませんでした：%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接收文件失败：%@"
           }
         }
       }
@@ -1199,6 +1613,12 @@
             "state" : "translated",
             "value" : "ファイル"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件"
+          }
         }
       }
     },
@@ -1214,6 +1634,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ファイル転送"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件传输"
           }
         }
       }
@@ -1231,6 +1657,12 @@
             "state" : "translated",
             "value" : "接続解除"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "断开连接"
+          }
         }
       }
     },
@@ -1246,6 +1678,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接続解除：%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "断开：%@"
           }
         }
       }
@@ -1263,6 +1701,12 @@
             "state" : "translated",
             "value" : "新しいデバイスは、双方で6桁のペアリングコードを確認してから接続します。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新设备需要两边核对六位配对码后才能连接。"
+          }
         }
       }
     },
@@ -1278,6 +1722,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "矢印キー"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "方向键"
           }
         }
       }
@@ -1295,6 +1745,12 @@
             "state" : "translated",
             "value" : "なし"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无延迟"
+          }
         }
       }
     },
@@ -1310,6 +1766,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rust Coreに接続要求を送信できませんでした"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法向 Rust Core 发送连接请求"
           }
         }
       }
@@ -1327,6 +1789,12 @@
             "state" : "translated",
             "value" : "Rust Coreを起動できませんでした"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启动 Rust Core"
+          }
         }
       }
     },
@@ -1342,6 +1810,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ログイン時の起動を変更できませんでした：%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法更改登录启动：%@"
           }
         }
       }
@@ -1359,6 +1833,12 @@
             "state" : "translated",
             "value" : "この名前を解決できません：%@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解析这个名称：%@"
+          }
         }
       }
     },
@@ -1374,6 +1854,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "その他"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多"
           }
         }
       }
@@ -1391,6 +1877,12 @@
             "state" : "translated",
             "value" : "追加できるアドレスは最大%lld個です"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最多添加 %lld 个地址"
+          }
         }
       }
     },
@@ -1406,6 +1898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未接続"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未连接"
           }
         }
       }
@@ -1423,6 +1921,12 @@
             "state" : "translated",
             "value" : "ペアリングされていないデバイスを切断しました（「ペアリング済みのデバイスのみ許可」がオン）。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配对的设备已断开（已开启“仅允许已配对的设备”）。"
+          }
         }
       }
     },
@@ -1435,6 +1939,12 @@
           }
         },
         "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "未配置"
@@ -1455,6 +1965,12 @@
             "state" : "translated",
             "value" : "このMac"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本机"
+          }
         }
       }
     },
@@ -1470,6 +1986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "放すと配置を解除"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "松开以取消放置"
           }
         }
       }
@@ -1490,7 +2012,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "正在从 %1$@ 接收 %2$@"
           }
         }
@@ -1512,7 +2034,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "正在从 %1$@ 接收 %2$@ 等 %3$lld 项"
           }
         }
@@ -1530,6 +2052,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "デバイスを検索中"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在发现设备"
           }
         }
       }
@@ -1550,7 +2078,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "正在发送 %1$@ 到 %2$@"
           }
         }
@@ -1572,7 +2100,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "正在发送 %1$@ 等 %2$lld 项到 %3$@"
           }
         }
@@ -1591,6 +2119,12 @@
             "state" : "translated",
             "value" : "%@を操作中"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在控制 %@"
+          }
         }
       }
     },
@@ -1606,6 +2140,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "検索中…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在查找…"
           }
         }
       }
@@ -1623,6 +2163,12 @@
             "state" : "translated",
             "value" : "応答がありません。相手側でRinflowが開いていること、ファイアウォールでUDP 42420–42421が許可されていることを確認してください"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有响应：确认对方已打开 Rinflow，且防火墙允许 UDP 42420–42421"
+          }
         }
       }
     },
@@ -1638,6 +2184,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Macのショートカットを使う"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沿用 Mac 的快捷键"
           }
         }
       }
@@ -1655,6 +2207,12 @@
             "state" : "translated",
             "value" : "ライト"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浅色"
+          }
         }
       }
     },
@@ -1670,6 +2228,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ダーク"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深色"
           }
         }
       }
@@ -1687,6 +2251,12 @@
             "state" : "translated",
             "value" : "追加"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加"
+          }
         }
       }
     },
@@ -1702,6 +2272,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "デバイスを追加"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加设备"
           }
         }
       }
@@ -1719,6 +2295,12 @@
             "state" : "translated",
             "value" : "ゲームやプレゼンテーションをフルスクリーンで表示している間は、ポインタがこのMacの画面の端から出ません。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游戏或演示全屏时，指针不会从本机屏幕边缘切出。"
+          }
         }
       }
     },
@@ -1734,6 +2316,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "スクロールの速度"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滚动速度"
           }
         }
       }
@@ -1751,6 +2339,12 @@
             "state" : "translated",
             "value" : "このMacのキーボードとマウスを共有し、ほかのデバイスから操作を受けるために必要です。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用于共享本机键鼠，以及接收其他设备的控制。"
+          }
         }
       }
     },
@@ -1766,6 +2360,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ショートカットでデバイスを切り替える"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用快捷键切换设备"
           }
         }
       }
@@ -1783,6 +2383,12 @@
             "state" : "translated",
             "value" : "相手からの接続"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由对方发起的连接"
+          }
         }
       }
     },
@@ -1798,6 +2404,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ログイン時に開く"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录时启动"
           }
         }
       }
@@ -1815,6 +2427,12 @@
             "state" : "translated",
             "value" : "隣のデバイスの端"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相邻设备的边缘"
+          }
         }
       }
     },
@@ -1830,6 +2448,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "短（150ミリ秒）"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短（150 毫秒）"
           }
         }
       }
@@ -1847,6 +2471,12 @@
             "state" : "translated",
             "value" : "オフライン"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "离线"
+          }
         }
       }
     },
@@ -1862,6 +2492,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "このアドレスを削除"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除这个地址"
           }
         }
       }
@@ -1879,6 +2515,12 @@
             "state" : "translated",
             "value" : "ほかのデバイスの接続を待っています"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待其他设备连接"
+          }
         }
       }
     },
@@ -1894,6 +2536,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "修飾キー"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "组合键"
           }
         }
       }
@@ -1911,6 +2559,12 @@
             "state" : "translated",
             "value" : "修飾キーと矢印キーで、その方向にあるデバイスへマウスを移動します。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "组合键加方向键，把鼠标移到那一侧的设备上。"
+          }
         }
       }
     },
@@ -1926,6 +2580,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自動切り替え：%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动切换：%@"
           }
         }
       }
@@ -1943,6 +2603,12 @@
             "state" : "translated",
             "value" : "現在の画面のロックを解除（⌃⌥L）"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁当前屏幕（⌃⌥L）"
+          }
         }
       }
     },
@@ -1958,6 +2624,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ロック解除（⌃⌥L）"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁（⌃⌥L）"
           }
         }
       }
@@ -1975,6 +2647,12 @@
             "state" : "translated",
             "value" : "デバイスの位置を保存しました。アクセシビリティを許可すると、画面の端で切り替えられます"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备位置已保存；授予辅助功能权限后即可从屏幕边缘切换"
+          }
         }
       }
     },
@@ -1990,6 +2668,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "デバイスが一覧に表示されませんか？IPアドレスまたはデバイス名を入力してください。どちらか一方のデバイスで追加するだけで構いません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备没出现在列表里？输入它的 IP 地址或设备名称。只需在其中一台设备上添加。"
           }
         }
       }
@@ -2007,6 +2691,12 @@
             "state" : "translated",
             "value" : "デバイスの識別証明書が変わったため、接続を拒否しました。相手のデバイスを再インストールした場合は、ペアリングを解除してからもう一度ペアリングしてください。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备的身份证书变了，已拒绝连接。如果对方重装过，请取消配对后重新配对。"
+          }
         }
       }
     },
@@ -2022,6 +2712,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "設定…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置…"
           }
         }
       }
@@ -2039,6 +2735,12 @@
             "state" : "translated",
             "value" : "言語"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语言"
+          }
         }
       }
     },
@@ -2054,6 +2756,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "言語はRinflowを開き直すと切り替わります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语言在重新打开 Rinflow 后生效。"
           }
         }
       }
@@ -2071,6 +2779,12 @@
             "state" : "translated",
             "value" : "もう一方のデバイスでRinflowを起動し、同じネットワークに接続してください。表示されない場合は「デバイスを追加」をクリックします。「ローカルネットワーク」へのアクセスを拒否した場合は、「システム設定」›「プライバシーとセキュリティ」›「ローカルネットワーク」でRinflowを許可してください。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在另一台设备上启动 Rinflow，并保持在同一局域网；没有出现时可以点“添加设备”。如果曾拒绝“本地网络”权限，请在“系统设置 › 隐私与安全性 › 本地网络”中允许 Rinflow。"
+          }
         }
       }
     },
@@ -2086,6 +2800,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "両方のデバイスに同じ数字が表示されていることを確認してください：\n\n%@\n\n一致していれば「ペアリング」をクリックし、相手のデバイスでも確認してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请确认两台设备上显示的数字相同：\n\n%@\n\n数字一致时点“配对”，并在对方设备上也确认。"
           }
         }
       }
@@ -2103,6 +2823,12 @@
             "state" : "translated",
             "value" : "ほかのRinflowが実行されていないことを確認してから、もう一度お試しください。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请确认没有其他 Rinflow 正在运行，然后重试。"
+          }
         }
       }
     },
@@ -2118,6 +2844,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "IPアドレスまたはデバイス名を入力してください"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入 IP 地址或设备名称"
           }
         }
       }
@@ -2135,6 +2867,12 @@
             "state" : "translated",
             "value" : "自動切り替えを使うには、デバイスの位置を選択してください"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择设备位置以启用自动切换"
+          }
         }
       }
     },
@@ -2150,6 +2888,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "システム"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随系统"
           }
         }
       }
@@ -2167,6 +2911,12 @@
             "state" : "translated",
             "value" : "端での切り替えの遅延"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "边缘切换延迟"
+          }
         }
       }
     },
@@ -2182,6 +2932,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "このアドレスはすでに追加されています"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个地址已经添加过了"
           }
         }
       }
@@ -2199,6 +2955,12 @@
             "state" : "translated",
             "value" : "接続"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
         }
       }
     },
@@ -2214,6 +2976,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接続サービスを開始できませんでした"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接服务未能启动"
           }
         }
       }
@@ -2231,6 +2999,12 @@
             "state" : "translated",
             "value" : "Rinflowを終了"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 Rinflow"
+          }
         }
       }
     },
@@ -2246,6 +3020,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一般"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
           }
         }
       }
@@ -2263,6 +3043,12 @@
             "state" : "translated",
             "value" : "ペアリング"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配对"
+          }
         }
       }
     },
@@ -2278,6 +3064,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ペアリングが完了しませんでした：%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配对未完成：%@"
           }
         }
       }
@@ -2295,6 +3087,12 @@
             "state" : "translated",
             "value" : "ペアリングがタイムアウトしました。2分以内に確認されませんでした。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配对超时，没有在两分钟内确认。"
+          }
         }
       }
     },
@@ -2310,6 +3108,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "操作を解除"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "释放控制"
           }
         }
       }
@@ -2327,6 +3131,12 @@
             "state" : "translated",
             "value" : "再試行"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试"
+          }
         }
       }
     },
@@ -2342,6 +3152,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "現在の画面にロック（⌃⌥L）"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锁定当前屏幕（⌃⌥L）"
           }
         }
       }
@@ -2359,6 +3175,12 @@
             "state" : "translated",
             "value" : "このMacをロックするとほかのデバイスもロックされ、ほかのデバイスをロックするとこのMacもロックされます。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锁定这台 Mac 时其他设备一起锁定，其他设备锁定时这台 Mac 也锁定。"
+          }
         }
       }
     },
@@ -2374,6 +3196,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ロック"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锁屏"
           }
         }
       }
@@ -2391,6 +3219,12 @@
             "state" : "translated",
             "value" : "キーボード"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键盘"
+          }
         }
       }
     },
@@ -2406,6 +3240,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "キーボードとマウスの共有"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键鼠共享"
           }
         }
       }
@@ -2423,6 +3263,12 @@
             "state" : "translated",
             "value" : "キーボードとマウスの共有を一時停止中"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键鼠共享已暂停"
+          }
         }
       }
     },
@@ -2438,6 +3284,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "長（500ミリ秒）"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "长（500 毫秒）"
           }
         }
       }
@@ -2455,6 +3307,12 @@
             "state" : "translated",
             "value" : "アクセシビリティの許可が必要です"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要辅助功能权限"
+          }
         }
       }
     },
@@ -2470,6 +3328,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画面の隅の近くでは自動で切り替えず、メニューやホットコーナーを使いやすくします。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "靠近屏幕角落时不自动切换，方便使用菜单和触发角。"
           }
         }
       }
@@ -2487,6 +3351,12 @@
             "state" : "translated",
             "value" : "マウスはこのMacの中だけで動きます"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标只在本机移动"
+          }
         }
       }
     },
@@ -2502,6 +3372,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "マウスはこのMacにあります。画面の端を越えると切り替わります"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标在本机，越过屏幕边缘即可切换"
           }
         }
       }
@@ -2519,6 +3395,12 @@
             "state" : "translated",
             "value" : "マウスはここ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标在这里"
+          }
         }
       }
     },
@@ -2534,6 +3416,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "マウスは%@にあります"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标正在 %@ 上"
           }
         }
       }
