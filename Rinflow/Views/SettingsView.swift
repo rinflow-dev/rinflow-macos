@@ -39,7 +39,9 @@ struct SettingsView: View {
             Section {
                 Toggle("登录时启动", isOn: Binding(
                     get: { model.loginStatus == .enabled || model.loginStatus == .requiresApproval },
-                    set: model.setLaunchAtLogin
+                    // A closure, not the method itself: Xcode 26's compiler
+                    // crashes on the method in a Release build.
+                    set: { model.setLaunchAtLogin($0) }
                 ))
                 if model.loginStatus == .requiresApproval {
                     Button("在系统设置中允许登录启动", action: model.openLoginSettings)
