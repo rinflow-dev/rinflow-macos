@@ -6,6 +6,13 @@ Rinflow shares one keyboard and mouse between computers on a local network. Move
 
 This is the macOS client. It works with the [Windows client](https://github.com/rinflow-dev/rinflow-windows) and is built on [rinflow-core](https://github.com/rinflow-dev/rinflow-core).
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/devices-en-US-dark.png">
+    <img src="docs/images/devices-en-US-light.png" width="640" alt="The main window: a Windows PC placed to the right of this Mac and connected">
+  </picture>
+</p>
+
 **Status:** early development. There are no binary releases yet. Known issues are listed in the [changelog](CHANGELOG.md).
 
 ## Features

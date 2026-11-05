@@ -6,6 +6,13 @@ Rinflow 让局域网内的多台电脑共用一套键盘和鼠标：把指针移
 
 这是 macOS 客户端，可与 [Windows 客户端](https://github.com/rinflow-dev/rinflow-windows)配合使用，基于 [rinflow-core](https://github.com/rinflow-dev/rinflow-core) 构建。
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/devices-zh-CN-dark.png">
+    <img src="docs/images/devices-zh-CN-light.png" width="640" alt="主窗口：一台 Windows 电脑放在本机右侧，已连接">
+  </picture>
+</p>
+
 **状态：** 早期开发阶段，暂无二进制发布版本。已知问题见[变更日志](CHANGELOG.md)。
 
 ## 功能

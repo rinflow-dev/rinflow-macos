@@ -6,7 +6,13 @@ import SwiftUI
 
 @main
 struct RinflowApp: App {
+    #if DEBUG
+    /// `-RinflowScreenshot light|dark` starts with the screenshots' state.
+    @State private var model = UserDefaults.standard.string(forKey: "RinflowScreenshot")
+        .flatMap(AppTheme.init(rawValue:)).map { AppModel(screenshot: $0) } ?? AppModel()
+    #else
     @State private var model = AppModel()
+    #endif
 
     var body: some Scene {
         Window("Rinflow", id: "main") {

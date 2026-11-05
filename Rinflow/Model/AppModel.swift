@@ -58,7 +58,9 @@ final class AppModel: RustCoreDelegate {
     private let pathMonitor = NWPathMonitor()
     /// Network changes come in bursts; the core hears of them once settled.
     private var pendingNetworkChange: DispatchWorkItem?
-    private var shuttingDown = false
+    /// Shut down, or never started (screenshots): nothing reaches the core
+    /// or the input any more.
+    private var stopped = false
     private static let log = Logger(subsystem: "com.rinflow.mac", category: "model")
 
     var isControlling: Bool { controlledPeerID != nil }
@@ -160,6 +162,30 @@ final class AppModel: RustCoreDelegate {
         refreshPermission()
     }
 
+    #if DEBUG
+    /// The made-up state of the README screenshots (scripts/screenshots.sh):
+    /// a Windows PC placed on the right of this Mac, connected. Reads nothing
+    /// saved, and is stopped from the start: no core, no input tap.
+    init(screenshot theme: AppTheme) {
+        stopped = true
+        let pc = Peer(id: "studio-pc", name: "Studio PC", platform: "windows", address: "192.168.1.20",
+                      port: 42421, displays: [Display(x: 0, y: 0, width: 1920, height: 1080)])
+        var settings = AppSettings()
+        settings.theme = theme
+        self.settings = settings
+        deviceName = "MacBook Pro"
+        peers = [pc]
+        knownPeers = [pc.id: pc]
+        trustedPeers = [pc.id: TrustedPeer(peerID: pc.id, fingerprint: "")]
+        sessions = [pc.id: PeerSession(status: .connected(pc))]
+        placements = [pc.id: PlacementRecord(peerID: pc.id, offset: Offset(x: 1512, y: -49), updatedMs: 0)]
+        localDisplays = [Display(x: 0, y: 0, width: 1512, height: 982, scale: 2)]
+        coreState = .running
+        hasAccessibilityPermission = true
+        NSApplication.shared.appearance = theme.appearance
+    }
+    #endif
+
     func startCore() {
         // A failed start can still own a handle whose Rust thread exited.
         clipboard.stop()
@@ -191,8 +217,8 @@ final class AppModel: RustCoreDelegate {
     }
 
     func shutdown() {
-        guard !shuttingDown else { return }
-        shuttingDown = true
+        guard !stopped else { return }
+        stopped = true
         pendingNetworkChange?.cancel()
         pathMonitor.cancel()
         clipboard.stop()
@@ -240,11 +266,7 @@ final class AppModel: RustCoreDelegate {
 
     private func applySettings(_ settings: AppSettings, previous: AppSettings?) {
         if settings.theme != previous?.theme {
-            NSApplication.shared.appearance = switch settings.theme {
-            case .system: nil
-            case .light: NSAppearance(named: .aqua)
-            case .dark: NSAppearance(named: .darkAqua)
-            }
+            NSApplication.shared.appearance = settings.theme.appearance
         }
         if settings.pauseInFullscreen != previous?.pauseInFullscreen || settings.sharing != previous?.sharing {
             fullscreen.setEnabled(settings.pauseInFullscreen && settings.sharing)
@@ -403,6 +425,7 @@ final class AppModel: RustCoreDelegate {
     }
 
     func refreshPermission() {
+        guard !stopped else { return }
         loginStatus = SMAppService.mainApp.status
         hasAccessibilityPermission = inputBridge.hasAccessibilityPermission
         core.setRemoteControlAllowed(settings.sharing && hasAccessibilityPermission)
@@ -434,7 +457,7 @@ final class AppModel: RustCoreDelegate {
     // MARK: - Core events
 
     func rustCore(_ core: RustCore, received event: CoreEventEnvelope) {
-        guard !shuttingDown else { return }
+        guard !stopped else { return }
         switch event.event {
         case "started":
             coreState = .running
@@ -616,7 +639,7 @@ final class AppModel: RustCoreDelegate {
     func rustCore(_ core: RustCore, received input: LcInputEvent) {
         // Reset releases must still be played after pausing. New presses and
         // motion already queued before the pause must not take effect.
-        guard !shuttingDown,
+        guard !stopped,
               settings.sharing || input.kind == UInt32(LC_INPUT_KEY_UP)
                 || input.kind == UInt32(LC_INPUT_MOUSE_BUTTON_UP)
         else { return }
@@ -811,7 +834,7 @@ final class AppModel: RustCoreDelegate {
 
     /// Hands the arrangement and the connected peers to the input bridge.
     private func refreshArrangement() {
-        guard settings.sharing, !shuttingDown else {
+        guard settings.sharing, !stopped else {
             inputBridge.stop()
             return
         }
@@ -931,5 +954,15 @@ final class AppModel: RustCoreDelegate {
             }
         }
         UserDefaults.standard.removeObject(forKey: legacyKey)
+    }
+}
+
+private extension AppTheme {
+    var appearance: NSAppearance? {
+        switch self {
+        case .system: nil
+        case .light: NSAppearance(named: .aqua)
+        case .dark: NSAppearance(named: .darkAqua)
+        }
     }
 }

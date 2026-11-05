@@ -6,6 +6,13 @@ Rinflow は、ローカルネットワーク上の複数のコンピューター
 
 これは macOS クライアントです。[Windows クライアント](https://github.com/rinflow-dev/rinflow-windows)と連携でき、[rinflow-core](https://github.com/rinflow-dev/rinflow-core) をベースにしています。
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/devices-ja-JP-dark.png">
+    <img src="docs/images/devices-ja-JP-light.png" width="640" alt="メインウィンドウ：Windows PC をこの Mac の右に配置し、接続済み">
+  </picture>
+</p>
+
 **状態：** 開発初期の段階です。バイナリのリリースはまだありません。既知の問題は[変更履歴](CHANGELOG.md)をご覧ください。
 
 ## 機能
