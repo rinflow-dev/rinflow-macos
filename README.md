@@ -13,7 +13,22 @@ This is the macOS client. It works with the [Windows client](https://github.com/
   </picture>
 </p>
 
-**Status:** early development. Download the disk image from [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest): `arm64` for Macs with Apple silicon, `x64` for Intel Macs. Known issues are listed in the [changelog](CHANGELOG.md).
+**Status:** early development. Known issues are listed in the [changelog](CHANGELOG.md).
+
+## Download
+
+Get the disk image for your Mac from [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest), open it and drag Rinflow into Applications. It needs macOS 14 or later, and is signed and notarized.
+
+| Your Mac | File |
+| --- | --- |
+| Apple silicon (M1 and later) | `Rinflow-<version>-macOS-arm64.dmg` |
+| Intel processor | `Rinflow-<version>-macOS-x64.dmg` |
+
+Not sure which one? Open **About This Mac** from the Apple menu: **Chip** says M1 or later for Apple silicon, **Processor** says Intel. Or run this in Terminal, which finds out, downloads the right file, checks its SHA-256 and installs it:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/rinflow-dev/rinflow-macos/main/scripts/install.sh | sh
+```
 
 ## Features
 

@@ -13,7 +13,22 @@ Rinflow は、ローカルネットワーク上の複数のコンピューター
   </picture>
 </p>
 
-**状態：** 開発初期の段階です。ディスクイメージは [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest) からダウンロードできます。Apple シリコン搭載の Mac は `arm64`、Intel の Mac は `x64` を選んでください。既知の問題は[変更履歴](CHANGELOG.md)をご覧ください。
+**状態：** 開発初期の段階です。既知の問題は[変更履歴](CHANGELOG.md)をご覧ください。
+
+## ダウンロード
+
+お使いの Mac に合ったディスクイメージを [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest) からダウンロードし、開いて Rinflow を「アプリケーション」へドラッグします。macOS 14 以降が必要で、署名と公証済みです。
+
+| お使いの Mac | ファイル |
+| --- | --- |
+| Apple シリコン（M1 以降） | `Rinflow-<バージョン>-macOS-arm64.dmg` |
+| Intel プロセッサ | `Rinflow-<バージョン>-macOS-x64.dmg` |
+
+どちらか分からない場合は、アップルメニューの「このMacについて」を開きます。「チップ」に M1 以降と表示されていれば Apple シリコン、「プロセッサ」に Intel と表示されていれば Intel です。ターミナルで次のコマンドを実行すると、自動で判別して適切なファイルをダウンロードし、SHA-256 を確認してからインストールします。
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/rinflow-dev/rinflow-macos/main/scripts/install.sh | sh
+```
 
 ## 機能
 

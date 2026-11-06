@@ -13,7 +13,22 @@ Rinflow 让局域网内的多台电脑共用一套键盘和鼠标：把指针移
   </picture>
 </p>
 
-**状态：** 早期开发阶段。从 [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest) 下载 DMG：Apple 芯片的 Mac 选 `arm64`，Intel 的 Mac 选 `x64`。已知问题见[变更日志](CHANGELOG.md)。
+**状态：** 早期开发阶段。已知问题见[变更日志](CHANGELOG.md)。
+
+## 下载
+
+从 [Releases](https://github.com/rinflow-dev/rinflow-macos/releases/latest) 下载适合你 Mac 的磁盘映像，打开后把 Rinflow 拖进“应用程序”。需要 macOS 14 或更高版本，已签名并公证。
+
+| 你的 Mac | 文件 |
+| --- | --- |
+| Apple 芯片（M1 及之后） | `Rinflow-<版本>-macOS-arm64.dmg` |
+| Intel 处理器 | `Rinflow-<版本>-macOS-x64.dmg` |
+
+不确定选哪个？打开苹果菜单中的“关于本机”：“芯片”显示 M1 或更新型号就是 Apple 芯片，“处理器”显示 Intel 就是 Intel。也可以在“终端”中运行下面的命令，它会自动识别、下载对应的文件，核对 SHA-256 后安装：
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/rinflow-dev/rinflow-macos/main/scripts/install.sh | sh
+```
 
 ## 功能
 
