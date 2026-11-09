@@ -21,6 +21,29 @@ final class CallbackRelayTests: XCTestCase {
         XCTAssertEqual(receiver.values, Array(0..<100))
     }
 
+    @MainActor func testPreparedCallbacksKeepTheirOrderWithPlainOnesAndRunOffMain() async {
+        let receiver = Receiver()
+        let relay = CallbackRelay(receiver)
+        let delivered = expectation(description: "ordered callbacks")
+        for value in 0..<50 {
+            if value.isMultiple(of: 2) {
+                relay.enqueue(preparing: { () -> Int? in
+                    XCTAssertFalse(Thread.isMainThread)
+                    // Slow decoding must not let later callbacks overtake it.
+                    if value == 10 { Thread.sleep(forTimeInterval: 0.05) }
+                    return value
+                }) { $0.values.append($1) }
+            } else {
+                relay.enqueue { $0.values.append(value) }
+            }
+        }
+        // Undecodable: dropped, the rest still delivered.
+        relay.enqueue(preparing: { nil as Int? }) { $0.values.append($1) }
+        relay.enqueue { _ in delivered.fulfill() }
+        await fulfillment(of: [delivered], timeout: 2)
+        XCTAssertEqual(receiver.values, Array(0..<50))
+    }
+
     @MainActor func testStoppingDropsQueuedCallbacksFromOldCore() async {
         let receiver = Receiver()
         let relay = CallbackRelay(receiver)
@@ -43,7 +66,11 @@ final class CallbackRelayTests: XCTestCase {
         receiver = nil
         XCTAssertNil(weakReceiver)
         let drained = expectation(description: "queue drained")
-        DispatchQueue.main.async { drained.fulfill() }
+        // After the callback above on both of the relay's queues.
+        DispatchQueue.global().async {
+            Thread.sleep(forTimeInterval: 0.05)
+            DispatchQueue.main.async { drained.fulfill() }
+        }
         await fulfillment(of: [drained], timeout: 2)
     }
 }

@@ -49,6 +49,22 @@ final class ClipboardTests: XCTestCase {
         bridge.stop()
     }
 
+    @MainActor func testAPeerClipboardWithNothingPasteableKeepsThisMacsCopy() {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        pasteboard.setString("mine", forType: .string)
+        let bridge = ClipboardBridge(pasteboard: pasteboard)
+        bridge.write([ClipboardItem(mime: "text/rtf", data: Data("{\\rtf1}".utf8))])
+        XCTAssertEqual(pasteboard.string(forType: .string), "mine")
+        bridge.write([ClipboardItem(mime: ClipboardItem.uriList, data: Data("https://example.com/".utf8))])
+        XCTAssertEqual(pasteboard.string(forType: .string), "mine")
+        bridge.write([
+            ClipboardItem(mime: "text/rtf", data: Data("{\\rtf1}".utf8)),
+            ClipboardItem(mime: ClipboardItem.text, data: Data("theirs".utf8)),
+        ])
+        XCTAssertEqual(pasteboard.string(forType: .string), "theirs")
+    }
+
     func testAnOversizedScreenshotIsShrunkInsteadOfDropped() throws {
         // Noise does not compress: like a busy 5K screenshot.
         let side = 1024

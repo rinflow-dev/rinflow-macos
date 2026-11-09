@@ -15,7 +15,13 @@
 #   SIGNING_IDENTITY  defaults to "Developer ID Application"
 #   RELEASE_DIR       defaults to releases/
 #   NOTARY_KEYCHAIN   the keychain holding NOTARY_PROFILE, if not the login one
+#   SPARKLE_PRIVATE_KEY  the EdDSA key that signs updates, if not in the login
+#                     keychain (Sparkle's generate_keys put it there)
 #   ALLOW_DIRTY=1     builds uncommitted changes, for trying the script only
+#
+# A notarized build also writes the update feed of each architecture,
+# appcast-arm64.xml and appcast-x64.xml, published with the release: the app
+# reads it from the latest release (Rinflow/App/Updater.swift).
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 CORE="${ROOT}/../rinflow-core"
@@ -59,6 +65,7 @@ build_app() {
         CURRENT_PROJECT_VERSION="$build" \
         CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO OTHER_CODE_SIGN_FLAGS=--timestamp clean build
 
+    sign_sparkle
     codesign --verify --deep --strict "$app"
     [ "$(lipo -archs "$app/Contents/MacOS/Rinflow")" = "$1" ] || fail "the $1 app holds other architectures"
     signature=$(codesign -dvv --entitlements - "$app" 2>&1)
@@ -79,6 +86,28 @@ build_app() {
     esac
     # The image is signed by whoever signed the app.
     identity=$(printf '%s\n' "$signature" | sed -n 's/^Authority=//p' | head -n 1)
+}
+
+# Xcode signs Sparkle.framework when it embeds it, but not the helpers
+# inside, which stay ad hoc and fail notarization. Sign them inside out
+# (Sparkle's documented order), then the framework and the app again, whose
+# seals cover them.
+sign_sparkle() {
+    framework="$app/Contents/Frameworks/Sparkle.framework"
+    for helper in Versions/B/XPCServices/Installer.xpc Versions/B/XPCServices/Downloader.xpc \
+        Versions/B/Autoupdate Versions/B/Updater.app ""; do
+        codesign --force --sign "$signingIdentity" --options runtime --timestamp \
+            --preserve-metadata=entitlements "$framework/$helper"
+    done
+    codesign --force --sign "$signingIdentity" --options runtime --timestamp \
+        --preserve-metadata=entitlements,requirements,flags "$app"
+    for helper in "$framework" "$framework/Versions/B/Autoupdate" "$framework/Versions/B/Updater.app" \
+        "$framework/Versions/B/XPCServices/Installer.xpc" "$framework/Versions/B/XPCServices/Downloader.xpc"; do
+        case "$(codesign -dvv "$helper" 2>&1)" in
+            *"Authority=Developer ID Application"*"Timestamp="*) ;;
+            *) fail "${helper#"$app"/} is not signed with Developer ID and a timestamp" ;;
+        esac
+    done
 }
 
 # $1 from $app: the app and a link to Applications, the usual drag-to-install
@@ -125,6 +154,32 @@ publish() {
     spctl --assess --type open --context context:primary-signature --verbose "$1"
 }
 
+# The update feed of architecture $2 offering image $1, signed with the
+# EdDSA key. Sparkle needs only the newest version in it.
+feed() {
+    feedImage=$1
+    feedArch=$2
+    feedFile="$releaseDir/appcast-$feedArch.xml"
+    key=$(/usr/libexec/PlistBuddy -c 'Print :SUPublicEDKey' "$app/Contents/Info.plist" 2>/dev/null || true)
+    [ -n "$key" ] || fail "no update key: set SPARKLE_PUBLIC_KEY in scripts/generate-xcodeproj.rb (docs/release-checklist.md)"
+    version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")
+    releases=https://github.com/rinflow-dev/rinflow-macos/releases
+    mkdir "$work/feed"
+    cp "$feedImage" "$work/feed/"
+    rm -f "$feedFile"
+    set -- "${derivedDir}/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast" \
+        --download-url-prefix "$releases/download/v$version/" \
+        --full-release-notes-url "$releases/tag/v$version" \
+        -o "$feedFile" "$work/feed"
+    if [ -n "${SPARKLE_PRIVATE_KEY:-}" ]; then
+        printf '%s' "$SPARKLE_PRIVATE_KEY" | "$@" --ed-key-file -
+    else
+        "$@"
+    fi
+    rm -rf "$work/feed"
+    grep -q 'sparkle:edSignature=' "$feedFile" || fail "$feedFile is not signed"
+}
+
 # Xcode's architecture, and the name downloads use, as on Windows.
 for arch in arm64:arm64 x86_64:x64; do
     build_app "${arch%%:*}"
@@ -138,6 +193,7 @@ for arch in arm64:arm64 x86_64:x64; do
     fi
     publish "$name.dmg"
     checksum "$name.dmg"
+    feed "$name.dmg" "${arch#*:}"
     # Only the notarized image stays, so the wrong one cannot be sent out.
     rm -f "$name-unnotarized.dmg" "$name-unnotarized.dmg.sha256"
     echo "Notarized release: $name.dmg"

@@ -8,6 +8,8 @@
 #   NOTARY_KEY                  an App Store Connect API key (.p8 contents)
 #   NOTARY_KEY_ID               its key ID
 #   NOTARY_ISSUER_ID            its issuer ID
+#   SPARKLE_PRIVATE_KEY         the EdDSA key that signs updates (Sparkle's
+#                               generate_keys -x), see docs/release-checklist.md
 name: Release
 
 on:
@@ -94,12 +96,18 @@ jobs:
           echo "NOTARY_KEYCHAIN=$keychain" >> "$GITHUB_ENV"
 
       - name: Build, sign and notarize
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: NOTARY_PROFILE=rinflow-notary scripts/package-release.sh
 
       - uses: actions/upload-artifact@v4
         with:
           name: disk-images
-          path: rinflow-macos/releases/Rinflow-*.dmg
+          # The update feeds go with the images: the app reads them from the
+          # latest release.
+          path: |
+            rinflow-macos/releases/Rinflow-*.dmg
+            rinflow-macos/releases/appcast-*.xml
           if-no-files-found: error
 
       - name: Remove the keychain
@@ -156,7 +164,7 @@ jobs:
         run: |
           prerelease=()
           case "$GITHUB_REF_NAME" in *-*) prerelease=(--prerelease) ;; esac
-          gh release create "$GITHUB_REF_NAME" dist/Rinflow-*.dmg \
+          gh release create "$GITHUB_REF_NAME" dist/Rinflow-*.dmg dist/appcast-*.xml \
             --title "Rinflow for macOS ${GITHUB_REF_NAME#v}" \
             --notes-file notes.md \
             "${prerelease[@]}"

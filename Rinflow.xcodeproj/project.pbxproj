@@ -7,342 +7,350 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00C9F4E23B8D377F45232424 /* CoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F90FDF3AE9D8C6BF633914 /* CoreTypes.swift */; };
-		038537733E7B78B25CEA0948 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119AF6F6EBA5293BCDADB088 /* AppModel.swift */; };
-		0442B3E83A48079EA73EB4BE /* ClipboardBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EC8DCD635189A0586C28BF /* ClipboardBridge.swift */; };
-		0465C3A79686B81D0BD6B585 /* FullscreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435F07A6EB9B70257668D7D2 /* FullscreenMonitor.swift */; };
-		0472B16CE8724F2FB3E7097A /* ControlHUDController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB1E8043042721809774106 /* ControlHUDController.swift */; };
-		0B282A760187F0976B99AD34 /* InputPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */; };
-		0FB05EC8376527A8660B837D /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE8B40D78B357AA16998AE5 /* HIDKeyMap.swift */; };
-		19EFC64A846C376C59C4692A /* RustCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C18BACCB69845E74D906E83 /* RustCore.swift */; };
-		1E8846F635AE76455F22E2CB /* SwitchHotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F881F74EEA32879B1148198F /* SwitchHotkeys.swift */; };
-		20649C860297CAA8BAA5759C /* PointerVisibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2644F56E3D41563A1E7C336 /* PointerVisibility.swift */; };
-		2A64CF04D959A3614DAD653A /* ArrangementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F6F1C1AFC96089E557FB18 /* ArrangementView.swift */; };
-		36A41A13E39B69669F322459 /* CrossingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23388D7C3C6C43085F04B08E /* CrossingGate.swift */; };
-		3BAE1E64461D55C1F69E0121 /* PairingPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBCE0DB83240142C4AC10A09 /* PairingPrompt.swift */; };
-		3BF7F5092E395BE0657C494B /* CrossingGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5104A37FAFCF18AECE5588 /* CrossingGateTests.swift */; };
-		424E025F30CC91CBCF2C079C /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5C32AFC47EE4A444E071D1 /* LocalizationTests.swift */; };
-		4EC669084B5705BE7DCDC116 /* InputPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */; };
-		639C0717432791A968114CBA /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC0BB257C309D663E812C2A /* Layout.swift */; };
-		6FD5A8737E092243FAE60089 /* InputPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE85185ED5451129E4204D /* InputPlayerTests.swift */; };
-		71CD2D7F0083C0509C48C08E /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B53A234B1936934BA28B8851 /* Localizable.xcstrings */; };
-		75E0F3D43E4E33E0C78FF294 /* LayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48302E6149A6D41B3AF7E3BE /* LayoutTests.swift */; };
-		7824D54158074ED81D7CC9B0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB31A34F494AACE455E77E49 /* Cocoa.framework */; };
-		7B04552700765C63CA6016BE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E095C998B3FED6D7227F2639 /* ContentView.swift */; };
-		7BC701AA196B96139E384C80 /* ClickTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9328FED96B4C1105286DB9 /* ClickTrackerTests.swift */; };
-		7D46F32D6BE8CBC516D16657 /* TransfersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDEE2D653F108BAE490CACD /* TransfersView.swift */; };
-		7F8EDD5A2AC3EDD2F7F1AE4C /* TransferNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A5519AFE1156C2ADDCB5536 /* TransferNotifications.swift */; };
-		91E341B8DE4AB622B5270E76 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB31A34F494AACE455E77E49 /* Cocoa.framework */; };
-		9392DF99F2797026E917189B /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE8B40D78B357AA16998AE5 /* HIDKeyMap.swift */; };
-		95FC9F7CAD55E7BCE7C2F6D5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE9C3D415E1E3A527C155A /* SettingsView.swift */; };
-		971326DE2C70B7C2CF47D69F /* InputBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4D768D9D70633CBC4B3F69 /* InputBridge.swift */; };
-		A1C0DE0000000000000000B1 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000000F1 /* AppIcon.icon */; };
-		A1C0DE0000000000000000B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000000F2 /* Assets.xcassets */; };
-		A1F3C2D47B8E4F60912C3D5E /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */; };
-		A55D61656C59DAEF4E897A69 /* CallbackRelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */; };
-		B034EA978CDF65FFA3B8A4CD /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1928FAEC6395FB471D58A2B /* SettingsTests.swift */; };
-		B10077A576A891F0D1A651A0 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18208A3B73430CF37166FB8D /* ClickTracker.swift */; };
-		B7AAD61A4B98C0A21AF8CF7B /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC0BB257C309D663E812C2A /* Layout.swift */; };
-		BCB0D990114B107462251289 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E965AF35CD5089962AD18469 /* CallbackRelay.swift */; };
-		C3A6AA359AB08B3B720327DA /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184F7F74A206A9A9C8DB577D /* AppSettings.swift */; };
-		C6660760F6CE7FAB1298F8A4 /* ClipboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0919A208CD8DB63705BC6E51 /* ClipboardTests.swift */; };
-		C6826E27B33745644D821C6B /* ClipboardBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EC8DCD635189A0586C28BF /* ClipboardBridge.swift */; };
-		C83890765264774C95674D39 /* RinflowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5928610448FD3D374F3CC85 /* RinflowApp.swift */; };
-		C975F6CB1B9AA89ED990425D /* PeerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE68F1D5E72A3AD24D80EE6D /* PeerTests.swift */; };
-		D5BD07B25B8DC38E2CD91187 /* CrossingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23388D7C3C6C43085F04B08E /* CrossingGate.swift */; };
-		E271BA5E65C67FA83FC33767 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CD65928BBD03A08F38867664 /* InfoPlist.xcstrings */; };
-		E6D7888661433B4B76BC7E13 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E965AF35CD5089962AD18469 /* CallbackRelay.swift */; };
-		E766C0FF9EA47966AC204E7C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184F7F74A206A9A9C8DB577D /* AppSettings.swift */; };
-		EC44ECE5CB5DCB4EEA62E575 /* PeerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421B90DC8DBE757706B25427 /* PeerRow.swift */; };
-		ED7342F7241BDFB2724FED67 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18208A3B73430CF37166FB8D /* ClickTracker.swift */; };
-		EE9A2E322B73F9D0A43D213B /* CoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F90FDF3AE9D8C6BF633914 /* CoreTypes.swift */; };
-		F4DE20FD7951D02384D70911 /* ManualAddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1075BBD78E1DFE2DB423F4 /* ManualAddressesView.swift */; };
-		F60A0C1607D4CDAECC412784 /* Presence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF513D8253246C4D0D3640D6 /* Presence.swift */; };
+		04A1A5F04DEB371BC94E4757 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0E574E04A475FA2C1B0BCC21 /* Sparkle */; };
+		15009504047666FDD799CA20 /* SwitchHotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF8B4AFEA42D7EE231C09AD /* SwitchHotkeys.swift */; };
+		1B2FCEDF68BDBC375587A2BA /* ClickTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124D9C831D366C71783B5C9 /* ClickTrackerTests.swift */; };
+		20F0483BBD598AE87E399599 /* ClipboardBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39BDEFE447692A215CD69FB9 /* ClipboardBridge.swift */; };
+		23DAD179CAE55F833A72FB43 /* PointerVisibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0218F281EF3ED48C7ACEE42 /* PointerVisibility.swift */; };
+		2729C82E9EC0D0496D456904 /* RustCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A954B085D60A80165AB5C4 /* RustCore.swift */; };
+		2D57BD277F05EE61E39E8F47 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB8601B0F59DA22220E29F3 /* CallbackRelay.swift */; };
+		317D25E1D7B5C1A256251930 /* CrossingGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59EAB03C890C6674950BC5E /* CrossingGateTests.swift */; };
+		3A78EEF3AEA0F2EDCC1A84D0 /* Presence.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5983621C3DCD2074491FFC /* Presence.swift */; };
+		4142FA66EEFEDD677E49AA13 /* CallbackRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB8601B0F59DA22220E29F3 /* CallbackRelay.swift */; };
+		477A1C334F0650F21B4001B5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708547D62264D47229139861 /* SettingsView.swift */; };
+		4BE9F8B72DF3BF79C01D317A /* CrossingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F401446FCEAC3CCC0FE99 /* CrossingGate.swift */; };
+		56C14572B1BB08F1F92B7C19 /* CoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765962641D3E838D44A6DD7D /* CoreTypes.swift */; };
+		5B8AB649C44E7971FAADD291 /* RinflowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A2202D1C762094A4829437 /* RinflowApp.swift */; };
+		6184115E5FEEE722DD453CE1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF6A031735AC3CBB33474B84 /* Cocoa.framework */; };
+		641C9ECD8C3153FF79B562A6 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C913A3FB39E8EB4CE593D7A /* ClickTracker.swift */; };
+		6E31AEA672B9D5F3F2423142 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FA15082405D518FA7C667F /* AppModel.swift */; };
+		733973A490094A1843957D55 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E82869E675E4CC1E85F32A1 /* Layout.swift */; };
+		812FF113B6EA1480857BE941 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD822850D0A99A7F14D28134 /* Assets.xcassets */; };
+		867BED96E2532EA11FCAFA5A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = A236C831FCC2B0F4E324FE11 /* AppIcon.icon */; };
+		8F01F6D66489304A30EDB10E /* TransfersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E43F6D4F016D2B90E25A799 /* TransfersView.swift */; };
+		906D73F595B1326DE17CCC3A /* CallbackRelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A9B37361F80EE8D279A8F2 /* CallbackRelayTests.swift */; };
+		939C2F9850FE20E78812E0E8 /* LayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E316B3CBADFD4A10DE0246E2 /* LayoutTests.swift */; };
+		95C8FB2A0ED94331E0EA3A30 /* ManualAddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28572E89CA0040E956069597 /* ManualAddressesView.swift */; };
+		96662D2F7FD798272487D94C /* InputPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D878D72107D0954BC8F043 /* InputPlayer.swift */; };
+		967F3BFBD5570D4074D02711 /* CoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765962641D3E838D44A6DD7D /* CoreTypes.swift */; };
+		A3E3E28311EB99C8B5F3708E /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D10434F896E7CB972FB0708 /* AppSettings.swift */; };
+		A481585D7BF41D28687B4334 /* TransferNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEF8EB3890CD88530B1965B /* TransferNotifications.swift */; };
+		A8CC8A6D5CD74C30D9F51D1C /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5555418E87A8BB903CD2EA91 /* HIDKeyMap.swift */; };
+		A97DAB46B49E6E4E72641FE5 /* ControlHUDController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5E4B3296D11B19F8C9364D /* ControlHUDController.swift */; };
+		B9AAB85F0E3CDFC14B34170E /* HIDKeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5555418E87A8BB903CD2EA91 /* HIDKeyMap.swift */; };
+		B9B411FDC63CEEB720744000 /* ArrangementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034A2ACD4AB0B60E11C81F81 /* ArrangementView.swift */; };
+		BAA4802AA479C014756A7B6F /* PeerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5650FAC9DD7C7E646D8149D3 /* PeerTests.swift */; };
+		C4CA536F5BD0E8ECA3FE5054 /* ClipboardBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39BDEFE447692A215CD69FB9 /* ClipboardBridge.swift */; };
+		C52AF3CC96CE83B6D5B6D5E5 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B0C6BEBF183B01697632CD7A /* Localizable.xcstrings */; };
+		C96B537105B37C34F676DF27 /* CrossingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F401446FCEAC3CCC0FE99 /* CrossingGate.swift */; };
+		CD589F71221B412F71D84456 /* InputBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE34E7ED81BECC89775E38A /* InputBridge.swift */; };
+		D154E4A8AD929354C21C3356 /* ClickTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C913A3FB39E8EB4CE593D7A /* ClickTracker.swift */; };
+		D2A7EF5026EFD85FAB672D1E /* PeerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4E621549F484E101CFBC12 /* PeerRow.swift */; };
+		D352565788148EB338B7C525 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF6A031735AC3CBB33474B84 /* Cocoa.framework */; };
+		D38A6810A29AFB17A1F16BF2 /* FullscreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58ECF71EC18A24B2AFBFA1D6 /* FullscreenMonitor.swift */; };
+		D9518E6158060BBF522079E5 /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = B97017CACD5BE44157F2528D /* THIRD_PARTY_NOTICES.txt */; };
+		DC4DD3168EE6B1C98E7C8B9C /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1161661534E95C223B692239 /* Updater.swift */; };
+		E07E9E636785CE19F36BA491 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E82869E675E4CC1E85F32A1 /* Layout.swift */; };
+		E3165ABC7E9C7E9FBD489A50 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D67C3ED6429FDB2094469E /* SettingsTests.swift */; };
+		EBF1225449CE583B246F9FE1 /* PairingPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40AD62D87FE8492FBB4067F /* PairingPrompt.swift */; };
+		F067DDE2EDEFFC6070496D55 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D10434F896E7CB972FB0708 /* AppSettings.swift */; };
+		F42A45E1BF1C1A6471969AA4 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6BA92D4EEEC8F392E8FAAC25 /* InfoPlist.xcstrings */; };
+		F7CD4319D8CBDF129C549DCE /* InputPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D878D72107D0954BC8F043 /* InputPlayer.swift */; };
+		F9D51A6B895A5200809B3F07 /* InputPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18F692BB901B846D499ADE7 /* InputPlayerTests.swift */; };
+		FB53917D97EFB2870EE95BCA /* ClipboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E333C75C1202C76DA0597A9 /* ClipboardTests.swift */; };
+		FB549459DB244A12CCAB4CCD /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E0B23E6CA247FBAB4961D1 /* LocalizationTests.swift */; };
+		FF5CDF1DE04A4D71858E9D46 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9505F7ED5154226E2746BF1 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05F90FDF3AE9D8C6BF633914 /* CoreTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreTypes.swift; sourceTree = "<group>"; };
-		0919A208CD8DB63705BC6E51 /* ClipboardTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardTests.swift; sourceTree = "<group>"; };
-		0DE8B40D78B357AA16998AE5 /* HIDKeyMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HIDKeyMap.swift; sourceTree = "<group>"; };
-		119AF6F6EBA5293BCDADB088 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
-		18208A3B73430CF37166FB8D /* ClickTracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClickTracker.swift; sourceTree = "<group>"; };
-		184F7F74A206A9A9C8DB577D /* AppSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
-		1B4D768D9D70633CBC4B3F69 /* InputBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputBridge.swift; sourceTree = "<group>"; };
-		23388D7C3C6C43085F04B08E /* CrossingGate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CrossingGate.swift; sourceTree = "<group>"; };
-		30BE85185ED5451129E4204D /* InputPlayerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayerTests.swift; sourceTree = "<group>"; };
-		421B90DC8DBE757706B25427 /* PeerRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PeerRow.swift; sourceTree = "<group>"; };
-		435F07A6EB9B70257668D7D2 /* FullscreenMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FullscreenMonitor.swift; sourceTree = "<group>"; };
-		48302E6149A6D41B3AF7E3BE /* LayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LayoutTests.swift; sourceTree = "<group>"; };
-		4A5519AFE1156C2ADDCB5536 /* TransferNotifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransferNotifications.swift; sourceTree = "<group>"; };
-		78B85F1FFAEFBC7DA4B95E78 /* RinflowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RinflowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayer.swift; sourceTree = "<group>"; };
-		7AB1E8043042721809774106 /* ControlHUDController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlHUDController.swift; sourceTree = "<group>"; };
-		7BD38437C550C6775A3EE5CC /* generate-xcodeproj.rb */ = {isa = PBXFileReference; includeInIndex = 1; path = "generate-xcodeproj.rb"; sourceTree = "<group>"; };
-		7C18BACCB69845E74D906E83 /* RustCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RustCore.swift; sourceTree = "<group>"; };
-		8442FF04CA26D8E34E3A37F8 /* Rinflow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rinflow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8B5C32AFC47EE4A444E071D1 /* LocalizationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
-		8C5104A37FAFCF18AECE5588 /* CrossingGateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CrossingGateTests.swift; sourceTree = "<group>"; };
-		96F6F1C1AFC96089E557FB18 /* ArrangementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ArrangementView.swift; sourceTree = "<group>"; };
-		A1C0DE0000000000000000F1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		A1C0DE0000000000000000F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A7CB9E8692A1A9FBB97BB20E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B2EC8DCD635189A0586C28BF /* ClipboardBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardBridge.swift; sourceTree = "<group>"; };
-		B53A234B1936934BA28B8851 /* Localizable.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		BDC0BB257C309D663E812C2A /* Layout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
-		BF513D8253246C4D0D3640D6 /* Presence.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Presence.swift; sourceTree = "<group>"; };
-		BF9328FED96B4C1105286DB9 /* ClickTrackerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClickTrackerTests.swift; sourceTree = "<group>"; };
-		C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
-		CBAE9C3D415E1E3A527C155A /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		CD65928BBD03A08F38867664 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
-		DB5C0635656F2D558749A9B9 /* build-rust.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "build-rust.sh"; sourceTree = "<group>"; };
-		DE68F1D5E72A3AD24D80EE6D /* PeerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PeerTests.swift; sourceTree = "<group>"; };
-		E095C998B3FED6D7227F2639 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		E965AF35CD5089962AD18469 /* CallbackRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallbackRelay.swift; sourceTree = "<group>"; };
-		EBCE0DB83240142C4AC10A09 /* PairingPrompt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PairingPrompt.swift; sourceTree = "<group>"; };
-		EC579B0A56647F8F099EE5B7 /* Rinflow-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rinflow-Bridging-Header.h"; sourceTree = "<group>"; };
-		F1928FAEC6395FB471D58A2B /* SettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
-		F2644F56E3D41563A1E7C336 /* PointerVisibility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PointerVisibility.swift; sourceTree = "<group>"; };
-		F5928610448FD3D374F3CC85 /* RinflowApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RinflowApp.swift; sourceTree = "<group>"; };
-		F881F74EEA32879B1148198F /* SwitchHotkeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwitchHotkeys.swift; sourceTree = "<group>"; };
-		FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallbackRelayTests.swift; sourceTree = "<group>"; };
-		FB31A34F494AACE455E77E49 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		FBDEE2D653F108BAE490CACD /* TransfersView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransfersView.swift; sourceTree = "<group>"; };
-		FF1075BBD78E1DFE2DB423F4 /* ManualAddressesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ManualAddressesView.swift; sourceTree = "<group>"; };
+		034A2ACD4AB0B60E11C81F81 /* ArrangementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ArrangementView.swift; sourceTree = "<group>"; };
+		0AF8B4AFEA42D7EE231C09AD /* SwitchHotkeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwitchHotkeys.swift; sourceTree = "<group>"; };
+		1161661534E95C223B692239 /* Updater.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
+		175D8FC57327AE57FC11CBF4 /* Rinflow-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rinflow-Bridging-Header.h"; sourceTree = "<group>"; };
+		17D67C3ED6429FDB2094469E /* SettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
+		1AE34E7ED81BECC89775E38A /* InputBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputBridge.swift; sourceTree = "<group>"; };
+		2124D9C831D366C71783B5C9 /* ClickTrackerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClickTrackerTests.swift; sourceTree = "<group>"; };
+		24D878D72107D0954BC8F043 /* InputPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayer.swift; sourceTree = "<group>"; };
+		28572E89CA0040E956069597 /* ManualAddressesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ManualAddressesView.swift; sourceTree = "<group>"; };
+		39BDEFE447692A215CD69FB9 /* ClipboardBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardBridge.swift; sourceTree = "<group>"; };
+		45DED39194485350CF66A976 /* Rinflow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rinflow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		45FA15082405D518FA7C667F /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		4D10434F896E7CB972FB0708 /* AppSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		4E333C75C1202C76DA0597A9 /* ClipboardTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardTests.swift; sourceTree = "<group>"; };
+		4E4E621549F484E101CFBC12 /* PeerRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PeerRow.swift; sourceTree = "<group>"; };
+		5555418E87A8BB903CD2EA91 /* HIDKeyMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HIDKeyMap.swift; sourceTree = "<group>"; };
+		55A9B37361F80EE8D279A8F2 /* CallbackRelayTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallbackRelayTests.swift; sourceTree = "<group>"; };
+		5650FAC9DD7C7E646D8149D3 /* PeerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PeerTests.swift; sourceTree = "<group>"; };
+		58ECF71EC18A24B2AFBFA1D6 /* FullscreenMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FullscreenMonitor.swift; sourceTree = "<group>"; };
+		67A954B085D60A80165AB5C4 /* RustCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RustCore.swift; sourceTree = "<group>"; };
+		6BA92D4EEEC8F392E8FAAC25 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		6C913A3FB39E8EB4CE593D7A /* ClickTracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClickTracker.swift; sourceTree = "<group>"; };
+		6E82869E675E4CC1E85F32A1 /* Layout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		708547D62264D47229139861 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		765962641D3E838D44A6DD7D /* CoreTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreTypes.swift; sourceTree = "<group>"; };
+		8E43F6D4F016D2B90E25A799 /* TransfersView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransfersView.swift; sourceTree = "<group>"; };
+		98E0B23E6CA247FBAB4961D1 /* LocalizationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
+		A0CC681ACAAE32D81CDC6AA2 /* build-rust.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "build-rust.sh"; sourceTree = "<group>"; };
+		A236C831FCC2B0F4E324FE11 /* AppIcon.icon */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		AAEF8EB3890CD88530B1965B /* TransferNotifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransferNotifications.swift; sourceTree = "<group>"; };
+		B0C6BEBF183B01697632CD7A /* Localizable.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		B18F692BB901B846D499ADE7 /* InputPlayerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayerTests.swift; sourceTree = "<group>"; };
+		B5A2202D1C762094A4829437 /* RinflowApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RinflowApp.swift; sourceTree = "<group>"; };
+		B9505F7ED5154226E2746BF1 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B97017CACD5BE44157F2528D /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
+		BB5E4B3296D11B19F8C9364D /* ControlHUDController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlHUDController.swift; sourceTree = "<group>"; };
+		BBDE36533932F9E8122E4DA6 /* RinflowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RinflowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDCCE6AE1B794649F36C06ED /* generate-xcodeproj.rb */ = {isa = PBXFileReference; includeInIndex = 1; path = "generate-xcodeproj.rb"; sourceTree = "<group>"; };
+		CD822850D0A99A7F14D28134 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D0218F281EF3ED48C7ACEE42 /* PointerVisibility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PointerVisibility.swift; sourceTree = "<group>"; };
+		D40AD62D87FE8492FBB4067F /* PairingPrompt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PairingPrompt.swift; sourceTree = "<group>"; };
+		DCB8601B0F59DA22220E29F3 /* CallbackRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallbackRelay.swift; sourceTree = "<group>"; };
+		E099B5C10BAA873DBCAA5A68 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E316B3CBADFD4A10DE0246E2 /* LayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LayoutTests.swift; sourceTree = "<group>"; };
+		EB5983621C3DCD2074491FFC /* Presence.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Presence.swift; sourceTree = "<group>"; };
+		EF6A031735AC3CBB33474B84 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		F59EAB03C890C6674950BC5E /* CrossingGateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CrossingGateTests.swift; sourceTree = "<group>"; };
+		FA4F401446FCEAC3CCC0FE99 /* CrossingGate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CrossingGate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		3C7C0FAC9D9998DA7323E184 /* Frameworks */ = {
+		13C750BAEBB4B5E1B7B6FDD1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7824D54158074ED81D7CC9B0 /* Cocoa.framework in Frameworks */,
+				D352565788148EB338B7C525 /* Cocoa.framework in Frameworks */,
+				04A1A5F04DEB371BC94E4757 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8BA355C4DF2449D35924B757 /* Frameworks */ = {
+		8204D34AFBAD48236C595532 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91E341B8DE4AB622B5270E76 /* Cocoa.framework in Frameworks */,
+				6184115E5FEEE722DD453CE1 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		155412A13CDB2A1D6682BA81 /* HUD */ = {
+		0472138A59111E08B308AAF5 /* OS X */ = {
 			isa = PBXGroup;
 			children = (
-				7AB1E8043042721809774106 /* ControlHUDController.swift */,
-				EBCE0DB83240142C4AC10A09 /* PairingPrompt.swift */,
+				EF6A031735AC3CBB33474B84 /* Cocoa.framework */,
 			);
-			name = HUD;
-			path = HUD;
+			name = "OS X";
 			sourceTree = "<group>";
 		};
-		193BE9F806B7376F48C492CC /* Input */ = {
+		0AFB4BC052892D21B79B8BAC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B2EC8DCD635189A0586C28BF /* ClipboardBridge.swift */,
-				0DE8B40D78B357AA16998AE5 /* HIDKeyMap.swift */,
-				1B4D768D9D70633CBC4B3F69 /* InputBridge.swift */,
-				78BACA34CABAA1DFA494EE74 /* InputPlayer.swift */,
-				F2644F56E3D41563A1E7C336 /* PointerVisibility.swift */,
-				F881F74EEA32879B1148198F /* SwitchHotkeys.swift */,
-				18208A3B73430CF37166FB8D /* ClickTracker.swift */,
-				23388D7C3C6C43085F04B08E /* CrossingGate.swift */,
-			);
-			name = Input;
-			path = Input;
-			sourceTree = "<group>";
-		};
-		249E3866F128A2F09703389D /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				96F6F1C1AFC96089E557FB18 /* ArrangementView.swift */,
-				E095C998B3FED6D7227F2639 /* ContentView.swift */,
-				FF1075BBD78E1DFE2DB423F4 /* ManualAddressesView.swift */,
-				421B90DC8DBE757706B25427 /* PeerRow.swift */,
-				CBAE9C3D415E1E3A527C155A /* SettingsView.swift */,
-				FBDEE2D653F108BAE490CACD /* TransfersView.swift */,
+				034A2ACD4AB0B60E11C81F81 /* ArrangementView.swift */,
+				B9505F7ED5154226E2746BF1 /* ContentView.swift */,
+				28572E89CA0040E956069597 /* ManualAddressesView.swift */,
+				4E4E621549F484E101CFBC12 /* PeerRow.swift */,
+				708547D62264D47229139861 /* SettingsView.swift */,
+				8E43F6D4F016D2B90E25A799 /* TransfersView.swift */,
 			);
 			name = Views;
 			path = Views;
 			sourceTree = "<group>";
 		};
-		3B2E5E2CC45747C030FCA6D0 /* Resources */ = {
+		1FF087E2BE9BB7F294483AA7 /* HUD */ = {
 			isa = PBXGroup;
 			children = (
-				A7CB9E8692A1A9FBB97BB20E /* Info.plist */,
-				B53A234B1936934BA28B8851 /* Localizable.xcstrings */,
-				CD65928BBD03A08F38867664 /* InfoPlist.xcstrings */,
-				A1C0DE0000000000000000F1 /* AppIcon.icon */,
-				A1C0DE0000000000000000F2 /* Assets.xcassets */,
-				C4E7D1A29B3F4C8DA6125E7F /* THIRD_PARTY_NOTICES.txt */,
+				BB5E4B3296D11B19F8C9364D /* ControlHUDController.swift */,
+				D40AD62D87FE8492FBB4067F /* PairingPrompt.swift */,
 			);
-			name = Resources;
-			path = Resources;
+			name = HUD;
+			path = HUD;
 			sourceTree = "<group>";
 		};
-		3D5235E4EE93443ADD2DEA34 /* Frameworks */ = {
+		22186D7295BBBFA66A7DE663 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D5D42B5E929A5A243460A7A4 /* OS X */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		470D6FC1E0F3196CC85CBBAF /* Rinflow */ = {
-			isa = PBXGroup;
-			children = (
-				E922483DE1BB7AFDD2E2FD73 /* App */,
-				AAD2D4DB89D7EF48987D0D73 /* Core */,
-				155412A13CDB2A1D6682BA81 /* HUD */,
-				193BE9F806B7376F48C492CC /* Input */,
-				F28334BAE57CF08EF8B8DB81 /* Model */,
-				9ACA53AC2AB43F7786ED42D9 /* System */,
-				249E3866F128A2F09703389D /* Views */,
-				C977DCD409FB323ABD207D2C /* Bridging */,
-				3B2E5E2CC45747C030FCA6D0 /* Resources */,
-			);
-			name = Rinflow;
-			path = Rinflow;
-			sourceTree = "<group>";
-		};
-		8A57327319887B904AFD2738 = {
-			isa = PBXGroup;
-			children = (
-				9EB9F14BCF85EF335260AF9B /* Products */,
-				3D5235E4EE93443ADD2DEA34 /* Frameworks */,
-				470D6FC1E0F3196CC85CBBAF /* Rinflow */,
-				EA23BC2DE1FA7D71B6371443 /* scripts */,
-				B52B375CF1F4488505758EAD /* RinflowTests */,
-			);
-			sourceTree = "<group>";
-		};
-		9ACA53AC2AB43F7786ED42D9 /* System */ = {
-			isa = PBXGroup;
-			children = (
-				BF513D8253246C4D0D3640D6 /* Presence.swift */,
-				4A5519AFE1156C2ADDCB5536 /* TransferNotifications.swift */,
-				435F07A6EB9B70257668D7D2 /* FullscreenMonitor.swift */,
-			);
-			name = System;
-			path = System;
-			sourceTree = "<group>";
-		};
-		9EB9F14BCF85EF335260AF9B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8442FF04CA26D8E34E3A37F8 /* Rinflow.app */,
-				78B85F1FFAEFBC7DA4B95E78 /* RinflowTests.xctest */,
+				45DED39194485350CF66A976 /* Rinflow.app */,
+				BBDE36533932F9E8122E4DA6 /* RinflowTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AAD2D4DB89D7EF48987D0D73 /* Core */ = {
+		2EECC1D1FCA8A5F7BA4C12C1 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				05F90FDF3AE9D8C6BF633914 /* CoreTypes.swift */,
-				BDC0BB257C309D663E812C2A /* Layout.swift */,
-				7C18BACCB69845E74D906E83 /* RustCore.swift */,
-				E965AF35CD5089962AD18469 /* CallbackRelay.swift */,
-			);
-			name = Core;
-			path = Core;
-			sourceTree = "<group>";
-		};
-		B52B375CF1F4488505758EAD /* RinflowTests */ = {
-			isa = PBXGroup;
-			children = (
-				48302E6149A6D41B3AF7E3BE /* LayoutTests.swift */,
-				8B5C32AFC47EE4A444E071D1 /* LocalizationTests.swift */,
-				FAECBF98FA0B1CD6E1FDBEB9 /* CallbackRelayTests.swift */,
-				BF9328FED96B4C1105286DB9 /* ClickTrackerTests.swift */,
-				0919A208CD8DB63705BC6E51 /* ClipboardTests.swift */,
-				8C5104A37FAFCF18AECE5588 /* CrossingGateTests.swift */,
-				30BE85185ED5451129E4204D /* InputPlayerTests.swift */,
-				F1928FAEC6395FB471D58A2B /* SettingsTests.swift */,
-				DE68F1D5E72A3AD24D80EE6D /* PeerTests.swift */,
-			);
-			name = RinflowTests;
-			path = RinflowTests;
-			sourceTree = "<group>";
-		};
-		C977DCD409FB323ABD207D2C /* Bridging */ = {
-			isa = PBXGroup;
-			children = (
-				EC579B0A56647F8F099EE5B7 /* Rinflow-Bridging-Header.h */,
-			);
-			name = Bridging;
-			path = Bridging;
-			sourceTree = "<group>";
-		};
-		D5D42B5E929A5A243460A7A4 /* OS X */ = {
-			isa = PBXGroup;
-			children = (
-				FB31A34F494AACE455E77E49 /* Cocoa.framework */,
-			);
-			name = "OS X";
-			sourceTree = "<group>";
-		};
-		E922483DE1BB7AFDD2E2FD73 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				F5928610448FD3D374F3CC85 /* RinflowApp.swift */,
+				B5A2202D1C762094A4829437 /* RinflowApp.swift */,
+				1161661534E95C223B692239 /* Updater.swift */,
 			);
 			name = App;
 			path = App;
 			sourceTree = "<group>";
 		};
-		EA23BC2DE1FA7D71B6371443 /* scripts */ = {
+		3821989F1CE7F8F87402F6EB = {
 			isa = PBXGroup;
 			children = (
-				DB5C0635656F2D558749A9B9 /* build-rust.sh */,
-				7BD38437C550C6775A3EE5CC /* generate-xcodeproj.rb */,
+				22186D7295BBBFA66A7DE663 /* Products */,
+				F40177AC069C53FAB18CE560 /* Frameworks */,
+				E638EA645C5F7E68F6BD0570 /* Rinflow */,
+				9DC28931E00EBEDD6732B305 /* scripts */,
+				6D54D5CA054495A398A97B1E /* RinflowTests */,
 			);
-			name = scripts;
-			path = scripts;
 			sourceTree = "<group>";
 		};
-		F28334BAE57CF08EF8B8DB81 /* Model */ = {
+		6D54D5CA054495A398A97B1E /* RinflowTests */ = {
 			isa = PBXGroup;
 			children = (
-				119AF6F6EBA5293BCDADB088 /* AppModel.swift */,
-				184F7F74A206A9A9C8DB577D /* AppSettings.swift */,
+				55A9B37361F80EE8D279A8F2 /* CallbackRelayTests.swift */,
+				2124D9C831D366C71783B5C9 /* ClickTrackerTests.swift */,
+				4E333C75C1202C76DA0597A9 /* ClipboardTests.swift */,
+				F59EAB03C890C6674950BC5E /* CrossingGateTests.swift */,
+				B18F692BB901B846D499ADE7 /* InputPlayerTests.swift */,
+				E316B3CBADFD4A10DE0246E2 /* LayoutTests.swift */,
+				98E0B23E6CA247FBAB4961D1 /* LocalizationTests.swift */,
+				5650FAC9DD7C7E646D8149D3 /* PeerTests.swift */,
+				17D67C3ED6429FDB2094469E /* SettingsTests.swift */,
+			);
+			name = RinflowTests;
+			path = RinflowTests;
+			sourceTree = "<group>";
+		};
+		74EFAD202204FAFCEFD1816D /* Bridging */ = {
+			isa = PBXGroup;
+			children = (
+				175D8FC57327AE57FC11CBF4 /* Rinflow-Bridging-Header.h */,
+			);
+			name = Bridging;
+			path = Bridging;
+			sourceTree = "<group>";
+		};
+		94690787A3956B01E15FD609 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				45FA15082405D518FA7C667F /* AppModel.swift */,
+				4D10434F896E7CB972FB0708 /* AppSettings.swift */,
 			);
 			name = Model;
 			path = Model;
 			sourceTree = "<group>";
 		};
+		9DC28931E00EBEDD6732B305 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				A0CC681ACAAE32D81CDC6AA2 /* build-rust.sh */,
+				BDCCE6AE1B794649F36C06ED /* generate-xcodeproj.rb */,
+			);
+			name = scripts;
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		B561036670C60A4AEBB2501E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E099B5C10BAA873DBCAA5A68 /* Info.plist */,
+				A236C831FCC2B0F4E324FE11 /* AppIcon.icon */,
+				CD822850D0A99A7F14D28134 /* Assets.xcassets */,
+				B97017CACD5BE44157F2528D /* THIRD_PARTY_NOTICES.txt */,
+				B0C6BEBF183B01697632CD7A /* Localizable.xcstrings */,
+				6BA92D4EEEC8F392E8FAAC25 /* InfoPlist.xcstrings */,
+			);
+			name = Resources;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BA61D809E129BD181F74A22A /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				DCB8601B0F59DA22220E29F3 /* CallbackRelay.swift */,
+				765962641D3E838D44A6DD7D /* CoreTypes.swift */,
+				6E82869E675E4CC1E85F32A1 /* Layout.swift */,
+				67A954B085D60A80165AB5C4 /* RustCore.swift */,
+			);
+			name = Core;
+			path = Core;
+			sourceTree = "<group>";
+		};
+		D23168917E34E29D9A89A43D /* System */ = {
+			isa = PBXGroup;
+			children = (
+				58ECF71EC18A24B2AFBFA1D6 /* FullscreenMonitor.swift */,
+				EB5983621C3DCD2074491FFC /* Presence.swift */,
+				AAEF8EB3890CD88530B1965B /* TransferNotifications.swift */,
+			);
+			name = System;
+			path = System;
+			sourceTree = "<group>";
+		};
+		E638EA645C5F7E68F6BD0570 /* Rinflow */ = {
+			isa = PBXGroup;
+			children = (
+				2EECC1D1FCA8A5F7BA4C12C1 /* App */,
+				BA61D809E129BD181F74A22A /* Core */,
+				1FF087E2BE9BB7F294483AA7 /* HUD */,
+				F6497A7DAF9CF6AFD5096286 /* Input */,
+				94690787A3956B01E15FD609 /* Model */,
+				D23168917E34E29D9A89A43D /* System */,
+				0AFB4BC052892D21B79B8BAC /* Views */,
+				74EFAD202204FAFCEFD1816D /* Bridging */,
+				B561036670C60A4AEBB2501E /* Resources */,
+			);
+			name = Rinflow;
+			path = Rinflow;
+			sourceTree = "<group>";
+		};
+		F40177AC069C53FAB18CE560 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0472138A59111E08B308AAF5 /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F6497A7DAF9CF6AFD5096286 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				6C913A3FB39E8EB4CE593D7A /* ClickTracker.swift */,
+				39BDEFE447692A215CD69FB9 /* ClipboardBridge.swift */,
+				FA4F401446FCEAC3CCC0FE99 /* CrossingGate.swift */,
+				5555418E87A8BB903CD2EA91 /* HIDKeyMap.swift */,
+				1AE34E7ED81BECC89775E38A /* InputBridge.swift */,
+				24D878D72107D0954BC8F043 /* InputPlayer.swift */,
+				D0218F281EF3ED48C7ACEE42 /* PointerVisibility.swift */,
+				0AF8B4AFEA42D7EE231C09AD /* SwitchHotkeys.swift */,
+			);
+			name = Input;
+			path = Input;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1B3C4F5B057DDACA2DF5061E /* Rinflow */ = {
+		779FD30FE4ECA22675381E9F /* Rinflow */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EA1BF3B74BA41CA5249F8459 /* Build configuration list for PBXNativeTarget "Rinflow" */;
+			buildConfigurationList = 14C67995317D0A396B9EEB16 /* Build configuration list for PBXNativeTarget "Rinflow" */;
 			buildPhases = (
-				9DDB7C1C03C8DEE194FA30B7 /* Build Rust Core */,
-				D25B0F9080CB00CE9C898F00 /* Sources */,
-				8BA355C4DF2449D35924B757 /* Frameworks */,
-				8D7DC6E2959D984B983C39F5 /* Resources */,
+				A72A0A848D2EF42164FBCF51 /* Build Rust Core */,
+				5E18C38BBDECFEA736523469 /* Sources */,
+				13C750BAEBB4B5E1B7B6FDD1 /* Frameworks */,
+				4D3E1EE113400FAEACB7CD71 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = Rinflow;
+			packageProductDependencies = (
+				0E574E04A475FA2C1B0BCC21 /* Sparkle */,
+			);
 			productName = Rinflow;
-			productReference = 8442FF04CA26D8E34E3A37F8 /* Rinflow.app */;
+			productReference = 45DED39194485350CF66A976 /* Rinflow.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AFC93C14D8E41453641BDB71 /* RinflowTests */ = {
+		C320350CCC35767305905B77 /* RinflowTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 982CAB54D0A49706C9965563 /* Build configuration list for PBXNativeTarget "RinflowTests" */;
+			buildConfigurationList = AE662826F164E91A377BC5E1 /* Build configuration list for PBXNativeTarget "RinflowTests" */;
 			buildPhases = (
-				CE464163583AC4D93048D589 /* Sources */,
-				3C7C0FAC9D9998DA7323E184 /* Frameworks */,
-				BB9D4C4932EFD4C348CEF518 /* Resources */,
+				883851B47DD7733F6CD2B3FC /* Sources */,
+				8204D34AFBAD48236C595532 /* Frameworks */,
+				1C6CD930C897C71CCF502B1B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -350,19 +358,19 @@
 			);
 			name = RinflowTests;
 			productName = RinflowTests;
-			productReference = 78B85F1FFAEFBC7DA4B95E78 /* RinflowTests.xctest */;
+			productReference = BBDE36533932F9E8122E4DA6 /* RinflowTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		394ECB641CE172E12ABE322A /* Project object */ = {
+		847E8B26ACE46FA7B6E19B8A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 			};
-			buildConfigurationList = 4A9CA7A4F3FB26C05D40086A /* Build configuration list for PBXProject "Rinflow" */;
+			buildConfigurationList = 5CDB6985F03C03144A6B95D6 /* Build configuration list for PBXProject "Rinflow" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -372,43 +380,46 @@
 				ja,
 				"zh-Hans",
 			);
-			mainGroup = 8A57327319887B904AFD2738;
+			mainGroup = 3821989F1CE7F8F87402F6EB;
 			minimizedProjectReferenceProxies = 0;
+			packageReferences = (
+				07198B6BC23F14484216E71C /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 9EB9F14BCF85EF335260AF9B /* Products */;
+			productRefGroup = 22186D7295BBBFA66A7DE663 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1B3C4F5B057DDACA2DF5061E /* Rinflow */,
-				AFC93C14D8E41453641BDB71 /* RinflowTests */,
+				779FD30FE4ECA22675381E9F /* Rinflow */,
+				C320350CCC35767305905B77 /* RinflowTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		8D7DC6E2959D984B983C39F5 /* Resources */ = {
+		1C6CD930C897C71CCF502B1B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71CD2D7F0083C0509C48C08E /* Localizable.xcstrings in Resources */,
-				E271BA5E65C67FA83FC33767 /* InfoPlist.xcstrings in Resources */,
-				A1C0DE0000000000000000B1 /* AppIcon.icon in Resources */,
-				A1C0DE0000000000000000B2 /* Assets.xcassets in Resources */,
-				A1F3C2D47B8E4F60912C3D5E /* THIRD_PARTY_NOTICES.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BB9D4C4932EFD4C348CEF518 /* Resources */ = {
+		4D3E1EE113400FAEACB7CD71 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				867BED96E2532EA11FCAFA5A /* AppIcon.icon in Resources */,
+				812FF113B6EA1480857BE941 /* Assets.xcassets in Resources */,
+				D9518E6158060BBF522079E5 /* THIRD_PARTY_NOTICES.txt in Resources */,
+				C52AF3CC96CE83B6D5B6D5E5 /* Localizable.xcstrings in Resources */,
+				F42A45E1BF1C1A6471969AA4 /* InfoPlist.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9DDB7C1C03C8DEE194FA30B7 /* Build Rust Core */ = {
+		A72A0A848D2EF42164FBCF51 /* Build Rust Core */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -431,68 +442,69 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CE464163583AC4D93048D589 /* Sources */ = {
+		5E18C38BBDECFEA736523469 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75E0F3D43E4E33E0C78FF294 /* LayoutTests.swift in Sources */,
-				424E025F30CC91CBCF2C079C /* LocalizationTests.swift in Sources */,
-				B7AAD61A4B98C0A21AF8CF7B /* Layout.swift in Sources */,
-				A55D61656C59DAEF4E897A69 /* CallbackRelayTests.swift in Sources */,
-				7BC701AA196B96139E384C80 /* ClickTrackerTests.swift in Sources */,
-				C6660760F6CE7FAB1298F8A4 /* ClipboardTests.swift in Sources */,
-				3BF7F5092E395BE0657C494B /* CrossingGateTests.swift in Sources */,
-				6FD5A8737E092243FAE60089 /* InputPlayerTests.swift in Sources */,
-				B034EA978CDF65FFA3B8A4CD /* SettingsTests.swift in Sources */,
-				BCB0D990114B107462251289 /* CallbackRelay.swift in Sources */,
-				E766C0FF9EA47966AC204E7C /* AppSettings.swift in Sources */,
-				C6826E27B33745644D821C6B /* ClipboardBridge.swift in Sources */,
-				D5BD07B25B8DC38E2CD91187 /* CrossingGate.swift in Sources */,
-				ED7342F7241BDFB2724FED67 /* ClickTracker.swift in Sources */,
-				0B282A760187F0976B99AD34 /* InputPlayer.swift in Sources */,
-				0FB05EC8376527A8660B837D /* HIDKeyMap.swift in Sources */,
-				C975F6CB1B9AA89ED990425D /* PeerTests.swift in Sources */,
-				EE9A2E322B73F9D0A43D213B /* CoreTypes.swift in Sources */,
+				5B8AB649C44E7971FAADD291 /* RinflowApp.swift in Sources */,
+				DC4DD3168EE6B1C98E7C8B9C /* Updater.swift in Sources */,
+				2D57BD277F05EE61E39E8F47 /* CallbackRelay.swift in Sources */,
+				967F3BFBD5570D4074D02711 /* CoreTypes.swift in Sources */,
+				E07E9E636785CE19F36BA491 /* Layout.swift in Sources */,
+				2729C82E9EC0D0496D456904 /* RustCore.swift in Sources */,
+				A97DAB46B49E6E4E72641FE5 /* ControlHUDController.swift in Sources */,
+				EBF1225449CE583B246F9FE1 /* PairingPrompt.swift in Sources */,
+				D154E4A8AD929354C21C3356 /* ClickTracker.swift in Sources */,
+				C4CA536F5BD0E8ECA3FE5054 /* ClipboardBridge.swift in Sources */,
+				4BE9F8B72DF3BF79C01D317A /* CrossingGate.swift in Sources */,
+				B9AAB85F0E3CDFC14B34170E /* HIDKeyMap.swift in Sources */,
+				CD589F71221B412F71D84456 /* InputBridge.swift in Sources */,
+				F7CD4319D8CBDF129C549DCE /* InputPlayer.swift in Sources */,
+				23DAD179CAE55F833A72FB43 /* PointerVisibility.swift in Sources */,
+				15009504047666FDD799CA20 /* SwitchHotkeys.swift in Sources */,
+				6E31AEA672B9D5F3F2423142 /* AppModel.swift in Sources */,
+				A3E3E28311EB99C8B5F3708E /* AppSettings.swift in Sources */,
+				D38A6810A29AFB17A1F16BF2 /* FullscreenMonitor.swift in Sources */,
+				3A78EEF3AEA0F2EDCC1A84D0 /* Presence.swift in Sources */,
+				A481585D7BF41D28687B4334 /* TransferNotifications.swift in Sources */,
+				B9B411FDC63CEEB720744000 /* ArrangementView.swift in Sources */,
+				FF5CDF1DE04A4D71858E9D46 /* ContentView.swift in Sources */,
+				95C8FB2A0ED94331E0EA3A30 /* ManualAddressesView.swift in Sources */,
+				D2A7EF5026EFD85FAB672D1E /* PeerRow.swift in Sources */,
+				477A1C334F0650F21B4001B5 /* SettingsView.swift in Sources */,
+				8F01F6D66489304A30EDB10E /* TransfersView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D25B0F9080CB00CE9C898F00 /* Sources */ = {
+		883851B47DD7733F6CD2B3FC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C83890765264774C95674D39 /* RinflowApp.swift in Sources */,
-				00C9F4E23B8D377F45232424 /* CoreTypes.swift in Sources */,
-				639C0717432791A968114CBA /* Layout.swift in Sources */,
-				19EFC64A846C376C59C4692A /* RustCore.swift in Sources */,
-				0472B16CE8724F2FB3E7097A /* ControlHUDController.swift in Sources */,
-				3BAE1E64461D55C1F69E0121 /* PairingPrompt.swift in Sources */,
-				0442B3E83A48079EA73EB4BE /* ClipboardBridge.swift in Sources */,
-				9392DF99F2797026E917189B /* HIDKeyMap.swift in Sources */,
-				971326DE2C70B7C2CF47D69F /* InputBridge.swift in Sources */,
-				4EC669084B5705BE7DCDC116 /* InputPlayer.swift in Sources */,
-				20649C860297CAA8BAA5759C /* PointerVisibility.swift in Sources */,
-				1E8846F635AE76455F22E2CB /* SwitchHotkeys.swift in Sources */,
-				038537733E7B78B25CEA0948 /* AppModel.swift in Sources */,
-				C3A6AA359AB08B3B720327DA /* AppSettings.swift in Sources */,
-				F60A0C1607D4CDAECC412784 /* Presence.swift in Sources */,
-				7F8EDD5A2AC3EDD2F7F1AE4C /* TransferNotifications.swift in Sources */,
-				2A64CF04D959A3614DAD653A /* ArrangementView.swift in Sources */,
-				7B04552700765C63CA6016BE /* ContentView.swift in Sources */,
-				F4DE20FD7951D02384D70911 /* ManualAddressesView.swift in Sources */,
-				EC44ECE5CB5DCB4EEA62E575 /* PeerRow.swift in Sources */,
-				95FC9F7CAD55E7BCE7C2F6D5 /* SettingsView.swift in Sources */,
-				7D46F32D6BE8CBC516D16657 /* TransfersView.swift in Sources */,
-				E6D7888661433B4B76BC7E13 /* CallbackRelay.swift in Sources */,
-				B10077A576A891F0D1A651A0 /* ClickTracker.swift in Sources */,
-				36A41A13E39B69669F322459 /* CrossingGate.swift in Sources */,
-				0465C3A79686B81D0BD6B585 /* FullscreenMonitor.swift in Sources */,
+				906D73F595B1326DE17CCC3A /* CallbackRelayTests.swift in Sources */,
+				1B2FCEDF68BDBC375587A2BA /* ClickTrackerTests.swift in Sources */,
+				FB53917D97EFB2870EE95BCA /* ClipboardTests.swift in Sources */,
+				317D25E1D7B5C1A256251930 /* CrossingGateTests.swift in Sources */,
+				F9D51A6B895A5200809B3F07 /* InputPlayerTests.swift in Sources */,
+				939C2F9850FE20E78812E0E8 /* LayoutTests.swift in Sources */,
+				FB549459DB244A12CCAB4CCD /* LocalizationTests.swift in Sources */,
+				BAA4802AA479C014756A7B6F /* PeerTests.swift in Sources */,
+				E3165ABC7E9C7E9FBD489A50 /* SettingsTests.swift in Sources */,
+				733973A490094A1843957D55 /* Layout.swift in Sources */,
+				56C14572B1BB08F1F92B7C19 /* CoreTypes.swift in Sources */,
+				4142FA66EEFEDD677E49AA13 /* CallbackRelay.swift in Sources */,
+				F067DDE2EDEFFC6070496D55 /* AppSettings.swift in Sources */,
+				20F0483BBD598AE87E399599 /* ClipboardBridge.swift in Sources */,
+				C96B537105B37C34F676DF27 /* CrossingGate.swift in Sources */,
+				641C9ECD8C3153FF79B562A6 /* ClickTracker.swift in Sources */,
+				96662D2F7FD798272487D94C /* InputPlayer.swift in Sources */,
+				A8CC8A6D5CD74C30D9F51D1C /* HIDKeyMap.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		3D92E0CB8C70992AC41EA309 /* Release */ = {
+		0B600CC138E0E14886E65024 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -527,6 +539,90 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
 				PRODUCT_NAME = Rinflow;
 				SDKROOT = macosx;
+				SPARKLE_PUBLIC_KEY = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		32C07403E0E7F29072F0FFC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 998ZTJV2HQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../rinflow-core/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac.tests;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		5D894DE7FEEFC362A6876381 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 998ZTJV2HQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../rinflow-core/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac.tests;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		91884AFA07A6024CA3FF9C3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 998ZTJV2HQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../rinflow-core/include",
+				);
+				INFOPLIST_FILE = Rinflow/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.0.1;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-force_load",
+					"$(BUILT_PRODUCTS_DIR)/librinflow_core.a",
+					"-liconv",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
+				PRODUCT_NAME = Rinflow;
+				SDKROOT = macosx;
+				SPARKLE_PUBLIC_KEY = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -534,7 +630,7 @@
 			};
 			name = Release;
 		};
-		62B087528B3A6BE1CF0A3302 /* Release */ = {
+		C2028F06F0418F46962A7003 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -588,7 +684,7 @@
 			};
 			name = Release;
 		};
-		C56E6DEBBADCB098E8B1A04C /* Debug */ = {
+		F55DDB2335247CEEF5B60729 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -649,119 +745,56 @@
 			};
 			name = Debug;
 		};
-		D6BA0BB2B6436CA26936A263 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 998ZTJV2HQ;
-				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../rinflow-core/include",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac.tests;
-				SDKROOT = macosx;
-				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
-				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Release;
-		};
-		D78FA9AF9B4E447BDC0E9258 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 998ZTJV2HQ;
-				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../rinflow-core/include",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac.tests;
-				SDKROOT = macosx;
-				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
-				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Debug;
-		};
-		E94E0CA20F9ACF5974E794B7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 998ZTJV2HQ;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../rinflow-core/include",
-				);
-				INFOPLIST_FILE = Rinflow/Resources/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.0.1;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-force_load",
-					"$(BUILT_PRODUCTS_DIR)/librinflow_core.a",
-					"-liconv",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
-				PRODUCT_NAME = Rinflow;
-				SDKROOT = macosx;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
-				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Debug;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4A9CA7A4F3FB26C05D40086A /* Build configuration list for PBXProject "Rinflow" */ = {
+		14C67995317D0A396B9EEB16 /* Build configuration list for PBXNativeTarget "Rinflow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C56E6DEBBADCB098E8B1A04C /* Debug */,
-				62B087528B3A6BE1CF0A3302 /* Release */,
+				91884AFA07A6024CA3FF9C3F /* Release */,
+				0B600CC138E0E14886E65024 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		982CAB54D0A49706C9965563 /* Build configuration list for PBXNativeTarget "RinflowTests" */ = {
+		5CDB6985F03C03144A6B95D6 /* Build configuration list for PBXProject "Rinflow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D6BA0BB2B6436CA26936A263 /* Release */,
-				D78FA9AF9B4E447BDC0E9258 /* Debug */,
+				F55DDB2335247CEEF5B60729 /* Debug */,
+				C2028F06F0418F46962A7003 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EA1BF3B74BA41CA5249F8459 /* Build configuration list for PBXNativeTarget "Rinflow" */ = {
+		AE662826F164E91A377BC5E1 /* Build configuration list for PBXNativeTarget "RinflowTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3D92E0CB8C70992AC41EA309 /* Release */,
-				E94E0CA20F9ACF5974E794B7 /* Debug */,
+				32C07403E0E7F29072F0FFC2 /* Release */,
+				5D894DE7FEEFC362A6876381 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		07198B6BC23F14484216E71C /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = exactVersion;
+				version = 2.10.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0E574E04A475FA2C1B0BCC21 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07198B6BC23F14484216E71C /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 394ECB641CE172E12ABE322A /* Project object */;
+	rootObject = 847E8B26ACE46FA7B6E19B8A /* Project object */;
 }

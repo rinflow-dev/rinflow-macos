@@ -13,6 +13,7 @@ struct RinflowApp: App {
     #else
     @State private var model = AppModel()
     #endif
+    @State private var updater = Updater()
 
     var body: some Scene {
         Window("Rinflow", id: "main") {
@@ -21,11 +22,11 @@ struct RinflowApp: App {
         .windowResizability(.contentSize)
 
         MenuBarExtra("Rinflow", image: "MenuBarIcon") {
-            MenuBarContent(model: model)
+            MenuBarContent(model: model, updater: updater)
         }
 
         Settings {
-            SettingsView(model: model)
+            SettingsView(model: model, updater: updater)
         }
     }
 }
@@ -34,6 +35,7 @@ struct RinflowApp: App {
 private struct MenuBarContent: View {
     @Environment(\.openWindow) private var openWindow
     let model: AppModel
+    let updater: Updater
 
     var body: some View {
         Button("打开主窗口") {
@@ -79,6 +81,9 @@ private struct MenuBarContent: View {
             Text("设置…")
         }
         .keyboardShortcut(",")
+        if updater.isAvailable {
+            Button("检查更新…", action: updater.checkForUpdates)
+        }
 
         Button("退出 Rinflow") {
             NSApplication.shared.terminate(nil)

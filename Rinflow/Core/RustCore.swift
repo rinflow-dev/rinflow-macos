@@ -17,7 +17,7 @@ final class RustCore {
 
     private var handle: OpaquePointer?
     private var callbacks: CallbackRelay<RustCore>?
-    private static let log = Logger(subsystem: "com.rinflow.mac", category: "core")
+    private nonisolated static let log = Logger(subsystem: "com.rinflow.mac", category: "core")
 
     isolated deinit {
         callbacks?.invalidate()
@@ -27,6 +27,8 @@ final class RustCore {
     }
 
     func stop() {
+        // A clipboard still encoding was this core's.
+        clipboardGeneration &+= 1
         callbacks?.invalidate()
         if let handle {
             // destroy joins the Rust thread: no callback can borrow the relay
@@ -60,7 +62,7 @@ final class RustCore {
         /// Only paired peers may connect (as on Windows, by default).
         let requirePairing: Bool
         /// What a PC's modifier keys play as here (core `remap.rs`).
-        let modifierMap: [String: String]
+        let modifierMap: ModifierMap
         /// Devices to look for by address, besides multicast discovery.
         let manualAddresses: [String]
 
@@ -104,7 +106,7 @@ final class RustCore {
             identityPath: Self.identityPath.path,
             trustedPeers: trustedPeers,
             requirePairing: settings.pairedOnly,
-            modifierMap: AppSettings.modifierMap(followMacShortcuts: settings.shortcutRemap),
+            modifierMap: settings.modifierMap,
             manualAddresses: settings.manualAddresses
         )
         guard let json = Self.json(configuration) else { return false }
@@ -199,11 +201,9 @@ final class RustCore {
         _ = lc_core_set_require_pairing(handle, required)
     }
 
-    func setShortcutRemap(_ enabled: Bool) {
-        guard let handle,
-              let data = try? JSONEncoder().encode(AppSettings.modifierMap(followMacShortcuts: enabled)),
-              let json = String(data: data, encoding: .utf8)
-        else { return }
+    /// What a PC's modifier keys play as here; keys held are released.
+    func setModifierMap(_ map: ModifierMap) {
+        guard let handle, let json = Self.json(map) else { return }
         _ = json.withCString { lc_core_set_modifier_map(handle, $0) }
     }
 
@@ -265,16 +265,38 @@ final class RustCore {
     }
 
     /// The pasteboard after a change; empty when it holds nothing to share.
+    ///
+    /// Encoding (base64 and JSON of up to 8 MB) happens off the main thread,
+    /// which also runs the input event tap. The core may get the clipboard
+    /// after the pointer has already moved to a peer: it then sends it to
+    /// the peer being driven (`store_clipboard`). Only the latest call
+    /// reaches the core; one overtaken while encoding is dropped.
     func setClipboard(_ items: [ClipboardItem]) {
-        guard let handle else { return }
-        let formats = items.map { ["mime": $0.mime, "data": $0.data.base64EncodedString()] }
-        guard
-            let data = try? JSONSerialization.data(withJSONObject: ["formats": formats]),
-            let json = String(data: data, encoding: .utf8)
-        else {
-            return
+        guard handle != nil else { return }
+        clipboardGeneration &+= 1
+        let generation = clipboardGeneration
+        Self.clipboardQueue.async { [weak self] in
+            let json = Self.clipboardJSON(items)
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, let json, let handle = self.handle,
+                          self.clipboardGeneration == generation
+                    else { return }
+                    _ = json.withCString { lc_core_set_clipboard(handle, $0) }
+                }
+            }
         }
-        _ = json.withCString { lc_core_set_clipboard(handle, $0) }
+    }
+
+    private var clipboardGeneration = 0
+    private nonisolated static let clipboardQueue = DispatchQueue(
+        label: "com.rinflow.clipboard-encode", qos: .userInitiated
+    )
+
+    private nonisolated static func clipboardJSON(_ items: [ClipboardItem]) -> String? {
+        let formats = items.map { ["mime": $0.mime, "data": $0.data.base64EncodedString()] }
+        guard let data = try? JSONSerialization.data(withJSONObject: ["formats": formats]) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 
     private static func json(_ value: some Encodable) -> String? {
@@ -295,16 +317,20 @@ final class RustCore {
         return lc_core_reset_input(handle)
     }
 
-    fileprivate func receive(eventJSON: String) {
-        guard
-            let data = eventJSON.data(using: .utf8),
-            let event = try? JSONDecoder().decode(CoreEventEnvelope.self, from: data)
-        else {
-            return
+    /// Runs on the callback queue: a clipboard event carries up to ~11 MB of
+    /// base64, too much to decode on the main thread.
+    fileprivate nonisolated static func decode(eventJSON: String) -> CoreEventEnvelope? {
+        guard let event = try? JSONDecoder().decode(CoreEventEnvelope.self, from: Data(eventJSON.utf8)) else {
+            log.error("undecodable core event")
+            return nil
         }
         // JSON may contain clipboard contents, pairing codes and file paths.
         // Log only the event type, never any part of its payload.
-        Self.log.debug("core event: \(event.event, privacy: .public)")
+        log.debug("core event: \(event.event, privacy: .public)")
+        return event
+    }
+
+    fileprivate func receive(event: CoreEventEnvelope) {
         delegate?.rustCore(self, received: event)
     }
 
@@ -320,7 +346,7 @@ private func rinflowCoreEventCallback(
     guard let json, let context else { return }
     let message = String(cString: json)
     let callbacks = Unmanaged<CallbackRelay<RustCore>>.fromOpaque(context).takeUnretainedValue()
-    callbacks.enqueue { $0.receive(eventJSON: message) }
+    callbacks.enqueue(preparing: { RustCore.decode(eventJSON: message) }) { $0.receive(event: $1) }
 }
 
 private func rinflowInputCallback(

@@ -12,6 +12,10 @@ root = File.expand_path('..', __dir__)
 project_path = File.join(root, 'Rinflow.xcodeproj')
 source_root = File.join(root, 'Rinflow')
 
+# The Swift packages' pinned versions survive regenerating the project.
+resolved_path = File.join(project_path, 'project.xcworkspace', 'xcshareddata', 'swiftpm', 'Package.resolved')
+resolved = File.exist?(resolved_path) ? File.read(resolved_path) : nil
+
 FileUtils.rm_rf(project_path)
 project = Xcodeproj::Project.new(project_path)
 project.root_object.attributes['LastSwiftUpdateCheck'] = '2660'
@@ -53,6 +57,20 @@ project.root_object.known_regions = %w[en Base ja zh-Hans]
   target.resources_build_phase.add_file_reference(catalog)
 end
 
+# Sparkle, for updates from the GitHub releases (Rinflow/App/Updater.swift).
+# An exact version: an update of the updater is a decision, not a side effect.
+sparkle = project.new(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
+sparkle.repositoryURL = 'https://github.com/sparkle-project/Sparkle'
+sparkle.requirement = { 'kind' => 'exactVersion', 'version' => '2.10.1' }
+project.root_object.package_references << sparkle
+sparkle_product = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
+sparkle_product.package = sparkle
+sparkle_product.product_name = 'Sparkle'
+target.package_product_dependencies << sparkle_product
+sparkle_file = project.new(Xcodeproj::Project::Object::PBXBuildFile)
+sparkle_file.product_ref = sparkle_product
+target.frameworks_build_phase.files << sparkle_file
+
 scripts_group = project.main_group.new_group('scripts', 'scripts')
 scripts_group.new_file('build-rust.sh')
 scripts_group.new_file('generate-xcodeproj.rb')
@@ -73,6 +91,10 @@ target.build_configurations.each do |configuration|
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac'
   settings['PRODUCT_NAME'] = 'Rinflow'
   settings['MARKETING_VERSION'] = '0.0.1'
+  # The public half of the EdDSA key that signs updates (Sparkle's
+  # generate_keys; the private half stays in the release keychain and the
+  # SPARKLE_PRIVATE_KEY secret). Empty: the app never looks for updates.
+  settings['SPARKLE_PUBLIC_KEY'] = ''
   settings['CURRENT_PROJECT_VERSION'] = '1'
   settings['INFOPLIST_FILE'] = 'Rinflow/Resources/Info.plist'
   settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'Rinflow/Bridging/Rinflow-Bridging-Header.h'
@@ -136,4 +158,19 @@ scheme.set_launch_target(target)
 scheme.save_as(project_path, 'Rinflow', true)
 
 project.save
+# The workspace Xcode and xcodebuild use for the packages; rm_rf took it.
+FileUtils.mkdir_p(File.join(project_path, 'project.xcworkspace'))
+File.write(File.join(project_path, 'project.xcworkspace', 'contents.xcworkspacedata'), <<~XML)
+  <?xml version="1.0" encoding="UTF-8"?>
+  <Workspace
+     version = "1.0">
+     <FileRef
+        location = "self:">
+     </FileRef>
+  </Workspace>
+XML
+if resolved
+  FileUtils.mkdir_p(File.dirname(resolved_path))
+  File.write(resolved_path, resolved)
+end
 puts "Generated #{project_path}"

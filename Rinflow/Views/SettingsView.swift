@@ -9,8 +9,16 @@ import ServiceManagement
 /// language, which needs a restart.
 struct SettingsView: View {
     let model: AppModel
+    @Bindable var updater: Updater
     /// The page last shown, shown again next time.
     @AppStorage("settings.page") private var page = Page.general
+    /// 自定义 chosen while the keys still match a preset, as on Windows:
+    /// the per-key choices stay shown until a preset is picked again.
+    @State private var customModifiers = false
+
+    private enum ModifierPreset: Hashable {
+        case mac, keep, custom
+    }
 
     enum Page: String {
         case general, keyboard, pointer, lock
@@ -75,15 +83,37 @@ struct SettingsView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+            Section("更新") {
+                LabeledContent("版本") {
+                    Text(verbatim: Updater.version)
+                        .textSelection(.enabled)
+                }
+                if updater.isAvailable {
+                    Toggle(isOn: $updater.automaticallyChecks) {
+                        Text("自动检查更新")
+                        Text("有新版本时提示安装。更新经过签名校验，只会安装 Rinflow 官方发布的版本。")
+                    }
+                    Button("检查更新…", action: updater.checkForUpdates)
+                }
+            }
         }
     }
 
     private var keyboard: some View {
         pane {
             Section {
-                Toggle(isOn: setting(\.shortcutRemap)) {
-                    Text("沿用 Mac 的快捷键")
-                    Text("Windows 控制这台 Mac 时，Ctrl 当作 ⌘ 使用（Ctrl+C 就是 ⌘C）。")
+                Picker(selection: modifierPreset) {
+                    Text("Mac 习惯（推荐）").tag(ModifierPreset.mac)
+                    Text("保持键位").tag(ModifierPreset.keep)
+                    Text("自定义").tag(ModifierPreset.custom)
+                } label: {
+                    Text("PC 控制这台 Mac 时的修饰键")
+                    Text(modifierDescription)
+                }
+                if modifierPreset.wrappedValue == .custom {
+                    modifierPicker(Text(verbatim: "Ctrl"), \.control)
+                    modifierPicker(Text("Windows 键"), \.windows)
+                    modifierPicker(Text(verbatim: "Alt"), \.alt)
                 }
             }
             Section {
@@ -106,6 +136,52 @@ struct SettingsView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
+
+    private var modifierPreset: Binding<ModifierPreset> {
+        Binding(
+            get: {
+                let map = model.settings.modifierMap
+                if customModifiers || (map != .mac && map != .keep) { return .custom }
+                return map == .mac ? .mac : .keep
+            },
+            set: { preset in
+                switch preset {
+                case .custom:
+                    // The choices start from the keys in use; nothing changes yet.
+                    customModifiers = true
+                case .mac, .keep:
+                    customModifiers = false
+                    model.updateSettings { $0.modifierMap = preset == .mac ? .mac : .keep }
+                }
+            }
+        )
+    }
+
+    private var modifierDescription: String {
+        switch modifierPreset.wrappedValue {
+        case .mac: String(localized: "Ctrl+C、Ctrl+V 等按 ⌘ 快捷键执行，Windows 键对应 ⌃。")
+        case .keep: String(localized: "按键保持原来的位置：Windows 键对应 ⌘，Ctrl 对应 ⌃。")
+        case .custom: String(localized: "为 PC 的每个修饰键选择它在这台 Mac 上对应的按键。")
+        }
+    }
+
+    /// What one of a PC's modifier keys plays as here.
+    private func modifierPicker(_ key: Text, _ path: WritableKeyPath<ModifierMap, ModifierTarget>) -> some View {
+        let map: WritableKeyPath<AppSettings, ModifierMap> = \.modifierMap
+        return Picker(selection: setting(map.appending(path: path))) {
+            ForEach(ModifierTarget.allCases) { target in
+                switch target {
+                case .command: Text(verbatim: "⌘ Command").tag(target)
+                case .control: Text(verbatim: "⌃ Control").tag(target)
+                case .option: Text(verbatim: "⌥ Option").tag(target)
+                case .shift: Text(verbatim: "⇧ Shift").tag(target)
+                case .none: Text("无").tag(target)
+                }
+            }
+        } label: {
+            key
         }
     }
 
