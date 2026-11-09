@@ -379,6 +379,16 @@ struct RemotePointer {
         position = nearest.clamp(point)
     }
 
+    /// The same pointer against a changed arrangement (displays rearranged
+    /// on either side, a placement refitted): it stays where it is on its
+    /// peer, moved into the nearest display if that one is gone. The entry
+    /// becomes the new portal on the same side, if any.
+    func rebased(onto peer: PlacedPeer, portals: [Portal], neighbors: [PlacedPeer]) -> RemotePointer {
+        let entry = entry.flatMap { old in portals.first { $0.side == old.side } ?? portals.first }
+        let local = CGPoint(x: position.x + peer.offset.x, y: position.y + peer.offset.y)
+        return RemotePointer(arrivingAt: local, peer: peer, portals: portals, neighbors: neighbors, entry: entry)
+    }
+
     /// Where the pointer is, in this Mac's space.
     var localPosition: CGPoint {
         CGPoint(x: position.x + peer.offset.x, y: position.y + peer.offset.y)

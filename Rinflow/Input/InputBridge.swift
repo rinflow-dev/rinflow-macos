@@ -135,14 +135,19 @@ final class InputBridge {
     /// accessibility permission).
     func setArrangement(_ world: World, connected: Set<String>) -> Bool {
         crossingGate.reset()
-        // An active RemotePointer caches portals and display bounds. Do not
-        // keep using stale geometry after a monitor or placement changes.
-        if self.world != world { stopCapturing() }
+        let changed = self.world != world
         self.world = world
         self.connected = connected
         entryPortals = connected.sorted().flatMap { world.portals(to: $0) }
-        if let pointer, !connected.contains(pointer.peerID) || world.peer(pointer.peerID) == nil {
-            stopCapturing()
+        if let pointer {
+            if connected.contains(pointer.peerID), let peer = world.peer(pointer.peerID) {
+                // A RemotePointer caches portals and display bounds: rebuilt
+                // on the new geometry, the pointer stays on its peer (a PC
+                // whose monitors were just rearranged, while driving it).
+                if changed { rebase(pointer, onto: peer) }
+            } else {
+                stopCapturing()
+            }
         }
         return updateEventTap()
     }
@@ -373,6 +378,20 @@ final class InputBridge {
         case let .peer(peerID):
             _ = moveOn(to: peerID, at: landing)
         }
+    }
+
+    /// Keeps driving `peer` on the current arrangement. The peer's cursor is
+    /// put where this Mac now tracks it: its own system may have moved it
+    /// while its displays changed (unless a game holds it).
+    private func rebase(_ old: RemotePointer, onto peer: PlacedPeer) {
+        let remote = old.rebased(
+            onto: peer,
+            portals: world.portals(to: peer.id),
+            neighbors: world.neighbors(of: peer.id)
+        )
+        pointer = remote
+        Self.log.info("arrangement changed under \(peer.id, privacy: .public): pointer at (\(remote.position.x), \(remote.position.y))")
+        if !heldPointers.contains(peer.id) { sendPosition(of: remote) }
     }
 
     /// An absolute move to where the pointer is on its peer.

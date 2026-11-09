@@ -6,6 +6,7 @@ Notable changes are recorded here. The format follows [Keep a Changelog](https:/
 
 ### Fixed
 
+- Rearranging the monitors of a device this Mac drives (in Windows display settings, say), or a placement moving meanwhile, no longer brings the pointer back to this Mac: it stays on that device, against the new arrangement.
 - While secure input is on (a focused password field, Terminal's Secure Keyboard Entry), the pointer no longer leaves this Mac, and comes back if it turns on meanwhile: keystrokes meant for the other device went to the local window. A message names the app holding it.
 - One damaged setting, paired device, placement or known device no longer resets the whole set: only that entry falls back.
 - A clipboard from another device holding nothing this Mac can paste (only RTF, say) no longer clears this Mac's clipboard.
