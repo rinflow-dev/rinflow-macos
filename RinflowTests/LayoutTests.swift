@@ -90,6 +90,46 @@ final class LayoutTests: XCTestCase {
         XCTAssertEqual(pointer.step(by: CGVector(dx: -1600, dy: 0)), .home(CGPoint(x: 1918, y: 500)))
     }
 
+    func testThePointerStaysOnAPeerWhoseDisplaysAreRearranged() throws {
+        let before = world()
+        let entry = try XCTUnwrap(before.portals(to: "mac").first)
+        var pointer = RemotePointer(
+            crossing: entry,
+            at: CGPoint(x: 1920, y: 500),
+            peer: try XCTUnwrap(before.peer("mac")),
+            portals: before.portals(to: "mac"),
+            neighbors: before.neighbors(of: "mac")
+        )
+        XCTAssertEqual(pointer.step(by: CGVector(dx: 1000, dy: 0)), .stay)
+
+        // The peer drags a second monitor in to the left of its main one,
+        // and the core places it again so that it still touches this Mac.
+        let monitors = [screen(0, 0, 1512, 982), screen(-1280, 0, 1280, 800)]
+        let after = World(
+            local: before.local,
+            peers: [PlacedPeer(id: "mac", displays: monitors, offset: Offset(x: 3200, y: 0))]
+        )
+        let rebased = pointer.rebased(
+            onto: try XCTUnwrap(after.peer("mac")),
+            portals: after.portals(to: "mac"),
+            neighbors: after.neighbors(of: "mac")
+        )
+        // Still on the peer, at the same point of its own space.
+        XCTAssertEqual(rebased.peerID, "mac")
+        XCTAssertEqual(rebased.position, CGPoint(x: 1002, y: 500))
+        // The entry is now the new monitor's edge, and so is the way home.
+        XCTAssertEqual(rebased.entry, after.portals(to: "mac").first)
+        var moved = rebased
+        XCTAssertEqual(moved.step(by: CGVector(dx: -1002, dy: 0)), .stay)
+        XCTAssertEqual(moved.step(by: CGVector(dx: -1281, dy: 0)), .home(CGPoint(x: 1918, y: 500)))
+
+        // The display the pointer was on is gone: into the nearest one left.
+        let shrunk = PlacedPeer(id: "mac", displays: [screen(0, 0, 800, 600)], offset: Offset(x: 1920, y: 0))
+        let clamped = pointer.rebased(onto: shrunk, portals: [], neighbors: [])
+        XCTAssertEqual(clamped.position, CGPoint(x: 799, y: 500))
+        XCTAssertNil(clamped.entry)
+    }
+
     func testArrivingFromANeighbourLandsInsideAndRemembersTheEntry() throws {
         let world = world()
         let pc = try XCTUnwrap(world.peer("pc"))
@@ -114,35 +154,6 @@ final class LayoutTests: XCTestCase {
             entry: nil
         )
         XCTAssertEqual(shortcut.returnPoint(near: CGPoint(x: 10, y: 20)), CGPoint(x: 10, y: 20))
-    }
-
-    /// The driven peer is placed elsewhere meanwhile (on either device): the
-    /// pointer stays where it is on it and comes home through the new edge,
-    /// rather than control being given back.
-    func testADrivenPeerMovedElsewhereKeepsItsPointer() throws {
-        let before = world()
-        let mac = try XCTUnwrap(before.peer("mac"))
-        let portal = try XCTUnwrap(before.portals(to: "mac").first)
-        var pointer = RemotePointer(crossing: portal, at: CGPoint(x: 1920, y: 500), peer: mac,
-                                    portals: before.portals(to: "mac"), neighbors: before.neighbors(of: "mac"))
-        XCTAssertEqual(pointer.step(by: CGVector(dx: 300, dy: 40)), .stay)
-        let position = pointer.position
-
-        // Now on the left of this Mac.
-        let after = World(
-            local: [screen(0, 0, 1920, 1080)],
-            peers: [PlacedPeer(id: "mac", displays: [screen(0, 0, 1512, 982)], offset: Offset(x: -1512, y: 0))]
-        )
-        let moved = try XCTUnwrap(after.peer("mac"))
-        var rearranged = pointer.rearranged(peer: moved, portals: after.portals(to: "mac"),
-                                            neighbors: after.neighbors(of: "mac"))
-        XCTAssertEqual(rearranged.position, position)
-        XCTAssertEqual(rearranged.entry?.side, .left)
-        // Out through the Mac's right edge: home, at this Mac's left edge.
-        guard case let .home(location) = rearranged.step(by: CGVector(dx: 2000, dy: 0)) else {
-            return XCTFail("expected to come home")
-        }
-        XCTAssertLessThan(location.x, 10)
     }
 }
 

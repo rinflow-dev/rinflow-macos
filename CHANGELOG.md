@@ -6,12 +6,12 @@ Notable changes are recorded here. The format follows [Keep a Changelog](https:/
 
 ### Fixed
 
+- Rearranging the monitors of a device this Mac drives (in Windows display settings, say), or a placement moving meanwhile, no longer brings the pointer back to this Mac: it stays on that device, against the new arrangement.
 - While secure input is on (a focused password field, Terminal's Secure Keyboard Entry), the pointer no longer leaves this Mac, and comes back if it turns on meanwhile: keystrokes meant for the other device went to the local window. A message names the app holding it.
 - One damaged setting, paired device, placement or known device no longer resets the whole set: only that entry falls back.
 - A clipboard from another device holding nothing this Mac can paste (only RTF, say) no longer clears this Mac's clipboard.
 - Every reason and error from the core is shown in the interface's language (the core's new `reason_code`), not in English.
 - Large clipboards (images up to 8 MB) are encoded and decoded off the main thread, which also runs the input event tap, and the pasteboard is no longer read inside the tap at the moment the pointer leaves.
-- Changing the arrangement while this Mac drives another device (on either device, for example by dragging screens with this very pointer) no longer gives control back to the Mac: the pointer stays where it is and follows the new arrangement.
 
 ### Added
 
