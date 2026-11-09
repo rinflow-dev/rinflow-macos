@@ -31,7 +31,25 @@ tccutil reset Accessibility com.rinflow.mac
 
 ## Updates
 
-The app updates itself with [Sparkle](https://sparkle-project.org) from the latest GitHub release: each architecture reads its own feed, `releases/latest/download/appcast-arm64.xml` or `appcast-x64.xml` (Sparkle allows one build per version in a feed). `make release` writes both next to the disk images, and the release workflow publishes them with the images. A prerelease (a tag with `-`) is never "latest", so it offers no update.
+The app updates itself with [Sparkle](https://sparkle-project.org) from `https://updates.rinflow.com/macos/`: each architecture reads its own feed, `appcast-arm64.xml` or `appcast-x64.xml` (Sparkle allows one build per version in a feed), which offers `v<version>/<disk image>`. `make release` writes both feeds next to the disk images; the release workflow uploads the images, then the feeds, to the `rinflow-updates` R2 bucket behind that domain, and then creates the GitHub release with the same files. A prerelease (a tag with `-`) is not uploaded, so it offers no update.
+
+The domain is ours so that users in mainland China, who often cannot reach GitHub's downloads, still get updates, and so that what serves it can change without a new app. The website links its macOS downloads there too.
+
+Before the first release, once (a Cloudflare account that holds the `rinflow.com` zone):
+
+```sh
+npx wrangler login
+npx wrangler r2 bucket create rinflow-updates
+npx wrangler r2 bucket domain add rinflow-updates --domain updates.rinflow.com --zone-id <rinflow.com zone ID>
+# Earlier releases, which the website may still link to:
+gh release download v0.0.1 -R rinflow-dev/rinflow-macos -p 'Rinflow-*.dmg' -D /tmp/rinflow-v0.0.1
+for f in /tmp/rinflow-v0.0.1/*.dmg; do
+  npx wrangler r2 object put "rinflow-updates/macos/v0.0.1/${f##*/}" --remote --file "$f" \
+    --content-type application/x-apple-diskimage --cache-control 'public, max-age=31536000, immutable'
+done
+```
+
+Then give the repository the `CLOUDFLARE_API_TOKEN` (a token with **Workers R2 Storage: Edit**) and `CLOUDFLARE_ACCOUNT_ID` secrets.
 
 Updates are signed with an EdDSA key. Create it once, on the Mac that releases:
 

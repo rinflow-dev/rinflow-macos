@@ -6,7 +6,12 @@ import Foundation
 import Observation
 import Sparkle
 
-/// Updates from the GitHub releases, with Sparkle 2.
+/// Updates from updates.rinflow.com, with Sparkle 2.
+///
+/// The domain is ours, not GitHub's (slow or unreachable in mainland
+/// China) nor a provider's: what serves it (now Cloudflare R2) can change
+/// without a new version of this app. The release workflow uploads each
+/// release there; the GitHub release keeps the same files.
 ///
 /// The disk images are built one per architecture, and a Sparkle feed holds
 /// one build per version, so each architecture has its feed
@@ -54,14 +59,14 @@ final class Updater: NSObject, SPUUpdaterDelegate {
         UserDefaults.standard.string(forKey: "RinflowFeedURL") ?? Self.feedURL
     }
 
-    /// The latest release's feed for this build's architecture.
+    /// The feed of this build's architecture.
     nonisolated static let feedURL: String = {
         #if arch(arm64)
         let architecture = "arm64"
         #else
         let architecture = "x64"
         #endif
-        return "https://github.com/rinflow-dev/rinflow-macos/releases/latest/download/appcast-\(architecture).xml"
+        return "https://updates.rinflow.com/macos/appcast-\(architecture).xml"
     }()
 
     /// "0.0.1 (123)": the version and the build Sparkle compares.

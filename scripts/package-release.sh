@@ -20,8 +20,8 @@
 #   ALLOW_DIRTY=1     builds uncommitted changes, for trying the script only
 #
 # A notarized build also writes the update feed of each architecture,
-# appcast-arm64.xml and appcast-x64.xml, published with the release: the app
-# reads it from the latest release (Rinflow/App/Updater.swift).
+# appcast-arm64.xml and appcast-x64.xml, uploaded with the images to
+# updates.rinflow.com by the release workflow (Rinflow/App/Updater.swift).
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 CORE="${ROOT}/../rinflow-core"
@@ -163,13 +163,13 @@ feed() {
     key=$(/usr/libexec/PlistBuddy -c 'Print :SUPublicEDKey' "$app/Contents/Info.plist" 2>/dev/null || true)
     [ -n "$key" ] || fail "no update key: set SPARKLE_PUBLIC_KEY in scripts/generate-xcodeproj.rb (docs/release-checklist.md)"
     version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")
-    releases=https://github.com/rinflow-dev/rinflow-macos/releases
+    updates=https://updates.rinflow.com/macos
     mkdir "$work/feed"
     cp "$feedImage" "$work/feed/"
     rm -f "$feedFile"
     set -- "${derivedDir}/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast" \
-        --download-url-prefix "$releases/download/v$version/" \
-        --full-release-notes-url "$releases/tag/v$version" \
+        --download-url-prefix "$updates/v$version/" \
+        --full-release-notes-url "https://github.com/rinflow-dev/rinflow-macos/releases/tag/v$version" \
         -o "$feedFile" "$work/feed"
     if [ -n "${SPARKLE_PRIVATE_KEY:-}" ]; then
         printf '%s' "$SPARKLE_PRIVATE_KEY" | "$@" --ed-key-file -
