@@ -115,6 +115,35 @@ final class LayoutTests: XCTestCase {
         )
         XCTAssertEqual(shortcut.returnPoint(near: CGPoint(x: 10, y: 20)), CGPoint(x: 10, y: 20))
     }
+
+    /// The driven peer is placed elsewhere meanwhile (on either device): the
+    /// pointer stays where it is on it and comes home through the new edge,
+    /// rather than control being given back.
+    func testADrivenPeerMovedElsewhereKeepsItsPointer() throws {
+        let before = world()
+        let mac = try XCTUnwrap(before.peer("mac"))
+        let portal = try XCTUnwrap(before.portals(to: "mac").first)
+        var pointer = RemotePointer(crossing: portal, at: CGPoint(x: 1920, y: 500), peer: mac,
+                                    portals: before.portals(to: "mac"), neighbors: before.neighbors(of: "mac"))
+        XCTAssertEqual(pointer.step(by: CGVector(dx: 300, dy: 40)), .stay)
+        let position = pointer.position
+
+        // Now on the left of this Mac.
+        let after = World(
+            local: [screen(0, 0, 1920, 1080)],
+            peers: [PlacedPeer(id: "mac", displays: [screen(0, 0, 1512, 982)], offset: Offset(x: -1512, y: 0))]
+        )
+        let moved = try XCTUnwrap(after.peer("mac"))
+        var rearranged = pointer.rearranged(peer: moved, portals: after.portals(to: "mac"),
+                                            neighbors: after.neighbors(of: "mac"))
+        XCTAssertEqual(rearranged.position, position)
+        XCTAssertEqual(rearranged.entry?.side, .left)
+        // Out through the Mac's right edge: home, at this Mac's left edge.
+        guard case let .home(location) = rearranged.step(by: CGVector(dx: 2000, dy: 0)) else {
+            return XCTFail("expected to come home")
+        }
+        XCTAssertLessThan(location.x, 10)
+    }
 }
 
 final class HIDKeyMapTests: XCTestCase {

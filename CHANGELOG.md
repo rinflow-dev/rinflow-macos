@@ -2,6 +2,12 @@
 
 Notable changes are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Changing the arrangement while this Mac drives another device (on either device, for example by dragging screens with this very pointer) no longer gives control back to the Mac: the pointer stays where it is and follows the new arrangement.
+
 ## [0.0.1] - 2026-11-06
 
 First public version.

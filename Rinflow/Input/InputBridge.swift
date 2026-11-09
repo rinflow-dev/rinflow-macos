@@ -127,14 +127,25 @@ final class InputBridge {
     /// accessibility permission).
     func setArrangement(_ world: World, connected: Set<String>) -> Bool {
         crossingGate.reset()
-        // An active RemotePointer caches portals and display bounds. Do not
-        // keep using stale geometry after a monitor or placement changes.
-        if self.world != world { stopCapturing() }
+        let changed = self.world != world
         self.world = world
         self.connected = connected
         entryPortals = connected.sorted().flatMap { world.portals(to: $0) }
-        if let pointer, !connected.contains(pointer.peerID) || world.peer(pointer.peerID) == nil {
-            stopCapturing()
+        if let current = pointer {
+            if !connected.contains(current.peerID) || world.peer(current.peerID) == nil {
+                stopCapturing()
+            } else if changed, let peer = world.peer(current.peerID) {
+                // An active RemotePointer caches portals and display bounds:
+                // after a placement (made on either device, often with this
+                // very pointer on the peer's arrangement) or a monitor
+                // changed, it follows the new geometry and stays where it
+                // is. Giving control back instead pulled the pointer home.
+                pointer = current.rearranged(
+                    peer: peer,
+                    portals: world.portals(to: peer.id),
+                    neighbors: world.neighbors(of: peer.id)
+                )
+            }
         }
         return updateEventTap()
     }

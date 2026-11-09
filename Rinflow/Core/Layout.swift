@@ -411,4 +411,14 @@ struct RemotePointer {
     func returnPoint(near location: CGPoint) -> CGPoint {
         entry?.localInside(near: location) ?? location
     }
+
+    /// The same pointer, at the same spot on its peer, with the peer placed
+    /// as it is now (moved on either device, or displays changed). The
+    /// portal it left through, where it comes back on release, becomes the
+    /// new one on the same side, or any.
+    func rearranged(peer: PlacedPeer, portals: [Portal], neighbors: [PlacedPeer]) -> RemotePointer {
+        let newEntry = entry.flatMap { left in portals.first(where: { $0.side == left.side }) ?? portals.first }
+        let local = CGPoint(x: position.x + peer.offset.x, y: position.y + peer.offset.y)
+        return RemotePointer(arrivingAt: local, peer: peer, portals: portals, neighbors: neighbors, entry: newEntry)
+    }
 }
