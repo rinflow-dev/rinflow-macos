@@ -64,20 +64,36 @@ final class ClipboardBridge {
     }
 
     /// Writes a peer's clipboard. The change this makes is not reported back.
+    /// Nothing this Mac can paste (only RTF, say) leaves the pasteboard as
+    /// it was: clearing it would lose this Mac's copy for nothing.
     func write(_ items: [ClipboardItem]) {
-        pasteboard.clearContents()
         // Received files: written as files, so Finder pastes them.
         if let list = items.first(where: { $0.mime == ClipboardItem.uriList }) {
             let urls = String(decoding: list.data, as: UTF8.self)
                 .split(whereSeparator: \.isNewline)
                 .compactMap { URL(string: String($0)) }
                 .filter(\.isFileURL)
-            pasteboard.writeObjects(urls as [NSURL])
-            reportedCount = pasteboard.changeCount
-            Self.log.info("wrote peer files: \(urls.count) items")
+            if !urls.isEmpty {
+                pasteboard.clearContents()
+                pasteboard.writeObjects(urls as [NSURL])
+                reportedCount = pasteboard.changeCount
+                Self.log.info("wrote peer files: \(urls.count) items")
+                return
+            }
+        }
+        let writable = items.filter { item in
+            switch item.mime {
+            case ClipboardItem.text: String(data: item.data, encoding: .utf8) != nil
+            case ClipboardItem.html, ClipboardItem.png: true
+            default: false
+            }
+        }
+        guard !writable.isEmpty else {
+            Self.log.info("peer clipboard has nothing to paste here: \(items.map(\.mime), privacy: .public)")
             return
         }
-        for item in items {
+        pasteboard.clearContents()
+        for item in writable {
             switch item.mime {
             case ClipboardItem.text:
                 if let text = String(data: item.data, encoding: .utf8) {

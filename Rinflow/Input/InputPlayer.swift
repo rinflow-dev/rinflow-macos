@@ -49,6 +49,9 @@ final class InputPlayer {
     private var heldButtons: Set<UInt32> = []
     private var clicks = ClickTracker()
     private let post: (CGEvent) -> Void
+    /// One source for every played event: they share the HID system state
+    /// anyway, and a new one per motion at 1 kHz is wasted work.
+    private let source = CGEventSource(stateID: .hidSystemState)
     private let cursorPosition: () -> CGPoint
     private let now: () -> DispatchTime
 
@@ -90,7 +93,7 @@ final class InputPlayer {
     }
 
     func play(_ input: LcInputEvent) {
-        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
+        guard let source else { return }
         let event: CGEvent?
         switch input.kind {
         case UInt32(LC_INPUT_MOUSE_MOVE):

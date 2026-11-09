@@ -19,8 +19,6 @@ final class AppModel: RustCoreDelegate {
     /// The peer this Mac's keyboard and mouse currently drive.
     private(set) var controlledPeerID: String?
     private(set) var hasAccessibilityPermission = false
-    private(set) var sentEventCount = 0
-    private(set) var receivedEventCount = 0
     private(set) var lastError: String?
     /// Files on their way, either way.
     private(set) var transfers: [FileTransfer] = []
@@ -100,12 +98,8 @@ final class AppModel: RustCoreDelegate {
         trustedPeers = Self.loadTrustedPeers()
         core.delegate = self
         inputBridge.send = { [weak self] input in
-            guard let self else { return }
-            if self.core.send(input) {
-                self.sentEventCount += 1
-            } else {
-                self.lastError = String(localized: "Rust Core 拒绝了输入事件")
-            }
+            guard let self, !self.core.send(input) else { return }
+            self.lastError = String(localized: "Rust Core 拒绝了输入事件")
         }
         inputBridge.didChangeTarget = { [weak self] peerID in
             self?.controlTargetChanged(peerID)
@@ -119,7 +113,18 @@ final class AppModel: RustCoreDelegate {
         inputBridge.willEnter = { [weak self] in
             // The cursor a peer left hidden here is this capture's to hide now.
             self?.cursorHider.reveal()
-            self?.clipboard.reportIfChanged()
+            // A copy made just before is read after the tap callback: an app
+            // that provides its data lazily (an image) can take long to hand
+            // it over. The core sends a clipboard set this late to the peer
+            // being driven.
+            Task { @MainActor [weak self] in self?.clipboard.reportIfChanged() }
+        }
+        inputBridge.secureInputRefused = { [weak self] app in
+            let message = app.map {
+                String(localized: "“\($0)”开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。")
+            } ?? String(localized: "有程序开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。")
+            // Possibly from inside the tap callback: no window work there.
+            Task { @MainActor [weak self] in self?.hud.notice(message) }
         }
         player.pointerLockChanged = { [weak self] locked in
             self?.core.setPointerLocked(locked)
@@ -299,8 +304,8 @@ final class AppModel: RustCoreDelegate {
             if settings.pairedOnly != previous?.pairedOnly {
                 core.setRequirePairing(settings.pairedOnly)
             }
-            if settings.shortcutRemap != previous?.shortcutRemap {
-                core.setShortcutRemap(settings.shortcutRemap)
+            if settings.modifierMap != previous?.modifierMap {
+                core.setModifierMap(settings.modifierMap)
             }
             if settings.manualAddresses != previous?.manualAddresses {
                 core.setManualAddresses(settings.manualAddresses)
@@ -505,7 +510,7 @@ final class AppModel: RustCoreDelegate {
             inputBridge.setPointerHeld(false, on: peerID)
             refreshArrangement()
             updateDriven()
-            if let message = event.reason.flatMap(Self.disconnectMessage) {
+            if let message = message(for: event, in: .session) {
                 lastError = String(localized: "\(name)：\(message)")
             }
         case "remote_control_started", "remote_control_ended":
@@ -515,7 +520,7 @@ final class AppModel: RustCoreDelegate {
             updateDriven()
             if active {
                 cursorHider.reveal()
-            } else if event.reason == "remote reset", settings.hideCursorOnLeave,
+            } else if event.reasonCode == .remoteReset, settings.hideCursorOnLeave,
                       !sessions.values.contains(where: \.remoteControl)
             {
                 // The peer's pointer moved away: the cursor shows only where
@@ -527,7 +532,7 @@ final class AppModel: RustCoreDelegate {
             // device drives that peer now, or a peer drives this Mac
             // ("taken_over", and that peer places the cursor).
             guard let peerID = event.peerID, peerID == controlledPeerID else { break }
-            inputBridge.controlRevoked(pointerStays: event.reason == "taken_over")
+            inputBridge.controlRevoked(pointerStays: event.reasonCode == .takenOver)
         case "peer_pointer_lock":
             guard let peerID = event.peerID else { break }
             inputBridge.setPointerHeld(event.locked ?? false, on: peerID)
@@ -563,9 +568,7 @@ final class AppModel: RustCoreDelegate {
                 break
             }
             // A peer's clipboard, handed over with the control.
-            let items = (event.formats ?? []).compactMap { format in
-                Data(base64Encoded: format.data).map { ClipboardItem(mime: format.mime, data: $0) }
-            }
+            let items = (event.formats ?? []).map { ClipboardItem(mime: $0.mime, data: $0.data) }
             clipboard.write(items)
         case "pairing_requested":
             guard let peerID = event.peerID, let code = event.code else { break }
@@ -585,7 +588,7 @@ final class AppModel: RustCoreDelegate {
         case "pairing_ended":
             guard let peerID = event.peerID else { break }
             pairing.dismiss(peerID: peerID)
-            if let message = event.reason.flatMap(Self.disconnectMessage) {
+            if let message = message(for: event, in: .session) {
                 lastError = String(localized: "配对未完成：\(message)")
             }
         case "unpaired":
@@ -613,23 +616,22 @@ final class AppModel: RustCoreDelegate {
         case "files_not_shared":
             // Copied here, past the core's limits: the rest of the clipboard
             // still went.
-            lastError = event.reason == "too_deep"
-                ? String(localized: "复制的文件夹层级太深，文件未共享。请先压缩后再复制。")
-                : String(localized: "复制的文件太多，文件未共享。请先压缩后再复制。")
+            lastError = message(for: event, in: .files)
         case "files_failed", "files_send_ended":
             guard let transfer = event.transfer else { break }
             let sending = event.event == "files_send_ended"
             pairing.dismiss(id: "file-\(transfer)")
             transfers.removeAll { $0.direction == (sending ? .sending : .receiving) && $0.transfer == transfer }
-            if let reason = event.reason, !Self.quietTransferEnds.contains(reason) {
+            if let message = message(for: event, in: .files) {
                 lastError = sending
-                    ? String(localized: "发送文件失败：\(reason)")
-                    : String(localized: "接收文件失败：\(reason)")
+                    ? String(localized: "发送文件失败：\(message)")
+                    : String(localized: "接收文件失败：\(message)")
             }
         case "error":
-            lastError = event.message
+            let message = message(for: event, in: .error) ?? CoreReason.Context.error.fallback
+            lastError = message
             if coreState == .starting {
-                coreState = .failed(event.message ?? String(localized: "无法启动 Rust Core"))
+                coreState = .failed(message)
             }
         default:
             break
@@ -644,7 +646,6 @@ final class AppModel: RustCoreDelegate {
                 || input.kind == UInt32(LC_INPUT_MOUSE_BUTTON_UP)
         else { return }
         player.play(input)
-        receivedEventCount += 1
     }
 
     /// The card of a transfer starting or under way.
@@ -674,41 +675,15 @@ final class AppModel: RustCoreDelegate {
         }
     }
 
-    /// Transfers that end for these were stopped on purpose or replaced.
-    private static let quietTransferEnds: Set<String> = [
-        "done",
-        "cancelled",
-        "replaced by a newer copy",
-        "files are no longer on the clipboard",
-    ]
-
-    /// What to tell the user about a session or pairing that ended, if
-    /// anything: ending it here or on the peer, or for sleep, is not an
-    /// error. The core reconnects by itself where it should.
-    private static func disconnectMessage(_ reason: String) -> String? {
-        switch reason {
-        case "local request", "peer closed the connection", "disconnected on the other device",
-             "going to sleep", "pairing declined", "core stopped":
-            nil
-        case "heartbeat timeout":
-            String(localized: "对方没有响应（可能睡眠了或断网），回来后会自动重新连接。")
-        case "refused by the other device":
-            String(localized: "对方拒绝了连接：对方可能移除了本机，或只允许已配对的设备。点“连接”可以重新配对。")
-        case "the device's identity changed":
-            String(localized: "设备的身份证书变了，已拒绝连接。如果对方重装过，请取消配对后重新配对。")
-        case "pairing declined on the other device":
-            String(localized: "对方拒绝了配对。")
-        case "pairing timed out":
-            String(localized: "配对超时，没有在两分钟内确认。")
-        case "pairing required":
-            String(localized: "未配对的设备已断开（已开启“仅允许已配对的设备”）。")
-        case "the other device needs a newer Rinflow to pair":
-            String(localized: "对方的 Rinflow 版本太旧，无法配对，请先更新。")
-        case "unpaired":
-            String(localized: "已取消配对。")
-        default:
-            reason
+    /// What to tell the user about the event's `reason_code`, in their language;
+    /// nil when nothing went wrong. One the core could not classify is
+    /// logged as it came, for the bug report.
+    private func message(for event: CoreEventEnvelope, in context: CoreReason.Context) -> String? {
+        let code = event.reasonCode ?? .other
+        if code == .other {
+            Self.log.error("\(event.event, privacy: .public) without a known code: \(event.reason ?? event.message ?? "")")
         }
+        return code.message(in: context)
     }
 
     /// The core keeps the user's devices connected by itself, but it has to
@@ -855,12 +830,7 @@ final class AppModel: RustCoreDelegate {
     private static let knownPeersKey = "rinflow.known-peers"
 
     private static func loadKnownPeers() -> [String: Peer] {
-        guard
-            let data = UserDefaults.standard.data(forKey: knownPeersKey),
-            let peers = try? JSONDecoder().decode([Peer].self, from: data)
-        else {
-            return [:]
-        }
+        let peers = LossyArray<Peer>.load(knownPeersKey)
         return Dictionary(peers.map { ($0.id, $0) }) { _, latest in latest }
     }
 
@@ -897,12 +867,7 @@ final class AppModel: RustCoreDelegate {
     private static let trustedPeersKey = "rinflow.trusted-peers"
 
     private static func loadTrustedPeers() -> [String: TrustedPeer] {
-        guard
-            let data = UserDefaults.standard.data(forKey: trustedPeersKey),
-            let peers = try? JSONDecoder().decode([TrustedPeer].self, from: data)
-        else {
-            return [:]
-        }
+        let peers = LossyArray<TrustedPeer>.load(trustedPeersKey)
         return Dictionary(peers.map { ($0.peerID, $0) }) { _, latest in latest }
     }
 
@@ -914,12 +879,7 @@ final class AppModel: RustCoreDelegate {
     private static let placementsKey = "rinflow.placements"
 
     private static func loadPlacements() -> [String: PlacementRecord] {
-        guard
-            let data = UserDefaults.standard.data(forKey: placementsKey),
-            let records = try? JSONDecoder().decode([PlacementRecord].self, from: data)
-        else {
-            return [:]
-        }
+        let records = LossyArray<PlacementRecord>.load(placementsKey)
         return Dictionary(records.map { ($0.peerID, $0) }) { _, latest in latest }
     }
 

@@ -29,10 +29,51 @@ Development and release builds have different signatures, and macOS records the 
 tccutil reset Accessibility com.rinflow.mac
 ```
 
+## Updates
+
+The app updates itself with [Sparkle](https://sparkle-project.org) from `https://updates.rinflow.com/macos/`: each architecture reads its own feed, `appcast-arm64.xml` or `appcast-x64.xml` (Sparkle allows one build per version in a feed), which offers `v<version>/<disk image>`. `make release` writes both feeds next to the disk images; the release workflow uploads the images, then the feeds, to the `rinflow-updates` R2 bucket behind that domain, and then creates the GitHub release with the same files. A prerelease (a tag with `-`) is not uploaded, so it offers no update.
+
+The domain is ours so that users in mainland China, who often cannot reach GitHub's downloads, still get updates, and so that what serves it can change without a new app. The website links its macOS downloads there too.
+
+Before the first release, once (a Cloudflare account that holds the `rinflow.com` zone):
+
+```sh
+npx wrangler login
+npx wrangler r2 bucket create rinflow-updates
+npx wrangler r2 bucket domain add rinflow-updates --domain updates.rinflow.com --zone-id <rinflow.com zone ID>
+# Earlier releases, which the website may still link to:
+gh release download v0.0.1 -R rinflow-dev/rinflow-macos -p 'Rinflow-*.dmg' -D /tmp/rinflow-v0.0.1
+for f in /tmp/rinflow-v0.0.1/*.dmg; do
+  npx wrangler r2 object put "rinflow-updates/macos/v0.0.1/${f##*/}" --remote --file "$f" \
+    --content-type application/x-apple-diskimage --cache-control 'public, max-age=31536000, immutable'
+done
+```
+
+Then give the repository the `CLOUDFLARE_API_TOKEN` (a token with **Workers R2 Storage: Edit**) and `CLOUDFLARE_ACCOUNT_ID` secrets.
+
+Updates are signed with an EdDSA key. Create it once, on the Mac that releases:
+
+```sh
+make build   # fetches Sparkle and its tools
+DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys
+```
+
+It stores the private key in the login keychain and prints the public key: put that in `SPARKLE_PUBLIC_KEY` in `scripts/generate-xcodeproj.rb` and regenerate the project. For CI, export the private key (`generate_keys -x sparkle-private-key`), store the file's contents as the `SPARKLE_PRIVATE_KEY` secret, and delete the file. Back the key up: an app that has it can only be updated by updates it signed. Without the public key the app never checks, and `make release` fails.
+
+Sparkle also installs an update only if it is signed by the same Developer ID, which keeps the Accessibility permission, bound to that signature.
+
+To try a feed before it is released, point a release build at it (the update must still be signed with the key):
+
+```sh
+defaults write com.rinflow.mac RinflowFeedURL https://example.com/appcast-arm64.xml
+defaults delete com.rinflow.mac RinflowFeedURL   # back to the releases
+```
+
 ## Signing
 
 - [ ] Developer ID certificate is valid. Released builds carry a timestamp and keep working after it expires, but new ones cannot be signed; renew in Xcode › Settings › Accounts or the developer portal.
-- [ ] A `notarytool` profile is configured, and `make release` ends in two notarized disk images
+- [ ] A `notarytool` profile is configured, and `make release` ends in two notarized disk images and two signed feeds
+- [ ] The previous release offers this one (**检查更新…**), installs it and keeps the Accessibility permission
 
 ## Mac and Windows on real machines
 

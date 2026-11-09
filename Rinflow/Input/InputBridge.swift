@@ -4,6 +4,7 @@
 
 import AppKit
 @preconcurrency import ApplicationServices
+import Carbon.HIToolbox
 @preconcurrency import CoreGraphics
 import OSLog
 
@@ -22,9 +23,12 @@ final class InputBridge {
     /// The peer that now receives input, or nil when control came back.
     /// Called synchronously, before the first event for the new target.
     var didChangeTarget: ((String?) -> Void)?
-    /// The pointer is about to leave for a peer: last chance to report what
-    /// it should take along (the clipboard).
+    /// The pointer is about to leave for a peer. Called from inside the
+    /// event tap: anything slow (reading the pasteboard) must be deferred.
     var willEnter: (() -> Void)?
+    /// The pointer stayed on (or came back to) this Mac because secure
+    /// input is on, held by the app named, if known.
+    var secureInputRefused: ((String?) -> Void)?
     /// How this Mac's mouse feels on a peer (speeds, scroll direction).
     var inputFor: ((String) -> PeerInput)?
     var togglePointerLock: (() -> Void)?
@@ -77,6 +81,10 @@ final class InputBridge {
     private var crossingGate = CrossingGate()
     private var switchDelay = 0.15
     private var cornerGuard = true
+    /// Checks for secure input while a peer is driven.
+    private var secureInputTimer: Timer?
+    private var lastSecureInputNotice: TimeInterval = -.infinity
+    private var stalls = TapStalls()
 
     func setCrossingOptions(delay: TimeInterval, cornerGuard: Bool) {
         switchDelay = delay
@@ -192,6 +200,7 @@ final class InputBridge {
               connected.contains(peerID),
               let peer = world.peer(peerID),
               let landing = world.landing(from: .local, to: .peer(peerID)),
+              secureInputAllowsCapture(),
               updateEventTap(needed: true)
         else {
             return
@@ -311,6 +320,7 @@ final class InputBridge {
         // Parked and hidden from the run loop, not from inside the tap
         // callback, as Deskflow and lan-mouse do.
         Task { @MainActor [weak self] in self?.park(from: location) }
+        watchSecureInput()
         didChangeTarget?(remote.peerID)
         Self.log.info("arrive at (\(remote.position.x), \(remote.position.y)) on \(remote.peerID, privacy: .public)")
         // Tells the peer where the pointer arrives; it puts its cursor there.
@@ -435,6 +445,8 @@ final class InputBridge {
     private func endCapture(at location: CGPoint?) {
         guard pointer != nil else { return }
         pointer = nil
+        secureInputTimer?.invalidate()
+        secureInputTimer = nil
         pendingWarp = nil
         pressedButtons = 0
         pressedKeys.removeAll()
@@ -463,11 +475,18 @@ final class InputBridge {
     }
 
     fileprivate func handle(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        let started = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
+        defer { stalls.note(eventTimestamp: event.timestamp, handlingFrom: started, log: Self.log) }
+        return dispatch(type: type, event: event)
+    }
+
+    private func dispatch(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         if event.getIntegerValueField(.eventSourceUserData) == SyntheticInput.marker {
             return Unmanaged.passUnretained(event)
         }
 
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            Self.log.error("event tap disabled (\(type == .tapDisabledByTimeout ? "timeout" : "user input", privacy: .public))")
             // Events may have escaped to the local app while the tap was
             // disabled. Release the peer instead of resuming stale keys.
             stopCapturing()
@@ -480,6 +499,10 @@ final class InputBridge {
 
         guard var remote = pointer else {
             guard let portal = enteredPortal(type: type, event: event) else {
+                return Unmanaged.passUnretained(event)
+            }
+            guard secureInputAllowsCapture() else {
+                crossingGate.reset()
                 return Unmanaged.passUnretained(event)
             }
             beginCapture(through: portal, at: liveLocation(of: event))
@@ -723,11 +746,61 @@ final class InputBridge {
             return
         }
         let location = Self.cursorLocation
-        guard self.portal(at: location) == portal else {
+        guard self.portal(at: location) == portal, secureInputAllowsCapture() else {
             crossingGate.reset()
             return
         }
         beginCapture(through: portal, at: location)
+    }
+
+    // MARK: - Secure input
+
+    /// Secure input (a focused password field, Terminal's Secure Keyboard
+    /// Entry) hides keystrokes from every event tap: typed for a peer, they
+    /// would land in this Mac's front window. So the pointer does not leave
+    /// while it is on, which is checked when crossing (rare, and cheap).
+    private func secureInputAllowsCapture() -> Bool {
+        guard IsSecureEventInputEnabled() else { return true }
+        noticeSecureInput()
+        return false
+    }
+
+    /// Turned on while a peer is driven (a password prompt here): the
+    /// pointer comes back, since the keyboard already stays here.
+    private func watchSecureInput() {
+        secureInputTimer?.invalidate()
+        let timer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, self.pointer != nil, IsSecureEventInputEnabled() else { return }
+                Self.log.info("secure input turned on while driving a peer: coming back")
+                self.stopCapturing()
+                self.noticeSecureInput()
+            }
+        }
+        // Common modes: it also fires while a menu is open.
+        RunLoop.main.add(timer, forMode: .common)
+        secureInputTimer = timer
+    }
+
+    /// Once in a while, not on every push against the edge.
+    private func noticeSecureInput() {
+        let now = Self.now
+        guard now - lastSecureInputNotice >= 3 else { return }
+        lastSecureInputNotice = now
+        let owner = Self.secureInputOwner
+        Self.log.info("secure input is on (\(owner ?? "unknown app", privacy: .public)): the pointer stays")
+        secureInputRefused?(owner)
+    }
+
+    /// The app holding secure input, from the session's (undocumented, but
+    /// long-standing) `kCGSSessionSecureInputPID`; nil when unknown.
+    private static var secureInputOwner: String? {
+        guard let session = CGSessionCopyCurrentDictionary() as? [String: Any],
+              let pid = (session["kCGSSessionSecureInputPID"] as? NSNumber)?.int32Value, pid > 0
+        else {
+            return nil
+        }
+        return NSRunningApplication(processIdentifier: pid)?.localizedName
     }
 
     private static var now: TimeInterval {
@@ -890,6 +963,52 @@ final class InputBridge {
             }
         }
         return value
+    }
+}
+
+/// Measures the event tap, which runs on the main thread with the UI: how
+/// long events waited before it saw them, and how long one took to handle.
+/// Over budget, a summary is logged at most once a second (`make log`).
+private struct TapStalls {
+    private static let waitBudget: UInt64 = 30_000_000
+    private static let handlingBudget: UInt64 = 4_000_000
+    private static let timebase: mach_timebase_info_data_t = {
+        var info = mach_timebase_info_data_t()
+        mach_timebase_info(&info)
+        return info
+    }()
+
+    private var count = 0
+    private var longestWait: UInt64 = 0
+    private var longestHandling: UInt64 = 0
+    private var lastLog: UInt64 = 0
+
+    mutating func note(eventTimestamp: CGEventTimestamp, handlingFrom started: UInt64, log: Logger) {
+        let now = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
+        let handling = now &- started
+        let wait = Self.waited(since: eventTimestamp, now: started)
+        guard wait > Self.waitBudget || handling > Self.handlingBudget else { return }
+        count += 1
+        longestWait = max(longestWait, wait)
+        longestHandling = max(longestHandling, handling)
+        guard now &- lastLog >= 1_000_000_000 else { return }
+        let (events, waitMs, handlingMs) = (count, longestWait / 1_000_000, longestHandling / 1_000_000)
+        log.notice("tap stalls: \(events) events, waited up to \(waitMs) ms, handled in up to \(handlingMs) ms")
+        lastLog = now
+        count = 0
+        longestWait = 0
+        longestHandling = 0
+    }
+
+    /// An event's timestamp is nanoseconds of uptime on some Macs and mach
+    /// ticks on others (Apple silicon): whichever gives a plausible wait.
+    private static func waited(since timestamp: UInt64, now: UInt64) -> UInt64 {
+        let plausible: ClosedRange<UInt64> = 0...10_000_000_000
+        if now >= timestamp, plausible.contains(now - timestamp) { return now - timestamp }
+        let ticks = mach_absolute_time()
+        guard ticks >= timestamp else { return 0 }
+        let elapsed = (ticks - timestamp) * UInt64(timebase.numer) / UInt64(timebase.denom)
+        return plausible.contains(elapsed) ? elapsed : 0
     }
 }
 

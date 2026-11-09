@@ -79,6 +79,28 @@
         }
       }
     },
+    "Ctrl+C、Ctrl+V 等按 ⌘ 快捷键执行，Windows 键对应 ⌃。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ctrl+C, Ctrl+V and the like work as ⌘ shortcuts, and the Windows key is ⌃."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ctrl+C、Ctrl+V などは ⌘ のショートカットとして動作し、Windows キーは ⌃ になります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ctrl+C、Ctrl+V 等按 ⌘ 快捷键执行，Windows 键对应 ⌃。"
+          }
+        }
+      }
+    },
     "IP 地址或设备名称" : {
       "localizations" : {
         "en" : {
@@ -97,6 +119,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "IP 地址或设备名称"
+          }
+        }
+      }
+    },
+    "Mac 习惯（推荐）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac style (recommended)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac 方式 (推奨)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac 习惯（推荐）"
+          }
+        }
+      }
+    },
+    "PC 控制这台 Mac 时的修饰键" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier keys when a PC controls this Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PC がこの Mac を操作するときの修飾キー"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PC 控制这台 Mac 时的修饰键"
           }
         }
       }
@@ -126,24 +192,24 @@
         }
       }
     },
-    "Windows 控制这台 Mac 时，Ctrl 当作 ⌘ 使用（Ctrl+C 就是 ⌘C）。" : {
+    "Windows 键" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When a PC controls this Mac, Ctrl works as ⌘ (Ctrl+C is ⌘C)."
+            "value" : "Windows key"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "WindowsからこのMacを操作するとき、Ctrlを⌘として使います（Ctrl+Cは⌘C）。"
+            "value" : "Windows キー"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Windows 控制这台 Mac 时，Ctrl 当作 ⌘ 使用（Ctrl+C 就是 ⌘C）。"
+            "value" : "Windows 键"
           }
         }
       }
@@ -166,6 +232,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "“%@”不是有效的地址：请输入 IP 地址或设备名称"
+          }
+        }
+      }
+    },
+    "“%@”开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” turned on secure input (a password field, for example). The keyboard can’t reach other devices, so the pointer stays on this Mac."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」がセキュア入力をオンにしています（パスワード欄など）。キーボードをほかのデバイスに送れないため、ポインタはこのMacに残ります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。"
           }
         }
       }
@@ -232,6 +320,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中（300 毫秒）"
+          }
+        }
+      }
+    },
+    "为 PC 的每个修饰键选择它在这台 Mac 上对应的按键。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what each of the PC's modifier keys does on this Mac."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PC の各修飾キーをこの Mac でどのキーとして扱うかを選択します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为 PC 的每个修饰键选择它在这台 Mac 上对应的按键。"
           }
         }
       }
@@ -386,6 +496,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保护屏幕角落"
+          }
+        }
+      }
+    },
+    "保持键位" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep key positions"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーの位置を維持"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持键位"
           }
         }
       }
@@ -566,6 +698,28 @@
         }
       }
     },
+    "出现了意外错误，详情见日志。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something unexpected went wrong. The log has the details."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予期しないエラーが発生しました。詳細はログを確認してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出现了意外错误，详情见日志。"
+          }
+        }
+      }
+    },
     "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。" : {
       "localizations" : {
         "en" : {
@@ -628,6 +782,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刷新"
+          }
+        }
+      }
+    },
+    "剪贴板内容无法共享（可能超过 8 MB）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The clipboard couldn’t be shared (it may be over 8 MB)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クリップボードを共有できませんでした（8 MB を超えている可能性があります）。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剪贴板内容无法共享（可能超过 8 MB）。"
           }
         }
       }
@@ -716,6 +892,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "取消配对"
+          }
+        }
+      }
+    },
+    "另一台设备使用了相同的设备 ID，已拒绝连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another device uses the same device ID, so the connection was refused."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別のデバイスが同じデバイス ID を使っているため、接続を拒否しました。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另一台设备使用了相同的设备 ID，已拒绝连接。"
+          }
+        }
+      }
+    },
+    "同时读取的文件太多，请稍后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many files are being read at once. Try again in a moment."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同時に読み込んでいるファイルが多すぎます。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同时读取的文件太多，请稍后再试。"
           }
         }
       }
@@ -852,6 +1072,28 @@
         }
       }
     },
+    "复制的文件无法共享。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The copied files couldn’t be shared."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピーしたファイルを共有できませんでした。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制的文件无法共享。"
+          }
+        }
+      }
+    },
     "外观" : {
       "localizations" : {
         "en" : {
@@ -918,6 +1160,28 @@
         }
       }
     },
+    "对方发来了无法识别的数据，连接已断开。请把两边都更新到最新版本。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device sent data this Mac doesn’t understand, so the connection ended. Update Rinflow on both devices."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のデバイスから認識できないデータが届いたため、接続を切断しました。両方の Rinflow を最新版にアップデートしてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方发来了无法识别的数据，连接已断开。请把两边都更新到最新版本。"
+          }
+        }
+      }
+    },
     "对方拒绝了连接：对方可能移除了本机，或只允许已配对的设备。点“连接”可以重新配对。" : {
       "localizations" : {
         "en" : {
@@ -980,6 +1244,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "对方没有响应（可能睡眠了或断网），回来后会自动重新连接。"
+          }
+        }
+      }
+    },
+    "对方的 Rinflow 版本不兼容，请把两边都更新到最新版本。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other device’s Rinflow isn’t compatible. Update Rinflow on both devices."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手の Rinflow は互換性がありません。両方を最新版にアップデートしてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对方的 Rinflow 版本不兼容，请把两边都更新到最新版本。"
           }
         }
       }
@@ -1512,6 +1798,28 @@
         }
       }
     },
+    "按键保持原来的位置：Windows 键对应 ⌘，Ctrl 对应 ⌃。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keys stay where they are: the Windows key is ⌘ and Ctrl is ⌃."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーの位置はそのままです。Windows キーは ⌘、Ctrl は ⌃ になります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键保持原来的位置：Windows 键对应 ⌘，Ctrl 对应 ⌃。"
+          }
+        }
+      }
+    },
     "授权" : {
       "localizations" : {
         "en" : {
@@ -1596,6 +1904,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接收文件失败：%@"
+          }
+        }
+      }
+    },
+    "收到的文件数据不完整，传输已停止。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file data received was incomplete, so the transfer stopped."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受信したファイルのデータが不完全なため、転送を停止しました。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收到的文件数据不完整，传输已停止。"
           }
         }
       }
@@ -1732,6 +2062,28 @@
         }
       }
     },
+    "无" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无"
+          }
+        }
+      }
+    },
     "无延迟" : {
       "localizations" : {
         "en" : {
@@ -1798,6 +2150,94 @@
         }
       }
     },
+    "无法建立传输剪贴板和文件的连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t open the connection for the clipboard and files."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クリップボードとファイル用の接続を確立できませんでした。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法建立传输剪贴板和文件的连接。"
+          }
+        }
+      }
+    },
+    "无法打开设备发现端口（UDP 42420），可能被其他程序占用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t open the discovery port (UDP 42420). Another app may be using it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイス検出用のポート (UDP 42420) を開けませんでした。ほかのアプリが使用している可能性があります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开设备发现端口（UDP 42420），可能被其他程序占用。"
+          }
+        }
+      }
+    },
+    "无法打开连接端口（42421），可能有另一个 Rinflow 正在运行。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t open the connection port (42421). Another copy of Rinflow may be running."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続用のポート (42421) を開けませんでした。別の Rinflow が実行中の可能性があります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开连接端口（42421），可能有另一个 Rinflow 正在运行。"
+          }
+        }
+      }
+    },
+    "无法把设备放在这个位置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The device can’t be placed there."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスをその位置に配置できません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法把设备放在这个位置。"
+          }
+        }
+      }
+    },
     "无法更改登录启动：%@" : {
       "localizations" : {
         "en" : {
@@ -1842,6 +2282,50 @@
         }
       }
     },
+    "无法读取或创建本机的身份证书。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read or create this Mac’s identity certificate."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac の ID 証明書を読み込むことも作成することもできませんでした。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取或创建本机的身份证书。"
+          }
+        }
+      }
+    },
+    "无法连接到对方：请确认对方在同一网络中，并且正在运行 Rinflow。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t connect. Make sure the other device is on the same network and Rinflow is running on it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続できませんでした。相手のデバイスが同じネットワーク上にあり、Rinflow が実行中であることを確認してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接到对方：请确认对方在同一网络中，并且正在运行 Rinflow。"
+          }
+        }
+      }
+    },
     "更多" : {
       "localizations" : {
         "en" : {
@@ -1864,6 +2348,28 @@
         }
       }
     },
+    "更新" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデート"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        }
+      }
+    },
     "最多添加 %lld 个地址" : {
       "localizations" : {
         "en" : {
@@ -1882,6 +2388,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最多添加 %lld 个地址"
+          }
+        }
+      }
+    },
+    "有新版本时提示安装。更新经过签名校验，只会安装 Rinflow 官方发布的版本。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offers new versions as they come out. Updates are signature-checked, so only official Rinflow releases install."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいバージョンがあるとインストールを案内します。アップデートは署名を検証するため、Rinflow の公式リリースだけがインストールされます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有新版本时提示安装。更新经过签名校验，只会安装 Rinflow 官方发布的版本。"
+          }
+        }
+      }
+    },
+    "有程序开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An app turned on secure input (a password field, for example). The keyboard can’t reach other devices, so the pointer stays on this Mac."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリがセキュア入力をオンにしています（パスワード欄など）。キーボードをほかのデバイスに送れないため、ポインタはこのMacに残ります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有程序开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。"
           }
         }
       }
@@ -1996,6 +2546,28 @@
         }
       }
     },
+    "检查更新…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデートを確認…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新…"
+          }
+        }
+      }
+    },
     "正在从 %@ 接收 %@" : {
       "localizations" : {
         "en" : {
@@ -2106,6 +2678,28 @@
         }
       }
     },
+    "正在和另一台设备配对，请完成后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another pairing is in progress. Finish it, then try again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別のデバイスとペアリング中です。完了してからもう一度お試しください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在和另一台设备配对，请完成后再试。"
+          }
+        }
+      }
+    },
     "正在控制 %@" : {
       "localizations" : {
         "en" : {
@@ -2172,24 +2766,46 @@
         }
       }
     },
-    "沿用 Mac 的快捷键" : {
+    "没能接收对方的文件。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use Mac shortcuts"
+            "value" : "Couldn’t receive the other device’s files."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Macのショートカットを使う"
+            "value" : "相手のファイルを受信できませんでした。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "沿用 Mac 的快捷键"
+            "value" : "没能接收对方的文件。"
+          }
+        }
+      }
+    },
+    "没能收到对方的剪贴板。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t receive the other device’s clipboard."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のクリップボードを受信できませんでした。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没能收到对方的剪贴板。"
           }
         }
       }
@@ -2322,6 +2938,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "滚动速度"
+          }
+        }
+      }
+    },
+    "版本" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バージョン"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本"
           }
         }
       }
@@ -2586,6 +3224,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自动切换：%@"
+          }
+        }
+      }
+    },
+    "自动检查更新" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for updates automatically"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデートを自動的に確認"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动检查更新"
+          }
+        }
+      }
+    },
+    "自定义" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カスタム"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
           }
         }
       }
@@ -2876,6 +3558,50 @@
         }
       }
     },
+    "读写文件时出错。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read or write a file."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの読み書き中にエラーが発生しました。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读写文件时出错。"
+          }
+        }
+      }
+    },
+    "读取文件超时，传输已停止。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading a file took too long, so the transfer stopped."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの読み込みがタイムアウトしたため、転送を停止しました。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读取文件超时，传输已停止。"
+          }
+        }
+      }
+    },
     "跟随系统" : {
       "localizations" : {
         "en" : {
@@ -2920,6 +3646,28 @@
         }
       }
     },
+    "这个地址上应答的是另一台设备。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A different device answered at this address."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアドレスでは別のデバイスが応答しました。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个地址上应答的是另一台设备。"
+          }
+        }
+      }
+    },
     "这个地址已经添加过了" : {
       "localizations" : {
         "en" : {
@@ -2942,6 +3690,28 @@
         }
       }
     },
+    "这台设备已不在网络上。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This device is no longer on the network."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスはネットワーク上にありません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这台设备已不在网络上。"
+          }
+        }
+      }
+    },
     "连接" : {
       "localizations" : {
         "en" : {
@@ -2960,6 +3730,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "连接"
+          }
+        }
+      }
+    },
+    "连接中断（网络不稳定或对方离线），会自动重新连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection dropped (an unstable network, or the device went offline). It reconnects by itself."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続が切れました（ネットワークが不安定か、相手がオフラインです）。自動的に再接続します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接中断（网络不稳定或对方离线），会自动重新连接。"
+          }
+        }
+      }
+    },
+    "连接对方时没有完成握手，稍后会自动重试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection didn’t finish setting up. It tries again by itself."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続の確立が完了しませんでした。自動的に再試行します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接对方时没有完成握手，稍后会自动重试。"
+          }
+        }
+      }
+    },
+    "连接已断开。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection ended."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続が切断されました。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接已断开。"
           }
         }
       }
@@ -3048,6 +3884,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "配对"
+          }
+        }
+      }
+    },
+    "配对失败，请重试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pairing failed. Try again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペアリングに失敗しました。もう一度お試しください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配对失败，请重试。"
           }
         }
       }

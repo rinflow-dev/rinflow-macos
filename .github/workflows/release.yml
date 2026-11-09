@@ -8,6 +8,11 @@
 #   NOTARY_KEY                  an App Store Connect API key (.p8 contents)
 #   NOTARY_KEY_ID               its key ID
 #   NOTARY_ISSUER_ID            its issuer ID
+#   SPARKLE_PRIVATE_KEY         the EdDSA key that signs updates (Sparkle's
+#                               generate_keys -x), see docs/release-checklist.md
+#   CLOUDFLARE_API_TOKEN        a token that may edit R2 (Workers R2 Storage: Edit)
+#   CLOUDFLARE_ACCOUNT_ID       the account of the rinflow-updates bucket, which
+#                               serves updates.rinflow.com
 name: Release
 
 on:
@@ -94,12 +99,17 @@ jobs:
           echo "NOTARY_KEYCHAIN=$keychain" >> "$GITHUB_ENV"
 
       - name: Build, sign and notarize
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: NOTARY_PROFILE=rinflow-notary scripts/package-release.sh
 
       - uses: actions/upload-artifact@v4
         with:
           name: disk-images
-          path: rinflow-macos/releases/Rinflow-*.dmg
+          # The update feeds go with the images, to updates.rinflow.com.
+          path: |
+            rinflow-macos/releases/Rinflow-*.dmg
+            rinflow-macos/releases/appcast-*.xml
           if-no-files-found: error
 
       - name: Remove the keychain
@@ -150,13 +160,34 @@ jobs:
             echo '```'
           } >> notes.md
 
+      # Before the GitHub release: the website links to these files as soon
+      # as it sees the release. The images first, the feeds last, so a feed
+      # never offers an image not there yet. A prerelease updates nobody.
+      - name: Upload to updates.rinflow.com
+        if: ${{ !contains(github.ref_name, '-') }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          put() {
+            npx --yes wrangler@4.158.0 r2 object put "rinflow-updates/macos/$1" --remote \
+              --file "$2" --content-type "$3" --cache-control "$4"
+          }
+          for image in dist/Rinflow-*.dmg; do
+            put "$GITHUB_REF_NAME/${image##*/}" "$image" application/x-apple-diskimage \
+              'public, max-age=31536000, immutable'
+          done
+          for feed in dist/appcast-*.xml; do
+            put "${feed##*/}" "$feed" application/xml 'public, max-age=300'
+          done
+
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           prerelease=()
           case "$GITHUB_REF_NAME" in *-*) prerelease=(--prerelease) ;; esac
-          gh release create "$GITHUB_REF_NAME" dist/Rinflow-*.dmg \
+          gh release create "$GITHUB_REF_NAME" dist/Rinflow-*.dmg dist/appcast-*.xml \
             --title "Rinflow for macOS ${GITHUB_REF_NAME#v}" \
             --notes-file notes.md \
             "${prerelease[@]}"

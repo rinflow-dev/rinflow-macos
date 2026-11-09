@@ -30,6 +30,10 @@
     <string>Rinflow 需要访问本地网络，以发现并连接附近的电脑。</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
+    <key>SUPublicEDKey</key>
+    <string>$(SPARKLE_PUBLIC_KEY)</string>
+    <key>SUEnableAutomaticChecks</key>
+    <true/>
 </dict>
 </plist>
 

@@ -16,10 +16,9 @@ struct AppSettings: Codable, Equatable, Sendable {
     var pauseInFullscreen = false
     /// Only paired devices may connect: others pair first.
     var pairedOnly = true
-    /// A PC driving this Mac uses its own shortcuts: Ctrl plays as ⌘ (Ctrl+C
-    /// copies), instead of keeping its position as Control. The core's
-    /// `shortcut_remap`.
-    var shortcutRemap = true
+    /// What a PC's modifier keys play as when it drives this Mac (the core's
+    /// `modifier_map`): Mac style by default, Ctrl as ⌘ so Ctrl+C copies.
+    var modifierMap = ModifierMap.mac
     /// When a peer that drove this Mac moves its pointer away, the cursor is
     /// hidden where it was left, until this Mac's own mouse moves.
     var hideCursorOnLeave = true
@@ -41,30 +40,37 @@ struct AppSettings: Codable, Equatable, Sendable {
 
     init() {}
 
-    /// Missing keys keep their defaults, so older saved settings still load.
+    /// Missing keys keep their defaults, so older saved settings still load,
+    /// and so does a damaged or unknown value (a newer version wrote it):
+    /// that one setting falls back, never all of them.
     init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let defaults = AppSettings()
-        sharing = try values.decodeIfPresent(Bool.self, forKey: .sharing) ?? defaults.sharing
-        clipboard = try values.decodeIfPresent(Bool.self, forKey: .clipboard) ?? defaults.clipboard
-        switchDelay = min(2, max(0, try values.decodeIfPresent(Double.self, forKey: .switchDelay) ?? defaults.switchDelay))
-        cornerGuard = try values.decodeIfPresent(Bool.self, forKey: .cornerGuard) ?? defaults.cornerGuard
-        pauseInFullscreen = try values.decodeIfPresent(Bool.self, forKey: .pauseInFullscreen) ?? defaults.pauseInFullscreen
-        pairedOnly = try values.decodeIfPresent(Bool.self, forKey: .pairedOnly) ?? defaults.pairedOnly
-        shortcutRemap = try values.decodeIfPresent(Bool.self, forKey: .shortcutRemap) ?? defaults.shortcutRemap
-        hideCursorOnLeave = try values.decodeIfPresent(Bool.self, forKey: .hideCursorOnLeave)
-            ?? defaults.hideCursorOnLeave
-        switchHotkeys = try values.decodeIfPresent(Bool.self, forKey: .switchHotkeys) ?? defaults.switchHotkeys
-        switchModifiers = try values.decodeIfPresent(SwitchModifiers.self, forKey: .switchModifiers)
-            ?? defaults.switchModifiers
-        keepAwake = try values.decodeIfPresent(Bool.self, forKey: .keepAwake) ?? defaults.keepAwake
-        lockSync = try values.decodeIfPresent(Bool.self, forKey: .lockSync) ?? defaults.lockSync
-        manualAddresses = try values.decodeIfPresent([String].self, forKey: .manualAddresses) ?? []
-        peerInput = try values.decodeIfPresent([String: PeerInput].self, forKey: .peerInput) ?? [:]
-        language = try values.decodeIfPresent(AppLanguage.self, forKey: .language) ?? defaults.language
-        // A value this version does not know (a newer one wrote it) falls
-        // back to the system's, instead of resetting every setting.
-        theme = (try? values.decodeIfPresent(AppTheme.self, forKey: .theme)) ?? defaults.theme
+        sharing = values.lossy(.sharing) ?? defaults.sharing
+        clipboard = values.lossy(.clipboard) ?? defaults.clipboard
+        switchDelay = min(2, max(0, values.lossy(.switchDelay, as: Double.self).flatMap { $0.isFinite ? $0 : nil } ?? defaults.switchDelay))
+        cornerGuard = values.lossy(.cornerGuard) ?? defaults.cornerGuard
+        pauseInFullscreen = values.lossy(.pauseInFullscreen) ?? defaults.pauseInFullscreen
+        pairedOnly = values.lossy(.pairedOnly) ?? defaults.pairedOnly
+        // Before per-key choices, a switch: on was Mac style, off kept keys.
+        let legacy = try? decoder.container(keyedBy: LegacyKeys.self)
+        modifierMap = values.lossy(.modifierMap)
+            ?? legacy?.lossy(.shortcutRemap, as: Bool.self).map { $0 ? .mac : .keep }
+            ?? defaults.modifierMap
+        hideCursorOnLeave = values.lossy(.hideCursorOnLeave) ?? defaults.hideCursorOnLeave
+        switchHotkeys = values.lossy(.switchHotkeys) ?? defaults.switchHotkeys
+        switchModifiers = values.lossy(.switchModifiers) ?? defaults.switchModifiers
+        keepAwake = values.lossy(.keepAwake) ?? defaults.keepAwake
+        lockSync = values.lossy(.lockSync) ?? defaults.lockSync
+        manualAddresses = values.lossy(.manualAddresses, as: LossyArray<String>.self)?.elements ?? []
+        peerInput = values.lossy(.peerInput, as: [String: Lossy<PeerInput>].self)?
+            .compactMapValues(\.value) ?? [:]
+        language = values.lossy(.language) ?? defaults.language
+        theme = values.lossy(.theme) ?? defaults.theme
+    }
+
+    private enum LegacyKeys: String, CodingKey {
+        case shortcutRemap
     }
 
     func input(for peerID: String) -> PeerInput {
@@ -72,15 +78,6 @@ struct AppSettings: Codable, Equatable, Sendable {
     }
 
     private static let key = "rinflow.settings"
-
-    /// "Use the Mac's shortcuts": a PC's Ctrl plays as ⌘ and its Windows key
-    /// as Control (the core's `ModifierMap::SWAP`, what the former
-    /// `shortcut_remap` did); otherwise keys keep their position (`KEEP`).
-    static func modifierMap(followMacShortcuts: Bool) -> [String: String] {
-        followMacShortcuts
-            ? ["super": "control", "control": "super", "alt": "alt"]
-            : ["super": "super", "control": "control", "alt": "alt"]
-    }
 
     static func load() -> AppSettings {
         guard let data = UserDefaults.standard.data(forKey: key),
@@ -94,6 +91,71 @@ struct AppSettings: Codable, Equatable, Sendable {
     func save() {
         guard let data = try? JSONEncoder().encode(self) else { return }
         UserDefaults.standard.set(data, forKey: Self.key)
+    }
+}
+
+extension KeyedDecodingContainer {
+    /// The value under `key`, or nil when it is missing or cannot be read.
+    func lossy<T: Decodable>(_ key: Key, as type: T.Type = T.self) -> T? {
+        (try? decodeIfPresent(type, forKey: key)) ?? nil
+    }
+}
+
+/// One value of a saved collection: nil when it cannot be read, so the
+/// others still load.
+struct Lossy<Value: Decodable>: Decodable {
+    let value: Value?
+
+    init(from decoder: any Decoder) throws {
+        value = try? Value(from: decoder)
+    }
+}
+
+/// A key a PC's modifier plays as on this Mac (the core's `remap::Modifier`,
+/// by position: `super` is ⌘ here and the Windows key on a PC).
+enum ModifierTarget: String, Codable, CaseIterable, Identifiable, Sendable {
+    case control
+    case command = "super"
+    case option = "alt"
+    case shift
+    case none
+
+    var id: String { rawValue }
+}
+
+/// What each modifier key of a PC driving this Mac plays as: the core's
+/// `ModifierMap`, sent as is (`{"super":…,"control":…,"alt":…}`), the same
+/// choices as on Windows (`modifier_map`).
+struct ModifierMap: Codable, Equatable, Sendable {
+    /// The Windows key.
+    var windows: ModifierTarget
+    var control: ModifierTarget
+    var alt: ModifierTarget
+
+    /// Ctrl plays as ⌘ (Ctrl+C copies) and the Windows key as ⌃: the core's
+    /// `SWAP`.
+    static let mac = ModifierMap(windows: .control, control: .command, alt: .option)
+    /// Keys keep their position: the Windows key is ⌘ (`KEEP`).
+    static let keep = ModifierMap(windows: .command, control: .control, alt: .option)
+
+    init(windows: ModifierTarget, control: ModifierTarget, alt: ModifierTarget) {
+        self.windows = windows
+        self.control = control
+        self.alt = alt
+    }
+
+    /// A key that cannot be read falls back to its Mac-style choice.
+    init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        windows = values.lossy(.windows) ?? Self.mac.windows
+        control = values.lossy(.control) ?? Self.mac.control
+        alt = values.lossy(.alt) ?? Self.mac.alt
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case windows = "super"
+        case control
+        case alt
     }
 }
 
@@ -128,11 +190,11 @@ struct PeerInput: Codable, Equatable, Sendable {
 
     init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        let pointer = try values.decodeIfPresent(Double.self, forKey: .pointerSpeed) ?? 1
-        let scroll = try values.decodeIfPresent(Double.self, forKey: .scrollSpeed) ?? 1
+        let pointer: Double = values.lossy(.pointerSpeed) ?? 1
+        let scroll: Double = values.lossy(.scrollSpeed) ?? 1
         pointerSpeed = pointer.isFinite ? min(Self.pointerSpeeds.upperBound, max(Self.pointerSpeeds.lowerBound, pointer)) : 1
         scrollSpeed = scroll.isFinite ? min(Self.scrollSpeeds.upperBound, max(Self.scrollSpeeds.lowerBound, scroll)) : 1
-        invertScroll = try values.decodeIfPresent(Bool.self, forKey: .invertScroll) ?? false
+        invertScroll = values.lossy(.invertScroll) ?? false
     }
 
     var isDefault: Bool { self == PeerInput() }

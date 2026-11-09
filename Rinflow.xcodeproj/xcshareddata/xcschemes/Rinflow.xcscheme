@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
+               BlueprintIdentifier = "779FD30FE4ECA22675381E9F"
                BuildableName = "Rinflow.app"
                BlueprintName = "Rinflow"
                ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
+            BlueprintIdentifier = "779FD30FE4ECA22675381E9F"
             BuildableName = "Rinflow.app"
             BlueprintName = "Rinflow"
             ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AFC93C14D8E41453641BDB71"
+               BlueprintIdentifier = "C320350CCC35767305905B77"
                BuildableName = "RinflowTests.xctest"
                BlueprintName = "RinflowTests"
                ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -63,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
+            BlueprintIdentifier = "779FD30FE4ECA22675381E9F"
             BuildableName = "Rinflow.app"
             BlueprintName = "Rinflow"
             ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1B3C4F5B057DDACA2DF5061E"
+            BlueprintIdentifier = "779FD30FE4ECA22675381E9F"
             BuildableName = "Rinflow.app"
             BlueprintName = "Rinflow"
             ReferencedContainer = "container:Rinflow.xcodeproj">
