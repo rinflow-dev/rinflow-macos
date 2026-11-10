@@ -35,12 +35,14 @@ The app updates itself with [Sparkle](https://sparkle-project.org) from `https:/
 
 The domain is ours so that users in mainland China, who often cannot reach GitHub's downloads, still get updates, and so that what serves it can change without a new app. The website links its macOS downloads there too.
 
+The domain belongs to the `rinflow-console` Worker (`console/` in rinflow-site), not to the bucket: it serves the bucket's files as they are, with ranges and ETags, and counts the update checks (platform, architecture, version, country; no IP). Never also give the bucket that domain.
+
 Before the first release, once (a Cloudflare account that holds the `rinflow.com` zone):
 
 ```sh
 npx wrangler login
 npx wrangler r2 bucket create rinflow-updates
-npx wrangler r2 bucket domain add rinflow-updates --domain updates.rinflow.com --zone-id <rinflow.com zone ID>
+# Then deploy rinflow-console (rinflow-site: gh workflow run console.yml), which takes updates.rinflow.com.
 # Earlier releases, which the website may still link to:
 gh release download v0.0.1 -R rinflow-dev/rinflow-macos -p 'Rinflow-*.dmg' -D /tmp/rinflow-v0.0.1
 for f in /tmp/rinflow-v0.0.1/*.dmg; do
