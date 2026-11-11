@@ -17,9 +17,16 @@ final class RustCore {
 
     private var handle: OpaquePointer?
     private var callbacks: CallbackRelay<RustCore>?
+    /// Held while the core runs. This app has no window most of the time, so
+    /// macOS would put it to App Nap: late timers and a lower priority, also
+    /// for the thread that plays a peer's input. The Mac may still sleep.
+    private var activity: (any NSObjectProtocol)?
     private nonisolated static let log = Logger(subsystem: "com.rinflow.mac", category: "core")
 
     isolated deinit {
+        if let activity {
+            ProcessInfo.processInfo.endActivity(activity)
+        }
         callbacks?.invalidate()
         if let handle {
             lc_core_destroy(handle)
@@ -29,6 +36,10 @@ final class RustCore {
     func stop() {
         // A clipboard still encoding was this core's.
         clipboardGeneration &+= 1
+        if let activity {
+            ProcessInfo.processInfo.endActivity(activity)
+        }
+        activity = nil
         callbacks?.invalidate()
         if let handle {
             // destroy joins the Rust thread: no callback can borrow the relay
@@ -116,6 +127,12 @@ final class RustCore {
         let context = Unmanaged.passUnretained(callbacks).toOpaque()
         handle = json.withCString { pointer in
             lc_core_create(pointer, rinflowCoreEventCallback, rinflowInputCallback, context)
+        }
+        if handle != nil, activity == nil {
+            activity = ProcessInfo.processInfo.beginActivity(
+                options: .userInitiatedAllowingIdleSystemSleep,
+                reason: "Sharing the keyboard and mouse with other devices"
+            )
         }
         return handle != nil
     }
@@ -327,6 +344,11 @@ final class RustCore {
         // JSON may contain clipboard contents, pairing codes and file paths.
         // Log only the event type, never any part of its payload.
         log.debug("core event: \(event.event, privacy: .public)")
+        if event.event == "link_quality" {
+            // A second in which the link held input up: a peer ID and
+            // numbers only (`make log` shows when the pointer stuttered).
+            log.notice("link quality: \(eventJSON, privacy: .public)")
+        }
         return event
     }
 
@@ -346,6 +368,8 @@ private func rinflowCoreEventCallback(
     guard let json, let context else { return }
     let message = String(cString: json)
     let callbacks = Unmanaged<CallbackRelay<RustCore>>.fromOpaque(context).takeUnretainedValue()
+    // Input the core delivers from here on is played after this event.
+    callbacks.inputs.seal()
     callbacks.enqueue(preparing: { RustCore.decode(eventJSON: message) }) { $0.receive(event: $1) }
 }
 
@@ -356,5 +380,12 @@ private func rinflowInputCallback(
     guard let input, let context else { return }
     let value = input.pointee
     let callbacks = Unmanaged<CallbackRelay<RustCore>>.fromOpaque(context).takeUnretainedValue()
-    callbacks.enqueue { $0.receive(input: value) }
+    // One job for all the input that arrives before the main thread gets to
+    // it, with the motion in it merged (see `InputBatches`).
+    guard let batch = callbacks.inputs.add(value) else { return }
+    callbacks.enqueue { core in
+        for input in callbacks.inputs.take(batch) {
+            core.receive(input: input)
+        }
+    }
 }

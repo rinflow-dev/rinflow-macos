@@ -6,6 +6,7 @@ Notable changes are recorded here. The format follows [Keep a Changelog](https:/
 
 ### Fixed
 
+- A steadier pointer while another device drives this Mac: Rinflow no longer goes into App Nap while it has no window, and motion that piled up while the main thread was busy is played as one move instead of one by one.
 - Rearranging the monitors of a device this Mac drives (in Windows display settings, say), or a placement moving meanwhile, no longer brings the pointer back to this Mac: it stays on that device, against the new arrangement.
 - While secure input is on (a focused password field, Terminal's Secure Keyboard Entry), the pointer no longer leaves this Mac, and comes back if it turns on meanwhile: keystrokes meant for the other device went to the local window. A message names the app holding it.
 - One damaged setting, paired device, placement or known device no longer resets the whole set: only that entry falls back.
