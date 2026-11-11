@@ -4,9 +4,16 @@ Notable changes are recorded here. The format follows [Keep a Changelog](https:/
 
 ## [Unreleased]
 
+### Changed
+
+- A smoother pointer on a busy network (in the core): while a link loses packets or delivers input late, motion is sent at most every 4 ms, merged in between, and the core's threads run ahead of ordinary work.
+- Shorter descriptions in Settings and in the add-device sheet, as on Windows.
+
 ### Fixed
 
 - A steadier pointer while another device drives this Mac: Rinflow no longer goes into App Nap while it has no window, and motion that piled up while the main thread was busy is played as one move instead of one by one.
+- After a stall, a held key (Backspace, an arrow) no longer deletes or moves further than it was held for: repeats held up on the way for 100 ms or more are not played.
+- A locked Mac is no longer kept awake, or its display lit, by another device in use.
 - Rearranging the monitors of a device this Mac drives (in Windows display settings, say), or a placement moving meanwhile, no longer brings the pointer back to this Mac: it stays on that device, against the new arrangement.
 - While secure input is on (a focused password field, Terminal's Secure Keyboard Entry), the pointer no longer leaves this Mac, and comes back if it turns on meanwhile: keystrokes meant for the other device went to the local window. A message names the app holding it.
 - One damaged setting, paired device, placement or known device no longer resets the whole set: only that entry falls back.

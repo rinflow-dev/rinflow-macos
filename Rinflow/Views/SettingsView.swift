@@ -56,7 +56,7 @@ struct SettingsView: View {
                 }
                 Toggle(isOn: setting(\.clipboard)) {
                     Text("同步剪贴板与文件")
-                    Text("切换设备时同步复制的文字、图片和文件。仅在信任对方设备时开启。")
+                    Text("文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。")
                 }
             }
             Section("安全") {
@@ -91,7 +91,7 @@ struct SettingsView: View {
                 if updater.isAvailable {
                     Toggle(isOn: $updater.automaticallyChecks) {
                         Text("自动检查更新")
-                        Text("有新版本时提示安装。更新经过签名校验，只会安装 Rinflow 官方发布的版本。")
+                        Text("有新版本时提示安装。")
                     }
                     Button("检查更新…", action: updater.checkForUpdates)
                 }
@@ -196,17 +196,17 @@ struct SettingsView: View {
                 }
                 Toggle(isOn: setting(\.cornerGuard)) {
                     Text("保护屏幕角落")
-                    Text("靠近屏幕角落时不自动切换，方便使用菜单和触发角。")
+                    Text("靠近屏幕角落时不切换。")
                 }
                 Toggle(isOn: setting(\.pauseInFullscreen)) {
                     Text("全屏时暂停自动切换")
-                    Text("游戏或演示全屏时，指针不会从本机屏幕边缘切出。")
+                    Text("游戏、视频或演示全屏时不切换。")
                 }
             }
             Section {
                 Toggle(isOn: setting(\.hideCursorOnLeave)) {
                     Text("其他设备的指针离开后隐藏光标")
-                    Text("光标只显示在指针所在的设备上；动一下这台 Mac 的鼠标或触控板就会出现。")
+                    Text("移动这台 Mac 的鼠标或触控板后重新显示。")
                 }
             }
         }
@@ -215,13 +215,10 @@ struct SettingsView: View {
     private var lock: some View {
         pane {
             Section {
-                Toggle(isOn: setting(\.keepAwake)) {
-                    Text("其他设备在使用时保持唤醒")
-                    Text("在另一台设备上工作时，这台 Mac 不会因闲置而熄屏或锁定。")
-                }
+                Toggle("其他设备在使用时保持唤醒", isOn: setting(\.keepAwake))
                 Toggle(isOn: setting(\.lockSync)) {
                     Text("一起锁定")
-                    Text("锁定这台 Mac 时其他设备一起锁定，其他设备锁定时这台 Mac 也锁定。")
+                    Text("任一设备锁定时，其他设备一起锁定。两端都需打开。")
                 }
             }
         }

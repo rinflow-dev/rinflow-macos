@@ -18,6 +18,8 @@ import OSLog
 ///   `IOPMAssertionDeclareUserActivity` resets the idle timer that the
 ///   screen saver and the idle lock go by. That is not an input event, so it
 ///   never counts as activity here. A minute after the last report it lets go.
+///   Not while this Mac is locked: a peer in use does not light up or hold
+///   on the display of a Mac its user locked.
 /// - Locking together (setting `lockSync`): when this Mac locks, peers are
 ///   told (`lockPeers`); a peer's `lockRequested` locks this Mac.
 @MainActor
@@ -46,35 +48,38 @@ final class Presence {
     private var assertion: IOPMAssertionID?
     private var lastNudge: Date?
     private var lockRequestedAt: Date?
-    private var lockObserver: NSObjectProtocol?
+    private var lockObservers: [NSObjectProtocol] = []
+    /// This Mac is locked: a peer in use does not keep it awake.
+    private var locked = false
 
     func start() {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.tick() }
         }
-        lockObserver = DistributedNotificationCenter.default().addObserver(
-            forName: NSNotification.Name("com.apple.screenIsLocked"),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.screenLocked() }
+        for (name, locked) in [("com.apple.screenIsLocked", true), ("com.apple.screenIsUnlocked", false)] {
+            lockObservers.append(DistributedNotificationCenter.default().addObserver(
+                forName: NSNotification.Name(name),
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                MainActor.assumeIsolated { self?.screenLocked(locked) }
+            })
         }
     }
 
     func stop() {
         timer?.invalidate()
         timer = nil
-        if let lockObserver {
-            DistributedNotificationCenter.default().removeObserver(lockObserver)
-            self.lockObserver = nil
-        }
+        lockObservers.forEach(DistributedNotificationCenter.default().removeObserver)
+        lockObservers = []
+        locked = false
         letSleep()
     }
 
     /// `peer_active`: another device is in use.
     func peerActive() {
-        guard keepAwake else { return }
+        guard keepAwake, !locked else { return }
         awakeUntil = Date().addingTimeInterval(Self.awakeFor)
         stayAwake()
     }
@@ -137,7 +142,10 @@ final class Presence {
         }
     }
 
-    private func screenLocked() {
+    private func screenLocked(_ locked: Bool) {
+        self.locked = locked
+        guard locked else { return }
+        letSleep()
         guard lockSync else { return }
         if let lockRequestedAt, Date().timeIntervalSince(lockRequestedAt) < Self.requestedLock {
             return

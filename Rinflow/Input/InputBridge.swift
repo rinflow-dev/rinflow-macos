@@ -824,8 +824,8 @@ final class InputBridge {
         delta: CGVector,
         at position: CGPoint
     ) -> [LcInputEvent] {
+        // The core stamps `timestamp_micros` itself.
         var input = LcInputEvent()
-        input.timestamp_micros = event.timestamp / 1_000
         input.x = position.x
         input.y = position.y
 

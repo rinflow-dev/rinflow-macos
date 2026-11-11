@@ -544,28 +544,6 @@
         }
       }
     },
-    "光标只显示在指针所在的设备上；动一下这台 Mac 的鼠标或触控板就会出现。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The cursor shows only on the device the pointer is on. Move this Mac’s mouse or trackpad to bring it back."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カーソルはポインタがあるデバイスにだけ表示されます。このMacのマウスやトラックパッドを動かすと再び表示されます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "光标只显示在指针所在的设备上；动一下这台 Mac 的鼠标或触控板就会出现。"
-          }
-        }
-      }
-    },
     "全屏时暂停自动切换" : {
       "localizations" : {
         "en" : {
@@ -738,28 +716,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。"
-          }
-        }
-      }
-    },
-    "切换设备时同步复制的文字、图片和文件。仅在信任对方设备时开启。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share copied text, images and files when switching devices. Enable only for devices you trust."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスを切り替えるときに、コピーしたテキスト、画像、ファイルを同期します。信頼できるデバイスの場合のみオンにしてください。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切换设备时同步复制的文字、图片和文件。仅在信任对方设备时开启。"
           }
         }
       }
@@ -980,28 +936,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 %@ 上"
-          }
-        }
-      }
-    },
-    "在另一台设备上工作时，这台 Mac 不会因闲置而熄屏或锁定。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "While you work on another device, this Mac doesn’t turn off its display or lock for being idle."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほかのデバイスで作業している間、このMacはアイドル状態でもディスプレイをオフにしたりロックしたりしません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在另一台设备上工作时，这台 Mac 不会因闲置而熄屏或锁定。"
           }
         }
       }
@@ -2392,28 +2326,6 @@
         }
       }
     },
-    "有新版本时提示安装。更新经过签名校验，只会安装 Rinflow 官方发布的版本。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Offers new versions as they come out. Updates are signature-checked, so only official Rinflow releases install."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいバージョンがあるとインストールを案内します。アップデートは署名を検証するため、Rinflow の公式リリースだけがインストールされます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有新版本时提示安装。更新经过签名校验，只会安装 Rinflow 官方发布的版本。"
-          }
-        }
-      }
-    },
     "有程序开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。" : {
       "localizations" : {
         "en" : {
@@ -2898,28 +2810,6 @@
         }
       }
     },
-    "游戏或演示全屏时，指针不会从本机屏幕边缘切出。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep the pointer on this Mac during full-screen games and presentations."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ゲームやプレゼンテーションをフルスクリーンで表示している間は、ポインタがこのMacの画面の端から出ません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "游戏或演示全屏时，指针不会从本机屏幕边缘切出。"
-          }
-        }
-      }
-    },
     "滚动速度" : {
       "localizations" : {
         "en" : {
@@ -3334,28 +3224,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设备位置已保存；授予辅助功能权限后即可从屏幕边缘切换"
-          }
-        }
-      }
-    },
-    "设备没出现在列表里？输入它的 IP 地址或设备名称。只需在其中一台设备上添加。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Device not in the list? Enter its IP address or name. Adding it on one of the two devices is enough."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスが一覧に表示されませんか？IPアドレスまたはデバイス名を入力してください。どちらか一方のデバイスで追加するだけで構いません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设备没出现在列表里？输入它的 IP 地址或设备名称。只需在其中一台设备上添加。"
           }
         }
       }
@@ -4020,28 +3888,6 @@
         }
       }
     },
-    "锁定这台 Mac 时其他设备一起锁定，其他设备锁定时这台 Mac 也锁定。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Locking this Mac locks the other devices, and locking them locks this Mac."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このMacをロックするとほかのデバイスもロックされ、ほかのデバイスをロックするとこのMacもロックされます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "锁定这台 Mac 时其他设备一起锁定，其他设备锁定时这台 Mac 也锁定。"
-          }
-        }
-      }
-    },
     "锁屏" : {
       "localizations" : {
         "en" : {
@@ -4174,28 +4020,6 @@
         }
       }
     },
-    "靠近屏幕角落时不自动切换，方便使用菜单和触发角。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep the pointer on this Mac near screen corners, so menus and Hot Corners remain accessible."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "画面の隅の近くでは自動で切り替えず、メニューやホットコーナーを使いやすくします。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "靠近屏幕角落时不自动切换，方便使用菜单和触发角。"
-          }
-        }
-      }
-    },
     "鼠标只在本机移动" : {
       "localizations" : {
         "en" : {
@@ -4280,6 +4104,160 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "鼠标正在 %@ 上"
+          }
+        }
+      }
+    },
+    "有新版本时提示安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offers new versions as they come out."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいバージョンがあるとインストールを案内します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有新版本时提示安装。"
+          }
+        }
+      }
+    },
+    "移动这台 Mac 的鼠标或触控板后重新显示。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It comes back when you move this Mac’s mouse or trackpad."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このMacのマウスやトラックパッドを動かすと再表示されます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移动这台 Mac 的鼠标或触控板后重新显示。"
+          }
+        }
+      }
+    },
+    "任一设备锁定时，其他设备一起锁定。两端都需打开。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locking one device locks the others. Turn it on on both devices."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どれかをロックするとほかのデバイスもロックされます。両方でオンにしてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任一设备锁定时，其他设备一起锁定。两端都需打开。"
+          }
+        }
+      }
+    },
+    "靠近屏幕角落时不切换。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No switching near screen corners."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の隅の近くでは切り替えません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "靠近屏幕角落时不切换。"
+          }
+        }
+      }
+    },
+    "游戏、视频或演示全屏时不切换。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No switching while a game, video or presentation is full screen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ゲーム、動画、プレゼンテーションのフルスクリーン表示中は切り替えません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游戏、视频或演示全屏时不切换。"
+          }
+        }
+      }
+    },
+    "文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text, images (up to 8 MB) and files. Files above 512 MB ask first."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキスト、画像（最大 8 MB）、ファイル。512 MB を超えるファイルは先に確認します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。"
+          }
+        }
+      }
+    },
+    "设备没出现在列表里？输入它的 IP 地址或设备名称。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device not in the list? Enter its IP address or name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスが一覧に表示されませんか？IPアドレスまたはデバイス名を入力してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备没出现在列表里？输入它的 IP 地址或设备名称。"
           }
         }
       }

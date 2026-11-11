@@ -23,7 +23,7 @@ struct AddDeviceSheet: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("添加设备").font(.headline)
-                Text("设备没出现在列表里？输入它的 IP 地址或设备名称。只需在其中一台设备上添加。")
+                Text("设备没出现在列表里？输入它的 IP 地址或设备名称。")
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
