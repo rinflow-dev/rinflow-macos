@@ -814,7 +814,9 @@ final class AppModel: RustCoreDelegate {
             return
         }
         let connected = Set(sessions.filter { $0.value.peer != nil }.keys)
-        if !inputBridge.setArrangement(world, connected: connected) {
+        // Without the permission the main window already asks for it; only
+        // a tap that fails although it is granted needs a message of its own.
+        if !inputBridge.setArrangement(world, connected: connected), inputBridge.hasAccessibilityPermission {
             lastError = Self.permissionNeeded
         }
     }

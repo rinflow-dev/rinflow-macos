@@ -368,6 +368,28 @@
         }
       }
     },
+    "任一设备锁定时，其他设备一起锁定。两端都需打开。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locking one device locks the others. Turn it on on both devices."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どれかをロックするとほかのデバイスもロックされます。両方でオンにしてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任一设备锁定时，其他设备一起锁定。两端都需打开。"
+          }
+        }
+      }
+    },
     "位于上方" : {
       "localizations" : {
         "en" : {
@@ -720,28 +742,6 @@
         }
       }
     },
-    "刷新" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Refresh"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新"
-          }
-        }
-      }
-    },
     "剪贴板内容无法共享（可能超过 8 MB）。" : {
       "localizations" : {
         "en" : {
@@ -936,6 +936,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 %@ 上"
+          }
+        }
+      }
+    },
+    "在“隐私与安全性 › 辅助功能”里打开 Rinflow 的开关，这里会自动更新。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on Rinflow under Privacy & Security › Accessibility. This updates by itself."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「プライバシーとセキュリティ › アクセシビリティ」でRinflowをオンにしてください。ここは自動で更新されます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在“隐私与安全性 › 辅助功能”里打开 Rinflow 的开关，这里会自动更新。"
           }
         }
       }
@@ -1336,6 +1358,28 @@
         }
       }
     },
+    "已允许" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allowed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可済み"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已允许"
+          }
+        }
+      }
+    },
     "已取消配对。" : {
       "localizations" : {
         "en" : {
@@ -1446,6 +1490,50 @@
         }
       }
     },
+    "开始之前，请先允许 Rinflow 使用下面的权限。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before you start, allow Rinflow the following."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はじめる前に、Rinflowに次の許可を与えてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始之前，请先允许 Rinflow 使用下面的权限。"
+          }
+        }
+      }
+    },
+    "开始使用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get Started"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はじめる"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始使用"
+          }
+        }
+      }
+    },
     "恢复默认" : {
       "localizations" : {
         "en" : {
@@ -1486,6 +1574,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "打开主窗口"
+          }
+        }
+      }
+    },
+    "打开系统设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open System Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム設定を開く"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开系统设置"
           }
         }
       }
@@ -1908,6 +2018,28 @@
         }
       }
     },
+    "文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text, images (up to 8 MB) and files. Files above 512 MB ask first."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキスト、画像（最大 8 MB）、ファイル。512 MB を超えるファイルは先に確認します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。"
+          }
+        }
+      }
+    },
     "断开连接" : {
       "localizations" : {
         "en" : {
@@ -2326,6 +2458,28 @@
         }
       }
     },
+    "有新版本时提示安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offers new versions as they come out."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいバージョンがあるとインストールを案内します。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有新版本时提示安装。"
+          }
+        }
+      }
+    },
     "有程序开启了安全输入（例如密码框），键盘无法发送到其他设备，指针留在本机。" : {
       "localizations" : {
         "en" : {
@@ -2414,6 +2568,28 @@
         }
       }
     },
+    "本地网络" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local Network"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカルネットワーク"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地网络"
+          }
+        }
+      }
+    },
     "本机" : {
       "localizations" : {
         "en" : {
@@ -2476,6 +2652,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "检查更新…"
+          }
+        }
+      }
+    },
+    "欢迎使用 Rinflow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to Rinflow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinflowへようこそ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎使用 Rinflow"
           }
         }
       }
@@ -2810,6 +3008,28 @@
         }
       }
     },
+    "游戏、视频或演示全屏时不切换。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No switching while a game, video or presentation is full screen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ゲーム、動画、プレゼンテーションのフルスクリーン表示中は切り替えません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游戏、视频或演示全屏时不切换。"
+          }
+        }
+      }
+    },
     "滚动速度" : {
       "localizations" : {
         "en" : {
@@ -2854,28 +3074,6 @@
         }
       }
     },
-    "用于共享本机键鼠，以及接收其他设备的控制。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Required to share this Mac’s keyboard and mouse and receive control from other devices."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このMacのキーボードとマウスを共有し、ほかのデバイスから操作を受けるために必要です。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用于共享本机键鼠，以及接收其他设备的控制。"
-          }
-        }
-      }
-    },
     "用快捷键切换设备" : {
       "localizations" : {
         "en" : {
@@ -2894,6 +3092,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用快捷键切换设备"
+          }
+        }
+      }
+    },
+    "用来发现同一网络中的其他设备。macOS 询问时请点“允许”。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finds your other devices on the same network. Choose Allow when macOS asks."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じネットワーク上のほかのデバイスを見つけるために使います。macOSに確認されたら「許可」を選んでください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用来发现同一网络中的其他设备。macOS 询问时请点“允许”。"
+          }
+        }
+      }
+    },
+    "用来把这台 Mac 的键盘和鼠标共享给其他设备，也让其他设备控制这台 Mac。键入的内容只发给你正在控制的设备，不会被保存。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lets this Mac share its keyboard and mouse with your other devices, and lets them control this Mac. What you type goes only to the device you are controlling and is never stored."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このMacのキーボードとマウスをほかのデバイスと共有し、ほかのデバイスからこのMacを操作できるようにします。入力した内容は操作中のデバイスにだけ送られ、保存されません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用来把这台 Mac 的键盘和鼠标共享给其他设备，也让其他设备控制这台 Mac。键入的内容只发给你正在控制的设备，不会被保存。"
           }
         }
       }
@@ -3008,6 +3250,28 @@
         }
       }
     },
+    "移动这台 Mac 的鼠标或触控板后重新显示。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It comes back when you move this Mac’s mouse or trackpad."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このMacのマウスやトラックパッドを動かすと再表示されます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移动这台 Mac 的鼠标或触控板后重新显示。"
+          }
+        }
+      }
+    },
     "移除这个地址" : {
       "localizations" : {
         "en" : {
@@ -3026,6 +3290,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移除这个地址"
+          }
+        }
+      }
+    },
+    "稍后设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あとで"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍后设置"
           }
         }
       }
@@ -3224,6 +3510,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设备位置已保存；授予辅助功能权限后即可从屏幕边缘切换"
+          }
+        }
+      }
+    },
+    "设备没出现在列表里？输入它的 IP 地址或设备名称。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device not in the list? Enter its IP address or name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスが一覧に表示されませんか？IPアドレスまたはデバイス名を入力してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备没出现在列表里？输入它的 IP 地址或设备名称。"
           }
         }
       }
@@ -3488,6 +3796,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "跟随系统"
+          }
+        }
+      }
+    },
+    "辅助功能" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセシビリティ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辅助功能"
           }
         }
       }
@@ -4020,6 +4350,28 @@
         }
       }
     },
+    "靠近屏幕角落时不切换。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No switching near screen corners."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の隅の近くでは切り替えません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "靠近屏幕角落时不切换。"
+          }
+        }
+      }
+    },
     "鼠标只在本机移动" : {
       "localizations" : {
         "en" : {
@@ -4108,156 +4460,24 @@
         }
       }
     },
-    "有新版本时提示安装。" : {
+    "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Offers new versions as they come out."
+            "value" : "Once granted, you can share the keyboard and mouse and switch to other devices at the screen edge."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新しいバージョンがあるとインストールを案内します。"
+            "value" : "許可すると、キーボードとマウスを共有し、画面の端からほかのデバイスに切り替えられます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "有新版本时提示安装。"
-          }
-        }
-      }
-    },
-    "移动这台 Mac 的鼠标或触控板后重新显示。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "It comes back when you move this Mac’s mouse or trackpad."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このMacのマウスやトラックパッドを動かすと再表示されます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "移动这台 Mac 的鼠标或触控板后重新显示。"
-          }
-        }
-      }
-    },
-    "任一设备锁定时，其他设备一起锁定。两端都需打开。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Locking one device locks the others. Turn it on on both devices."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どれかをロックするとほかのデバイスもロックされます。両方でオンにしてください。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "任一设备锁定时，其他设备一起锁定。两端都需打开。"
-          }
-        }
-      }
-    },
-    "靠近屏幕角落时不切换。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No switching near screen corners."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "画面の隅の近くでは切り替えません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "靠近屏幕角落时不切换。"
-          }
-        }
-      }
-    },
-    "游戏、视频或演示全屏时不切换。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No switching while a game, video or presentation is full screen."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ゲーム、動画、プレゼンテーションのフルスクリーン表示中は切り替えません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "游戏、视频或演示全屏时不切换。"
-          }
-        }
-      }
-    },
-    "文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text, images (up to 8 MB) and files. Files above 512 MB ask first."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テキスト、画像（最大 8 MB）、ファイル。512 MB を超えるファイルは先に確認します。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。"
-          }
-        }
-      }
-    },
-    "设备没出现在列表里？输入它的 IP 地址或设备名称。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Device not in the list? Enter its IP address or name."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスが一覧に表示されませんか？IPアドレスまたはデバイス名を入力してください。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设备没出现在列表里？输入它的 IP 地址或设备名称。"
+            "value" : "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。"
           }
         }
       }

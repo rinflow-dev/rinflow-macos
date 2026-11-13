@@ -60,6 +60,7 @@
 		FB53917D97EFB2870EE95BCA /* ClipboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E333C75C1202C76DA0597A9 /* ClipboardTests.swift */; };
 		FB549459DB244A12CCAB4CCD /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E0B23E6CA247FBAB4961D1 /* LocalizationTests.swift */; };
 		FF5CDF1DE04A4D71858E9D46 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9505F7ED5154226E2746BF1 /* ContentView.swift */; };
+		C5B4A3928170F6E5D4C3B2A1 /* PermissionGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* PermissionGuide.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +98,7 @@
 		B18F692BB901B846D499ADE7 /* InputPlayerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputPlayerTests.swift; sourceTree = "<group>"; };
 		B5A2202D1C762094A4829437 /* RinflowApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RinflowApp.swift; sourceTree = "<group>"; };
 		B9505F7ED5154226E2746BF1 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* PermissionGuide.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PermissionGuide.swift; sourceTree = "<group>"; };
 		B97017CACD5BE44157F2528D /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
 		BB5E4B3296D11B19F8C9364D /* ControlHUDController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlHUDController.swift; sourceTree = "<group>"; };
 		BBDE36533932F9E8122E4DA6 /* RinflowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RinflowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,6 +149,7 @@
 			children = (
 				034A2ACD4AB0B60E11C81F81 /* ArrangementView.swift */,
 				B9505F7ED5154226E2746BF1 /* ContentView.swift */,
+				A1B2C3D4E5F60718293A4B5C /* PermissionGuide.swift */,
 				28572E89CA0040E956069597 /* ManualAddressesView.swift */,
 				4E4E621549F484E101CFBC12 /* PeerRow.swift */,
 				708547D62264D47229139861 /* SettingsView.swift */,
@@ -469,6 +472,7 @@
 				A481585D7BF41D28687B4334 /* TransferNotifications.swift in Sources */,
 				B9B411FDC63CEEB720744000 /* ArrangementView.swift in Sources */,
 				FF5CDF1DE04A4D71858E9D46 /* ContentView.swift in Sources */,
+				C5B4A3928170F6E5D4C3B2A1 /* PermissionGuide.swift in Sources */,
 				95C8FB2A0ED94331E0EA3A30 /* ManualAddressesView.swift in Sources */,
 				D2A7EF5026EFD85FAB672D1E /* PeerRow.swift in Sources */,
 				477A1C334F0650F21B4001B5 /* SettingsView.swift in Sources */,

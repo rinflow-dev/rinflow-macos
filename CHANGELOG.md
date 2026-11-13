@@ -23,6 +23,7 @@ Notable changes are recorded here. The format follows [Keep a Changelog](https:/
 
 ### Added
 
+- A welcome sheet on the first launch (and whenever the Accessibility permission is missing): it says what macOS will ask for and why, opens the right page of System Settings, and notices by itself when the permission is granted.
 - Updates (Sparkle) from updates.rinflow.com, which also works where GitHub does not: checked automatically, or with **检查更新…** in the menu bar and in Settings. Updates are signed and keep the Accessibility permission.
 - Modifier keys when a PC controls this Mac: Mac style, keep key positions, or a choice for each of Ctrl, the Windows key and Alt, as on Windows. The former switch carries over.
 - Event tap stalls (events waiting over 30 ms, or taking over 4 ms to handle) and tap timeouts are logged (`make log`), to measure input latency.

@@ -8,6 +8,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Bindable var model: AppModel
     @State private var addingDevice = false
+    @State private var showingPermissionGuide = false
 
     var body: some View {
         ScrollView {
@@ -75,7 +76,13 @@ struct ContentView: View {
                 remove: model.removeManualAddress
             )
         }
-        .onAppear(perform: model.refreshPermission)
+        .sheet(isPresented: $showingPermissionGuide) {
+            PermissionGuide(model: model)
+        }
+        .onAppear {
+            model.refreshPermission()
+            showingPermissionGuide = !model.hasAccessibilityPermission
+        }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 model.refreshPermission()
@@ -113,9 +120,8 @@ struct ContentView: View {
         }
         if !model.hasAccessibilityPermission {
             Notice(symbol: "hand.raised.fill", tint: .orange, title: "需要辅助功能权限",
-                   detail: String(localized: "用于共享本机键鼠，以及接收其他设备的控制。")) {
-                Button("授权", action: model.requestPermission).buttonStyle(.borderedProminent)
-                Button("刷新", action: model.refreshPermission)
+                   detail: String(localized: "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。")) {
+                Button("授权") { showingPermissionGuide = true }.buttonStyle(.borderedProminent)
             }
         }
         if model.pointerLocked {
