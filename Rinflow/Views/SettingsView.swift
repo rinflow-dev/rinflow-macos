@@ -65,6 +65,15 @@ struct SettingsView: View {
                     Text("新设备需要两边核对六位配对码后才能连接。")
                 }
             }
+            Section("隐私") {
+                Toggle(isOn: Binding(
+                    get: { model.settings.diagnostics == true },
+                    set: { value in model.updateSettings { $0.diagnostics = value } }
+                )) {
+                    Text("共享匿名诊断数据")
+                    Text("每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。")
+                }
+            }
             Section {
                 Picker("外观", selection: setting(\.theme)) {
                     Text("跟随系统").tag(AppTheme.system)

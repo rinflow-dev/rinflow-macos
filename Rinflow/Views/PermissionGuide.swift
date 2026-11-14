@@ -4,14 +4,23 @@
 
 import SwiftUI
 
-/// What macOS will ask for, and why, before it asks. Shown over the main
-/// window whenever it opens without the Accessibility permission: on the
-/// first launch, and after the permission was taken away.
+/// What macOS will ask for, and why, before it asks, and whether to share
+/// anonymous diagnostics. Shown over the main window whenever it opens
+/// without the Accessibility permission (the first launch, or after the
+/// permission was taken away), or before the user chose about diagnostics
+/// (also after updating from a version without them).
 struct PermissionGuide: View {
     let model: AppModel
     @Environment(\.dismiss) private var dismiss
+    /// Off unless the user turns it on; saved however the sheet closes.
+    @State private var shareDiagnostics: Bool
 
     private var granted: Bool { model.hasAccessibilityPermission }
+
+    init(model: AppModel) {
+        self.model = model
+        _shareDiagnostics = State(initialValue: model.settings.diagnostics ?? false)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -54,6 +63,15 @@ struct PermissionGuide: View {
                         detail: "用来发现同一网络中的其他设备。macOS 询问时请点“允许”。"
                     ) {}
                 }
+                Divider()
+                step(
+                    symbol: "chart.bar.xaxis",
+                    tint: .accentColor,
+                    title: "帮助改进 Rinflow",
+                    detail: "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。可以随时在设置里关闭。"
+                ) {
+                    Toggle("共享匿名诊断数据", isOn: $shareDiagnostics)
+                }
             }
             .card()
 
@@ -65,6 +83,9 @@ struct PermissionGuide: View {
         }
         .padding(24)
         .frame(width: 460)
+        .onDisappear {
+            model.updateSettings { $0.diagnostics = shareDiagnostics }
+        }
         .task {
             // The switch is flipped in System Settings, which tells no one.
             while !Task.isCancelled, !model.hasAccessibilityPermission {

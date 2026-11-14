@@ -133,7 +133,7 @@ tests_group = project.main_group.new_group('RinflowTests', 'RinflowTests')
 Dir.glob(File.join(tests_root, '*.swift')).sort.each do |path|
   test_target.source_build_phase.add_file_reference(tests_group.new_file(File.basename(path)))
 end
-['Core/Layout.swift', 'Core/CoreTypes.swift', 'Core/CallbackRelay.swift', 'Model/AppSettings.swift', 'Input/ClipboardBridge.swift', 'Input/CrossingGate.swift', 'Input/ClickTracker.swift', 'Input/InputPlayer.swift', 'Input/HIDKeyMap.swift'].each do |relative|
+['Core/Layout.swift', 'Core/CoreTypes.swift', 'Core/CallbackRelay.swift', 'Model/AppSettings.swift', 'Input/ClipboardBridge.swift', 'Input/CrossingGate.swift', 'Input/ClickTracker.swift', 'Input/InputPlayer.swift', 'Input/HIDKeyMap.swift', 'System/Diagnostics.swift'].each do |relative|
   reference = app_group.recursive_children.find { |item| item.respond_to?(:real_path) && item.real_path.to_s == File.join(source_root, relative) }
   test_target.source_build_phase.add_file_reference(reference)
 end

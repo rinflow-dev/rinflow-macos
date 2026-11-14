@@ -52,6 +52,7 @@ final class AppModel: RustCoreDelegate {
     private let cursorHider = CursorHider()
     private let notifications = TransferNotifications()
     private let fullscreen = FullscreenMonitor()
+    private let diagnostics = Diagnostics()
     /// Reports network changes to the core (Wi-Fi, addresses, VPN).
     private let pathMonitor = NWPathMonitor()
     /// Network changes come in bursts; the core hears of them once settled.
@@ -235,6 +236,7 @@ final class AppModel: RustCoreDelegate {
         presence.stop()
         fullscreen.setEnabled(false)
         core.stop()
+        diagnostics.save()
     }
 
     func togglePointerLock() {
@@ -329,6 +331,7 @@ final class AppModel: RustCoreDelegate {
         }
         presence.keepAwake = settings.keepAwake
         presence.lockSync = settings.lockSync
+        diagnostics.enabled = settings.diagnostics == true
     }
 
     /// Adds an address to look for devices at; a message when it cannot be.
@@ -463,6 +466,7 @@ final class AppModel: RustCoreDelegate {
 
     func rustCore(_ core: RustCore, received event: CoreEventEnvelope) {
         guard !stopped else { return }
+        diagnostics.record(event, platform: event.peerID.flatMap { knownPeers[$0]?.platform })
         switch event.event {
         case "started":
             coreState = .running

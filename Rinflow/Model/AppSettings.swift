@@ -37,6 +37,9 @@ struct AppSettings: Codable, Equatable, Sendable {
     var language: AppLanguage = .system
     /// Light, dark, or as the system is (`theme` on Windows too).
     var theme: AppTheme = .system
+    /// Sends anonymous figures about connections (System/Diagnostics.swift).
+    /// Nil until the user chose, which the welcome sheet asks.
+    var diagnostics: Bool?
 
     init() {}
 
@@ -67,6 +70,7 @@ struct AppSettings: Codable, Equatable, Sendable {
             .compactMapValues(\.value) ?? [:]
         language = values.lossy(.language) ?? defaults.language
         theme = values.lossy(.theme) ?? defaults.theme
+        diagnostics = values.lossy(.diagnostics)
     }
 
     private enum LegacyKeys: String, CodingKey {

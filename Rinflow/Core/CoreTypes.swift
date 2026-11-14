@@ -169,6 +169,19 @@ struct CoreEventEnvelope: Decodable, Sendable {
     let code: String?
     let name: String?
     let fingerprint: String?
+    /// `input_latency`: the mean (`ms`) and worst of `samples` round trips.
+    let ms: Double?
+    let worstMs: Double?
+    let samples: Double?
+    /// `link_quality`: one second in which the link held input up.
+    let sentPackets: Double?
+    let lostPackets: Double?
+    let inputBatches: Double?
+    let inputLate: Double?
+    let inputWorstMs: Double?
+    let staleRepeats: Double?
+    let roundTripWorstMs: Double?
+    let paced: Bool?
 
     struct ClipboardFormat: Decodable, Sendable {
         let mime: String
@@ -200,6 +213,17 @@ struct CoreEventEnvelope: Decodable, Sendable {
         case code
         case name
         case fingerprint
+        case ms
+        case worstMs = "worst_ms"
+        case samples
+        case sentPackets = "sent_packets"
+        case lostPackets = "lost_packets"
+        case inputBatches = "input_batches"
+        case inputLate = "input_late"
+        case inputWorstMs = "input_worst_ms"
+        case staleRepeats = "stale_repeats"
+        case roundTripWorstMs = "round_trip_worst_ms"
+        case paced
     }
 }
 

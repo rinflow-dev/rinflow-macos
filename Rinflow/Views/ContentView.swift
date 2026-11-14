@@ -81,7 +81,7 @@ struct ContentView: View {
         }
         .onAppear {
             model.refreshPermission()
-            showingPermissionGuide = !model.hasAccessibilityPermission
+            showingPermissionGuide = !model.hasAccessibilityPermission || model.settings.diagnostics == nil
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {

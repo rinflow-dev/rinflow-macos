@@ -610,6 +610,28 @@
         }
       }
     },
+    "共享匿名诊断数据" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share anonymous diagnostics"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匿名の診断データを送信"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享匿名诊断数据"
+          }
+        }
+      }
+    },
     "共享键盘与鼠标" : {
       "localizations" : {
         "en" : {
@@ -1490,6 +1512,28 @@
         }
       }
     },
+    "帮助改进 Rinflow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help improve Rinflow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinflow の改善に協力"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助改进 Rinflow"
+          }
+        }
+      }
+    },
     "开始之前，请先允许 Rinflow 使用下面的权限。" : {
       "localizations" : {
         "en" : {
@@ -1882,6 +1926,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "授权"
+          }
+        }
+      }
+    },
+    "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once granted, you can share the keyboard and mouse and switch to other devices at the screen edge."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可すると、キーボードとマウスを共有し、画面の端からほかのデバイスに切り替えられます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。"
           }
         }
       }
@@ -2850,6 +2916,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在查找…"
+          }
+        }
+      }
+    },
+    "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends why connections ended and packet-loss and latency figures once an hour, anonymously. No device names, addresses or content."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続が切れた理由、パケットロスと遅延の統計を1時間ごとに匿名で送信します。デバイス名、アドレス、内容は含みません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。"
+          }
+        }
+      }
+    },
+    "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。可以随时在设置里关闭。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends why connections ended and packet-loss and latency figures once an hour, anonymously. No device names, addresses or content. You can turn it off in Settings at any time."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続が切れた理由、パケットロスと遅延の統計を1時間ごとに匿名で送信します。デバイス名、アドレス、内容は含みません。設定でいつでもオフにできます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。可以随时在设置里关闭。"
           }
         }
       }
@@ -4328,6 +4438,28 @@
         }
       }
     },
+    "隐私" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私"
+          }
+        }
+      }
+    },
     "需要辅助功能权限" : {
       "localizations" : {
         "en" : {
@@ -4456,28 +4588,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "鼠标正在 %@ 上"
-          }
-        }
-      }
-    },
-    "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Once granted, you can share the keyboard and mouse and switch to other devices at the screen edge."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "許可すると、キーボードとマウスを共有し、画面の端からほかのデバイスに切り替えられます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "授权后即可共享键鼠，并从屏幕边缘切换到其他设备。"
           }
         }
       }
