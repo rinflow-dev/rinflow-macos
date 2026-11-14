@@ -23,11 +23,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # The rinflow-core commit this version is built with. Update it when the
-  # macOS client moves to a newer core.
-  CORE_REF: 01602547e66e9e31ca3d21fbab4677dcd04a2f98
-
 jobs:
   build:
     name: Disk images
@@ -41,6 +36,10 @@ jobs:
           path: rinflow-macos
           # The build number is the commit count.
           fetch-depth: 0
+      # The rinflow-core commit this version is built with (CORE_REF, which
+      # the local build checks too).
+      - name: Read the core commit
+        run: echo "CORE_REF=$(cat CORE_REF)" >> "$GITHUB_ENV"
       # The app builds the core from source, from a sibling folder.
       - uses: actions/checkout@v4
         with:

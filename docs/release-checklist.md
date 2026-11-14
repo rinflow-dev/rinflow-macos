@@ -21,7 +21,7 @@ rustup target add aarch64-apple-darwin x86_64-apple-darwin
 xcrun notarytool store-credentials rinflow-notary --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM_ID
 ```
 
-The release script packages committed code only (both `rinflow-macos` and `rinflow-core` must be clean) and always builds from clean. The build number is the commit count. It checks for the Developer ID signature, hardened runtime, secure timestamp and absence of debug entitlements, and prints the reason if notarization is rejected. Results land in `releases/`: a disk image for Apple silicon (`arm64`) and one for Intel (`x64`), each holding the app and a link to Applications. With notarization each app is notarized and stapled first, so it opens offline once copied out, and then its image; only the distributable images and their SHA-256 files remain.
+The release script packages committed code only (both `rinflow-macos` and `rinflow-core` must be clean, and `rinflow-core` must be at the commit in `CORE_REF`, which the release workflow checks out) and always builds from clean. The build number is the commit count. It checks for the Developer ID signature, hardened runtime, secure timestamp and absence of debug entitlements, and prints the reason if notarization is rejected. Results land in `releases/`: a disk image for Apple silicon (`arm64`) and one for Intel (`x64`), each holding the app and a link to Applications. With notarization each app is notarized and stapled first, so it opens offline once copied out, and then its image; only the distributable images and their SHA-256 files remain.
 
 Development and release builds have different signatures, and macOS records the Accessibility permission separately for each. If sharing stops working after switching, reset and grant it again:
 

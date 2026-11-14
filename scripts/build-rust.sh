@@ -37,6 +37,20 @@ if [ ! -f "${CORE_DIR}/Cargo.toml" ]; then
     exit 1
 fi
 
+# CORE_REF names the core commit this version is built with, the one the
+# release workflow checks out. A release must use exactly that core; a debug
+# build may run ahead of it, with a warning.
+CORE_REF=$(cat "${SRCROOT}/CORE_REF")
+CORE_HEAD=$(git -C "${CORE_DIR}" rev-parse HEAD 2>/dev/null || echo "an unknown commit")
+if [ "${CORE_HEAD}" != "${CORE_REF}" ]; then
+    MESSAGE="Rinflow Core is at ${CORE_HEAD}, but CORE_REF names ${CORE_REF}. Check out that commit in ${CORE_DIR}, or update CORE_REF when moving to a newer core."
+    if [ "${CONFIGURATION:-Debug}" = "Release" ]; then
+        echo "error: ${MESSAGE}"
+        exit 1
+    fi
+    echo "warning: ${MESSAGE}"
+fi
+
 if [ "${CONFIGURATION:-Debug}" = "Release" ]; then
     CARGO_MODE="--release"
     PROFILE="release"

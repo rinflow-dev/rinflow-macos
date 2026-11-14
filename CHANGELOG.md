@@ -11,6 +11,7 @@ Notable changes are recorded here. The format follows [Keep a Changelog](https:/
 
 ### Fixed
 
+- A device running a newer Rinflow no longer disconnects this Mac by sending something it does not know (in the core): unknown messages and added fields are skipped.
 - A steadier pointer while another device drives this Mac: Rinflow no longer goes into App Nap while it has no window, and motion that piled up while the main thread was busy is played as one move instead of one by one.
 - After a stall, a held key (Backspace, an arrow) no longer deletes or moves further than it was held for: repeats held up on the way for 100 ms or more are not played.
 - A locked Mac is no longer kept awake, or its display lit, by another device in use.
