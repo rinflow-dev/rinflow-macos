@@ -17,6 +17,8 @@ final class RustCore {
 
     private var handle: OpaquePointer?
     private var callbacks: CallbackRelay<RustCore>?
+    /// The peers' copied files, for worker threads; nil while stopped.
+    private(set) var leases: LeaseSource?
     /// Held while the core runs. This app has no window most of the time, so
     /// macOS would put it to App Nap: late timers and a lower priority, also
     /// for the thread that plays a peer's input. The Mac may still sleep.
@@ -28,6 +30,7 @@ final class RustCore {
             ProcessInfo.processInfo.endActivity(activity)
         }
         callbacks?.invalidate()
+        leases?.invalidate()
         if let handle {
             lc_core_destroy(handle)
         }
@@ -41,6 +44,9 @@ final class RustCore {
         }
         activity = nil
         callbacks?.invalidate()
+        // Reads of peers' files end before the core does.
+        leases?.invalidate()
+        leases = nil
         if let handle {
             // destroy joins the Rust thread: no callback can borrow the relay
             // after this returns. Queued deliveries own it independently.
@@ -66,6 +72,10 @@ final class RustCore {
         /// app accepts up to its own limit and asks beyond it, and with the
         /// clipboard off rejects it before any file contents are downloaded.
         let maxAutoReceiveBytes: UInt64 = 0
+        /// A peer that can serve its files piece by piece (all current
+        /// cores) announces them (`files_available`) and they are read when
+        /// pasted (RemoteFiles); older ones still go through `files_offered`.
+        let onDemandFiles = true
         let downloadDirectory: String
         /// This Mac's key and certificate; kept, so paired peers know it.
         let identityPath: String
@@ -88,6 +98,7 @@ final class RustCore {
             case clipboard
             case files
             case maxAutoReceiveBytes = "max_auto_receive_bytes"
+            case onDemandFiles = "on_demand_files"
             case downloadDirectory = "download_directory"
             case identityPath = "identity_path"
             case trustedPeers = "trusted_peers"
@@ -128,6 +139,7 @@ final class RustCore {
         handle = json.withCString { pointer in
             lc_core_create(pointer, rinflowCoreEventCallback, rinflowInputCallback, context)
         }
+        leases = handle.map(LeaseSource.init)
         if handle != nil, activity == nil {
             activity = ProcessInfo.processInfo.beginActivity(
                 options: .userInitiatedAllowingIdleSystemSleep,
@@ -279,6 +291,13 @@ final class RustCore {
     func cancelFiles(_ transfer: UInt32) {
         guard let handle else { return }
         _ = lc_core_cancel_files(handle, transfer)
+    }
+
+    /// Ends every paste of a peer's files under way, here and on peers
+    /// pasting this Mac's, as when sharing the clipboard is turned off.
+    func revokeFileStreams() {
+        guard let handle else { return }
+        _ = lc_core_revoke_file_streams(handle)
     }
 
     /// The pasteboard after a change; empty when it holds nothing to share.

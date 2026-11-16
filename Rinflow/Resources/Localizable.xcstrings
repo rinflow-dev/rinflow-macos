@@ -1,6 +1,40 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
+    "%@ 复制了 %lld 个文件" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ copied a file"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ copied %2$lld files"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@が%2$lld個のファイルをコピーしました"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 复制了 %2$lld 个文件"
+          }
+        }
+      }
+    },
     "%@ 想发送 %lld 个文件" : {
       "localizations" : {
         "en" : {
@@ -276,6 +310,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一起锁定"
+          }
+        }
+      }
+    },
+    "下载" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダウンロード"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载"
           }
         }
       }
@@ -606,6 +662,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "共 %@，将保存到“下载/Rinflow”。"
+          }
+        }
+      }
+    },
+    "共 %@，需要先下载到这台 Mac 才能粘贴。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in all. They have to be downloaded to this Mac before they can be pasted."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合計%@。ペーストする前にこのMacにダウンロードする必要があります。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共 %@，需要先下载到这台 Mac 才能粘贴。"
           }
         }
       }

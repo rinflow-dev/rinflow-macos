@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C493145970974963A2F7C712C1B3D02B"
+               BlueprintIdentifier = "D72A6839EE91398AC601EF0505F3D16D"
                BuildableName = "Rinflow.app"
                BlueprintName = "Rinflow"
                ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C493145970974963A2F7C712C1B3D02B"
+            BlueprintIdentifier = "D72A6839EE91398AC601EF0505F3D16D"
             BuildableName = "Rinflow.app"
             BlueprintName = "Rinflow"
             ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "94BFD7B0D79950FCCF7C7352C0D0354F"
+               BlueprintIdentifier = "3B88343D77CC0440D7DA76724AB68244"
                BuildableName = "RinflowTests.xctest"
                BlueprintName = "RinflowTests"
                ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -63,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C493145970974963A2F7C712C1B3D02B"
+            BlueprintIdentifier = "D72A6839EE91398AC601EF0505F3D16D"
             BuildableName = "Rinflow.app"
             BlueprintName = "Rinflow"
             ReferencedContainer = "container:Rinflow.xcodeproj">
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C493145970974963A2F7C712C1B3D02B"
+            BlueprintIdentifier = "D72A6839EE91398AC601EF0505F3D16D"
             BuildableName = "Rinflow.app"
             BlueprintName = "Rinflow"
             ReferencedContainer = "container:Rinflow.xcodeproj">

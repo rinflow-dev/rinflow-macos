@@ -21,6 +21,9 @@ project = Xcodeproj::Project.new(project_path)
 project.root_object.attributes['LastSwiftUpdateCheck'] = '2660'
 project.root_object.attributes['LastUpgradeCheck'] = '2660'
 
+# The version of the app and of what it embeds, which must match it.
+version = '0.0.2'
+
 target = project.new_target(:application, 'Rinflow', :osx, '14.0')
 app_group = project.main_group.new_group('Rinflow', 'Rinflow')
 
@@ -33,10 +36,16 @@ Dir.glob(File.join(source_root, '**', '*.swift')).sort.each do |path|
   target.source_build_phase.add_file_reference(reference)
 end
 
+# What the app and its File Provider extension share (docs/on-demand-files.md).
+shared_group = project.main_group.new_group('Shared', 'Shared')
+shared_files = Dir.glob(File.join(root, 'Shared', '*.swift')).sort.map { |path| shared_group.new_file(File.basename(path)) }
+shared_files.each { |reference| target.source_build_phase.add_file_reference(reference) }
+
 bridging_group = app_group.groups.find { |group| group.display_name == 'Bridging' } || app_group.new_group('Bridging', 'Bridging')
 bridging_group.new_file('Rinflow-Bridging-Header.h')
 resources_group = app_group.groups.find { |group| group.display_name == 'Resources' } || app_group.new_group('Resources', 'Resources')
 resources_group.new_file('Info.plist')
+resources_group.new_file('Rinflow.entitlements')
 # The app icon is an Icon Composer document (light / dark / tinted from one glyph);
 # Xcode also derives the AppIcon.icns that macOS before 26 reads. MenuBarIcon is
 # a template image, so the menu bar tints it for light, dark and wallpaper.
@@ -90,7 +99,7 @@ target.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac'
   settings['PRODUCT_NAME'] = 'Rinflow'
-  settings['MARKETING_VERSION'] = '0.0.2'
+  settings['MARKETING_VERSION'] = version
   # The public half of the EdDSA key that signs updates (Sparkle's
   # `generate_keys --account rinflow`; the private half stays in the release
   # keychain and the SPARKLE_PRIVATE_KEY secret). Empty: the app never looks
@@ -98,6 +107,8 @@ target.build_configurations.each do |configuration|
   settings['SPARKLE_PUBLIC_KEY'] = 'U/AAXXL5iNc9TETSwFgX0wK9/BVIx3bsq16djMqWek0='
   settings['CURRENT_PROJECT_VERSION'] = '1'
   settings['INFOPLIST_FILE'] = 'Rinflow/Resources/Info.plist'
+  # The App Group it shares with its File Provider extension; not sandboxed.
+  settings['CODE_SIGN_ENTITLEMENTS'] = 'Rinflow/Resources/Rinflow.entitlements'
   settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'Rinflow/Bridging/Rinflow-Bridging-Header.h'
   settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', '$(SRCROOT)/../rinflow-core/include']
   settings['LIBRARY_SEARCH_PATHS'] = ['$(inherited)', '$(BUILT_PRODUCTS_DIR)']
@@ -126,6 +137,65 @@ target.build_configurations.each do |configuration|
   settings['ONLY_ACTIVE_ARCH'] = 'YES'
 end
 
+# A peer's copied files as File Provider placeholders, fetched when read
+# (FileProvider/, docs/on-demand-files.md): a sandboxed extension in
+# Contents/PlugIns, and rinflow-files in Contents/MacOS, the process that
+# registers its domain and asks for placeholder URLs.
+def file_targets_settings(configuration, version)
+  settings = configuration.build_settings
+  settings['MARKETING_VERSION'] = version
+  settings['CURRENT_PROJECT_VERSION'] = '1'
+  settings['SWIFT_VERSION'] = '6.0'
+  settings['SWIFT_STRICT_CONCURRENCY'] = 'complete'
+  settings['ENABLE_HARDENED_RUNTIME'] = 'YES'
+  settings['CODE_SIGN_STYLE'] = 'Automatic'
+  settings['DEVELOPMENT_TEAM'] = '998ZTJV2HQ'
+  settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
+  settings['ONLY_ACTIVE_ARCH'] = 'YES'
+  settings['SKIP_INSTALL'] = 'YES'
+  # The template's; neither has an asset catalog.
+  settings.delete('ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME')
+  settings
+end
+
+extension_target = project.new_target(:app_extension, 'RinflowFiles', :osx, '14.0')
+extension_group = project.main_group.new_group('FileProvider', 'FileProvider')
+Dir.glob(File.join(root, 'FileProvider', '*.swift')).sort.each do |path|
+  extension_target.source_build_phase.add_file_reference(extension_group.new_file(File.basename(path)))
+end
+extension_group.new_file('Info.plist')
+extension_group.new_file('FileProvider.entitlements')
+shared_files.each { |reference| extension_target.source_build_phase.add_file_reference(reference) }
+extension_target.build_configurations.each do |configuration|
+  settings = file_targets_settings(configuration, version)
+  settings['PRODUCT_NAME'] = 'RinflowFiles'
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac.files'
+  settings['INFOPLIST_FILE'] = 'FileProvider/Info.plist'
+  settings['CODE_SIGN_ENTITLEMENTS'] = 'FileProvider/FileProvider.entitlements'
+  settings['LD_RUNPATH_SEARCH_PATHS'] = ['$(inherited)', '@executable_path/../Frameworks', '@executable_path/../../../../Frameworks']
+end
+
+helper_target = project.new_target(:command_line_tool, 'rinflow-files', :osx, '14.0')
+helper_group = project.main_group.new_group('FilesHelper', 'FilesHelper')
+helper_target.source_build_phase.add_file_reference(helper_group.new_file('main.swift'))
+shared_files.each { |reference| helper_target.source_build_phase.add_file_reference(reference) }
+helper_target.build_configurations.each do |configuration|
+  settings = file_targets_settings(configuration, version)
+  settings['PRODUCT_NAME'] = 'rinflow-files'
+  # Its signing identifier; a tool has no bundle.
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac.files-helper'
+  settings['CODE_SIGN_ENTITLEMENTS'] = 'Rinflow/Resources/Rinflow.entitlements'
+end
+
+target.add_dependency(extension_target)
+target.add_dependency(helper_target)
+embed_extensions = target.new_copy_files_build_phase('Embed App Extensions')
+embed_extensions.symbol_dst_subfolder_spec = :plug_ins
+embed_extensions.add_file_reference(extension_target.product_reference).settings = { 'ATTRIBUTES' => %w[RemoveHeadersOnCopy] }
+embed_helper = target.new_copy_files_build_phase('Embed rinflow-files')
+embed_helper.symbol_dst_subfolder_spec = :executables
+embed_helper.add_file_reference(helper_target.product_reference).settings = { 'ATTRIBUTES' => %w[CodeSignOnCopy] }
+
 # Unit tests of the pure geometry, without the app (no host): it starts the
 # core and asks for permissions, which tests have no business doing.
 tests_root = File.join(root, 'RinflowTests')
@@ -138,6 +208,7 @@ end
   reference = app_group.recursive_children.find { |item| item.respond_to?(:real_path) && item.real_path.to_s == File.join(source_root, relative) }
   test_target.source_build_phase.add_file_reference(reference)
 end
+shared_files.each { |reference| test_target.source_build_phase.add_file_reference(reference) }
 test_target.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac.tests'

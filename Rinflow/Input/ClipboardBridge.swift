@@ -113,6 +113,27 @@ final class ClipboardBridge {
         Self.log.info("wrote peer clipboard: \(items.map(\.mime), privacy: .public)")
     }
 
+    /// Empties the pasteboard for a peer's files that are not pasteable yet
+    /// (RemoteFiles), so a paste meanwhile gives nothing rather than what
+    /// was there before. Not reported. The change count, for `writeFiles`.
+    func holdForPeerFiles() -> Int {
+        pasteboard.clearContents()
+        reportedCount = pasteboard.changeCount
+        return reportedCount
+    }
+
+    /// Writes the files, unless the pasteboard changed since `holdForPeerFiles`
+    /// (the user copied something else meanwhile). Not reported.
+    @discardableResult
+    func writeFiles(_ urls: [URL], ifUnchangedSince count: Int) -> Bool {
+        guard pasteboard.changeCount == count else { return false }
+        pasteboard.clearContents()
+        pasteboard.writeObjects(urls as [NSURL])
+        reportedCount = pasteboard.changeCount
+        Self.log.info("wrote peer files: \(urls.count) items")
+        return true
+    }
+
     /// Reports a change not reported yet. Called when the pointer leaves for
     /// a peer, so a copy made just before is not left behind by the polling.
     func reportIfChanged() {

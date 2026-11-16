@@ -161,6 +161,8 @@ struct CoreEventEnvelope: Decodable, Sendable {
     let sent: UInt64?
     let total: UInt64?
     let paths: [String]?
+    /// `files_available`: a peer's copied files, read when pasted.
+    let manifest: Manifest?
     /// `manual_addresses`
     let addresses: [ManualAddressStatus]?
     /// `peer_pointer_lock`
@@ -208,6 +210,7 @@ struct CoreEventEnvelope: Decodable, Sendable {
         case sent
         case total
         case paths
+        case manifest
         case addresses
         case locked
         case code

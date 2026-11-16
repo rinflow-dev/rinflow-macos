@@ -84,6 +84,20 @@ build_app() {
     case "$signature" in
         *get-task-allow*) fail "the debugging entitlement is present" ;;
     esac
+    # What pastes a peer's files (docs/on-demand-files.md): signed like the
+    # app, in its App Group, and the extension sandboxed, which the system
+    # requires of it.
+    for part in Contents/PlugIns/RinflowFiles.appex Contents/MacOS/rinflow-files; do
+        details=$(codesign -dvv --entitlements - "$app/$part" 2>&1)
+        case "$details" in
+            *"(runtime)"*"Authority=Developer ID Application"*"Timestamp="*"998ZTJV2HQ.com.rinflow.mac"*) ;;
+            *) fail "$part is not signed with Developer ID, the hardened runtime, a timestamp and the App Group" ;;
+        esac
+        case "$part:$details" in
+            *.appex:*app-sandbox*|*rinflow-files:*) ;;
+            *) fail "$part is not sandboxed" ;;
+        esac
+    done
     # The image is signed by whoever signed the app.
     identity=$(printf '%s\n' "$signature" | sed -n 's/^Authority=//p' | head -n 1)
 }

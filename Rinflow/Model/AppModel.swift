@@ -46,6 +46,8 @@ final class AppModel: RustCoreDelegate {
     private let player = InputPlayer()
     private let hud = ControlHUDController()
     private let clipboard = ClipboardBridge()
+    /// Peers' copied files, fetched when pasted.
+    private let remoteFiles: RemoteFiles
     private let pairing = PairingPrompt()
     private let hotkeys = SwitchHotkeys()
     private let presence = Presence()
@@ -93,6 +95,7 @@ final class AppModel: RustCoreDelegate {
 
     init() {
         deviceName = Host.current().localizedName ?? "Mac"
+        remoteFiles = RemoteFiles(clipboard: clipboard)
         settings = AppSettings.load()
         placements = Self.loadPlacements()
         knownPeers = Self.loadKnownPeers()
@@ -110,6 +113,9 @@ final class AppModel: RustCoreDelegate {
         }
         clipboard.didChange = { [weak self] items in
             self?.core.setClipboard(items)
+        }
+        remoteFiles.confirm = { [weak self] clip, answer in
+            self?.askToFetchFiles(clip, answer: answer)
         }
         inputBridge.willEnter = { [weak self] in
             // The cursor a peer left hidden here is this capture's to hide now.
@@ -174,6 +180,7 @@ final class AppModel: RustCoreDelegate {
     /// saved, and is stopped from the start: no core, no input tap.
     init(screenshot theme: AppTheme) {
         stopped = true
+        remoteFiles = RemoteFiles(clipboard: clipboard)
         let pc = Peer(id: "studio-pc", name: "Studio PC", platform: "windows", address: "192.168.1.20",
                       port: 42421, displays: [Display(x: 0, y: 0, width: 1920, height: 1080)])
         var settings = AppSettings()
@@ -197,6 +204,7 @@ final class AppModel: RustCoreDelegate {
         clipboard.stop()
         inputBridge.stop()
         player.releaseAll()
+        remoteFiles.setSource(nil)
         core.stop()
         sessions.removeAll()
         peers.removeAll()
@@ -216,6 +224,8 @@ final class AppModel: RustCoreDelegate {
             coreState = .failed(String(localized: "无法启动 Rust Core"))
             return
         }
+        remoteFiles.start()
+        remoteFiles.setSource(core.leases)
         migrateLegacyPlacements()
         dropUnknownPlacements()
         core.setRemoteControlAllowed(settings.sharing && inputBridge.hasAccessibilityPermission)
@@ -235,6 +245,8 @@ final class AppModel: RustCoreDelegate {
         player.releaseAll()
         presence.stop()
         fullscreen.setEnabled(false)
+        remoteFiles.setSource(nil)
+        remoteFiles.stop()
         core.stop()
         diagnostics.save()
     }
@@ -290,6 +302,9 @@ final class AppModel: RustCoreDelegate {
                 pairing.dismissFiles()
                 core.setClipboard([])
                 for transfer in transfers { core.cancelFiles(transfer.transfer) }
+                // Pastes under way of a peer's files stop too.
+                core.revokeFileStreams()
+                remoteFiles.withdrawAll()
             }
         }
         if let previous, settings.sharing != previous.sharing {
@@ -612,6 +627,15 @@ final class AppModel: RustCoreDelegate {
                 break
             }
             updateTransfer(with: event)
+        case "files_available":
+            guard settings.clipboard, let peerID = event.peerID, let manifest = event.manifest else { break }
+            remoteFiles.available(peer: peerID, manifest: manifest)
+        case "files_unavailable":
+            if let peerID = event.peerID { remoteFiles.unavailable(peer: peerID) }
+        case "files_stream_ended":
+            // A paste of a peer's files finished or stopped.
+            guard let transfer = event.transfer else { break }
+            transfers.removeAll { $0.direction == .receiving && $0.transfer == transfer }
         case "files_received":
             guard let transfer = event.transfer else { break }
             transfers.removeAll { $0.direction == .receiving && $0.transfer == transfer }
@@ -747,6 +771,20 @@ final class AppModel: RustCoreDelegate {
             guard let self else { return }
             if accepted && self.settings.clipboard { self.core.acceptFiles(transfer) }
             else { self.core.cancelFiles(transfer) }
+        }
+    }
+
+    /// A peer's large copy, with the File Provider extension off: it has to
+    /// be fetched whole before it can be pasted.
+    private func askToFetchFiles(_ clip: Clip, answer: @escaping (Bool) -> Void) {
+        let count = clip.entries.filter { !$0.dir }.count
+        pairing.show(
+            id: "file-clip-\(clip.id)",
+            title: String(localized: "\(name(of: clip.peer)) 复制了 \(count) 个文件"),
+            message: String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。"),
+            accept: String(localized: "下载")
+        ) { [weak self] accepted in
+            answer(accepted && self?.settings.clipboard == true)
         }
     }
 
