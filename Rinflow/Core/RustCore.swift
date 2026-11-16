@@ -363,10 +363,19 @@ final class RustCore {
         // JSON may contain clipboard contents, pairing codes and file paths.
         // Log only the event type, never any part of its payload.
         log.debug("core event: \(event.event, privacy: .public)")
-        if event.event == "link_quality" {
-            // A second in which the link held input up: a peer ID and
-            // numbers only (`make log` shows when the pointer stuttered).
-            log.notice("link quality: \(eventJSON, privacy: .public)")
+        switch event.event {
+        case "link_quality", "discovery_reset":
+            // A second in which the link held input up (a peer ID and
+            // numbers), or the discovery socket made anew (a reason and the
+            // system's error): `make log` shows when and why.
+            log.notice("\(event.event, privacy: .public): \(eventJSON, privacy: .public)")
+        case "peer_up", "peer_down", "connected", "disconnected":
+            // When a device came and went, and why: its ID and the reason
+            // code, nothing it sent.
+            let peer = event.peer?.id ?? event.peerID ?? ""
+            log.notice("\(event.event, privacy: .public) \(peer, privacy: .public) \(event.reasonCode?.rawValue ?? "", privacy: .public)")
+        default:
+            break
         }
         return event
     }
