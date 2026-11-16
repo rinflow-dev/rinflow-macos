@@ -90,7 +90,7 @@ target.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.rinflow.mac'
   settings['PRODUCT_NAME'] = 'Rinflow'
-  settings['MARKETING_VERSION'] = '0.0.1'
+  settings['MARKETING_VERSION'] = '0.0.2'
   # The public half of the EdDSA key that signs updates (Sparkle's
   # `generate_keys --account rinflow`; the private half stays in the release
   # keychain and the SPARKLE_PRIVATE_KEY secret). Empty: the app never looks
