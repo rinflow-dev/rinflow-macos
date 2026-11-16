@@ -69,8 +69,8 @@ struct PermissionGuide: View {
                     step(
                         symbol: "doc.on.clipboard",
                         tint: .orange,
-                        title: "粘贴其他设备的文件",
-                        detail: "启用 Rinflow 文件扩展后，其他设备复制的文件在粘贴时才传输，不必先完整下载。"
+                        title: "共享剪贴板",
+                        detail: "启用后，可以直接粘贴其他设备复制的文件。"
                     ) {
                         Button("启用…", action: model.enableFilesExtension)
                     }

@@ -65,8 +65,8 @@ struct SettingsView: View {
                     LabeledContent {
                         Button("启用…", action: model.enableFilesExtension)
                     } label: {
-                        Text("Rinflow 文件扩展已关闭")
-                        Text("其他设备复制的文件要先完整下载才能粘贴，超过 512 MB 会先询问。")
+                        Text("共享剪贴板")
+                        Text("启用后，可以直接粘贴其他设备复制的文件。")
                     }
                 }
             }

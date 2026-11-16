@@ -204,28 +204,6 @@
     "Rinflow" : {
       "shouldTranslate" : false
     },
-    "Rinflow 文件扩展已关闭" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Rinflow Files extension is off"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rinflowファイル拡張機能がオフです"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rinflow 文件扩展已关闭"
-          }
-        }
-      }
-    },
     "Rust Core 拒绝了输入事件" : {
       "localizations" : {
         "en" : {
@@ -710,24 +688,46 @@
         }
       }
     },
-    "共 %@，需要先下载到这台 Mac 才能粘贴。在设置中启用 Rinflow 文件扩展后，文件会在粘贴时才传输。" : {
+    "共 %@，需要先下载到这台 Mac 才能粘贴。在设置中启用共享剪贴板后，可以直接粘贴。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ in all. They have to be downloaded to this Mac before they can be pasted. With the Rinflow Files extension on (in Settings), files travel only when pasted."
+            "value" : "%@ in all. They have to be downloaded to this Mac before they can be pasted. Turn on Shared Clipboard in Settings to paste them right away."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "合計%@。ペーストする前にこのMacにダウンロードする必要があります。設定でRinflowファイル拡張機能をオンにすると、ファイルはペーストしたときに転送されます。"
+            "value" : "合計%@。ペーストする前にこのMacにダウンロードする必要があります。設定で共有クリップボードをオンにすると、そのままペーストできます。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "共 %@，需要先下载到这台 Mac 才能粘贴。在设置中启用 Rinflow 文件扩展后，文件会在粘贴时才传输。"
+            "value" : "共 %@，需要先下载到这台 Mac 才能粘贴。在设置中启用共享剪贴板后，可以直接粘贴。"
+          }
+        }
+      }
+    },
+    "共享剪贴板" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared Clipboard"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有クリップボード"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享剪贴板"
           }
         }
       }
@@ -816,28 +816,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "其他设备在使用时保持唤醒"
-          }
-        }
-      }
-    },
-    "其他设备复制的文件要先完整下载才能粘贴，超过 512 MB 会先询问。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Files copied on other devices are downloaded whole before they can be pasted, asking first over 512 MB."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほかのデバイスでコピーしたファイルは、ペーストする前にすべてダウンロードされます。512 MBを超える場合は先に確認します。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "其他设备复制的文件要先完整下载才能粘贴，超过 512 MB 会先询问。"
           }
         }
       }
@@ -1106,28 +1084,6 @@
         }
       }
     },
-    "启用 Rinflow 文件扩展后，其他设备复制的文件在粘贴时才传输，不必先完整下载。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "With the Rinflow Files extension on, files copied on other devices travel only when pasted, without being downloaded whole first."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rinflowファイル拡張機能をオンにすると、ほかのデバイスでコピーしたファイルは、先にすべてダウンロードせずにペーストしたときに転送されます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "启用 Rinflow 文件扩展后，其他设备复制的文件在粘贴时才传输，不必先完整下载。"
-          }
-        }
-      }
-    },
     "启用…" : {
       "localizations" : {
         "en" : {
@@ -1146,6 +1102,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启用…"
+          }
+        }
+      }
+    },
+    "启用后，可以直接粘贴其他设备复制的文件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn it on to paste files copied on other devices right away."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オンにすると、ほかのデバイスでコピーしたファイルをそのままペーストできます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用后，可以直接粘贴其他设备复制的文件。"
           }
         }
       }
@@ -3632,28 +3610,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "等待其他设备连接"
-          }
-        }
-      }
-    },
-    "粘贴其他设备的文件" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pasting files from other devices"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほかのデバイスのファイルのペースト"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "粘贴其他设备的文件"
           }
         }
       }

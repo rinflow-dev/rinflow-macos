@@ -798,7 +798,7 @@ final class AppModel: RustCoreDelegate {
             id: "file-clip-\(clip.id)",
             title: String(localized: "\(name(of: clip.peer)) 复制了 \(count) 个文件"),
             message: filesExtension == .disabled
-                ? String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。在设置中启用 Rinflow 文件扩展后，文件会在粘贴时才传输。")
+                ? String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。在设置中启用共享剪贴板后，可以直接粘贴。")
                 : String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。"),
             accept: String(localized: "下载")
         ) { [weak self] accepted in
