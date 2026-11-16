@@ -63,18 +63,6 @@ struct PermissionGuide: View {
                         detail: "用来发现局域网中的设备，macOS 询问时请点“允许”。"
                     ) {}
                 }
-                // Only when the user turned it off: on is the default.
-                if model.filesExtension == .disabled {
-                    Divider()
-                    step(
-                        symbol: "doc.on.clipboard",
-                        tint: .orange,
-                        title: "共享剪贴板",
-                        detail: "启用后，可以直接粘贴其他设备复制的文件。"
-                    ) {
-                        Button("启用…", action: model.enableFilesExtension)
-                    }
-                }
                 Divider()
                 step(
                     symbol: "chart.bar.xaxis",

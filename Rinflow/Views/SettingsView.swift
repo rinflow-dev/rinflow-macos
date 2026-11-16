@@ -61,12 +61,13 @@ struct SettingsView: View {
                     Text("同步剪贴板与文件")
                     Text("文字、图片（最大 8 MB）和文件。其他设备复制的文件在粘贴时才传输。")
                 }
+                // On by default; only a user who turned it off sees this.
                 if model.settings.clipboard, model.filesExtension == .disabled {
                     LabeledContent {
-                        Button("启用…", action: model.enableFilesExtension)
+                        Button("打开系统设置", action: model.enableFilesExtension)
                     } label: {
-                        Text("共享剪贴板")
-                        Text("启用后，可以直接粘贴其他设备复制的文件。")
+                        Text("共享剪贴板已关闭")
+                        Text("在“登录项与扩展”中打开 Rinflow，就能直接粘贴其他设备复制的文件。")
                     }
                 }
             }

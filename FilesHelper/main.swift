@@ -15,8 +15,6 @@
 //   rinflow-files signal                   after the app removed clips
 //   rinflow-files status                   registers the domain if needed;
 //       exit 0 if the extension is on, 3 if the user turned it off
-//   rinflow-files root                     prints the domain's folder: opened
-//       in Finder, it offers to turn the extension on
 //   rinflow-files remove                   removes the domain and its files
 //
 // Exit 0 on success, 2 for bad arguments, 4 for any other failure (on stderr).
@@ -84,14 +82,12 @@ do {
         if let current = try await registered(), !current.userEnabled {
             fail(3, "the extension is turned off")
         }
-    case "root":
-        print(try await manager().getUserVisibleURL(for: .rootContainer).path)
     case "remove":
         if let domain = try await registered() {
             _ = try await NSFileProviderManager.remove(domain, mode: .removeAll)
         }
     default:
-        fail(2, "usage: rinflow-files publish <clip> <name>… | signal | status | root | remove")
+        fail(2, "usage: rinflow-files publish <clip> <name>… | signal | status | remove")
     }
 } catch {
     fail(4, String(describing: error))

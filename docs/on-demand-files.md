@@ -28,7 +28,7 @@ The App Group `998ZTJV2HQ.com.rinflow.mac` (team-prefixed: no provisioning profi
 
 ## When things go wrong
 
-- The extension is turned off (System Settings › General › Login Items & Extensions), or the App Group is missing: every copy is fetched locally, asking first past 512 MB. `rinflow-files status` tells (exit 3), checked at launch, when Rinflow comes to the front and when Settings opens; while it is off, Settings › General and the welcome sheet offer to turn it on, which opens the domain's folder in Finder (Finder offers to turn it on there) or else System Settings, and the 512 MB question says so too.
+- The extension is turned off (System Settings › General › Login Items & Extensions; it is on by default), or the App Group is missing: every copy is fetched locally, asking first past 512 MB. `rinflow-files status` tells (exit 3), checked at launch, whenever Rinflow comes to the front and when Settings opens. Only then does Settings › General show "Shared Clipboard is off" with a button to that page of System Settings, and the 512 MB question mentions it; nothing asks a user who never turned it off.
 - The peer copied something else, or left: the extension reports the item as gone (`noSuchItem`), which Finder shows as an error instead of retrying.
 - The connection broke off, a read timed out, or the file changed on the peer: `serverUnreachable`, which can be tried again.
 - Cancelled in Finder: the extension closes the socket, the app stops at its next write and closes the lease as cancelled.

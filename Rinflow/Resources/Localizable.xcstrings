@@ -710,24 +710,24 @@
         }
       }
     },
-    "共享剪贴板" : {
+    "共享剪贴板已关闭" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Shared Clipboard"
+            "value" : "Shared Clipboard is off"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "共有クリップボード"
+            "value" : "共有クリップボードがオフです"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "共享剪贴板"
+            "value" : "共享剪贴板已关闭"
           }
         }
       }
@@ -1084,50 +1084,6 @@
         }
       }
     },
-    "启用…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn On…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オンにする…"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "启用…"
-          }
-        }
-      }
-    },
-    "启用后，可以直接粘贴其他设备复制的文件。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn it on to paste files copied on other devices right away."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オンにすると、ほかのデバイスでコピーしたファイルをそのままペーストできます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "启用后，可以直接粘贴其他设备复制的文件。"
-          }
-        }
-      }
-    },
     "在 %@ 上" : {
       "localizations" : {
         "en" : {
@@ -1146,6 +1102,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 %@ 上"
+          }
+        }
+      }
+    },
+    "在“登录项与扩展”中打开 Rinflow，就能直接粘贴其他设备复制的文件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on Rinflow in Login Items & Extensions to paste files copied on other devices right away."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ログイン項目と機能拡張」でRinflowをオンにすると、ほかのデバイスでコピーしたファイルをそのままペーストできます。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在“登录项与扩展”中打开 Rinflow，就能直接粘贴其他设备复制的文件。"
           }
         }
       }

@@ -168,6 +168,13 @@ final class AppModel: RustCoreDelegate {
             }
         }
         observePowerAndNetwork()
+        // Back from System Settings, where the user may have turned Shared
+        // Clipboard (the File Provider extension) on or off.
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshFilesExtension() }
+        }
         NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification, object: nil, queue: .main
         ) { [weak self] _ in
@@ -459,6 +466,8 @@ final class AppModel: RustCoreDelegate {
         remoteFiles.refreshExtension()
     }
 
+    /// System Settings › General › Login Items & Extensions, where Shared
+    /// Clipboard is switched on (Rinflow, under File Providers).
     func enableFilesExtension() {
         remoteFiles.openExtensionSettings()
     }

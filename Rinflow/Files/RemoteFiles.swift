@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-import AppKit
+import Foundation
 import OSLog
 import ServiceManagement
 
@@ -97,20 +97,11 @@ final class RemoteFiles {
         }
     }
 
-    /// Where the user turns the extension on: its folder in Finder, which
-    /// offers to, or else System Settings › General › Login Items &
-    /// Extensions. Checked again when the user comes back to Rinflow.
+    /// Where the user turns the extension on: System Settings › General ›
+    /// Login Items & Extensions. Checked again when Rinflow is back in front.
     func openExtensionSettings() {
-        Self.helper(["root"]) { status, output in
-            let path = output.trimmingCharacters(in: .whitespacesAndNewlines)
-            MainActor.assumeIsolated {
-                if status == 0, !path.isEmpty, NSWorkspace.shared.open(URL(filePath: path, directoryHint: .isDirectory)) {
-                    return
-                }
-                SMAppService.openSystemSettingsLoginItems()
-            }
-        }
         checked = .distantPast
+        SMAppService.openSystemSettingsLoginItems()
     }
 
     /// The core's `files_available`.
