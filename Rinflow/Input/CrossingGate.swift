@@ -43,6 +43,16 @@ struct CrossingGate {
         warmUntil = time + Self.warm
     }
 
+    /// A peer drives this Mac now, or took it over: the warm-up after the
+    /// pointer came back is for this Mac's own hand, which is elsewhere.
+    /// The window server sends a stray move now and then (when the cursor
+    /// changes under the pointer), which must not cross on its own.
+    mutating func handedOver() {
+        reset()
+        coolUntil = -Double.infinity
+        warmUntil = -Double.infinity
+    }
+
     /// A motion against `candidate` (nil: no portal) by `amount` points
     /// outward.
     mutating func push(_ candidate: Portal?, by amount: Double, at time: TimeInterval,

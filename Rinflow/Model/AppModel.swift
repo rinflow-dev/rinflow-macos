@@ -564,6 +564,7 @@ final class AppModel: RustCoreDelegate {
             updateDriven()
             if active {
                 cursorHider.reveal()
+                inputBridge.peerDrives()
             } else if event.reasonCode == .remoteReset, settings.hideCursorOnLeave,
                       !sessions.values.contains(where: \.remoteControl)
             {

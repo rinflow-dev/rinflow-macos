@@ -60,6 +60,14 @@ final class CrossingGateTests: XCTestCase {
         XCTAssertEqual(gate.push(portal, by: 1, at: 31, delay: 0.15), .began)
     }
 
+    func testAPeerTakingOverEndsTheWarmUp() {
+        var gate = CrossingGate()
+        gate.returned(at: 10)
+        gate.handedOver()
+        XCTAssertEqual(gate.push(portal, by: 1, at: 12, delay: 0.15), .began)
+        XCTAssertEqual(gate.push(portal, by: 1, at: 12.2, delay: 0.15), .none)
+    }
+
     func testAnUnrelatedDisplayBeyondThePortalDoesNotCross() {
         XCTAssertTrue(portal.isEntered(at: CGPoint(x: 99, y: 50), delta: CGVector(dx: 1, dy: 0)))
         XCTAssertFalse(portal.isEntered(at: CGPoint(x: 500, y: 50), delta: CGVector(dx: 1, dy: 0)))

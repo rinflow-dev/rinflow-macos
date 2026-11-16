@@ -9,6 +9,16 @@ import OSLog
 /// Marks the events this app posts, so its own event tap lets them through.
 enum SyntheticInput {
     static let marker: Int64 = 0x4C_49_4E_4B_43_55_52
+
+    /// Where a mouse event came from, for the log.
+    static func describe(_ event: CGEvent) -> String {
+        let pid = event.getIntegerValueField(.eventSourceUnixProcessID)
+        let state = event.getIntegerValueField(.eventSourceStateID)
+        let user = event.getIntegerValueField(.eventSourceUserData)
+        let dx = event.getDoubleValueField(.mouseEventDeltaX)
+        let dy = event.getDoubleValueField(.mouseEventDeltaY)
+        return "type=\(event.type.rawValue) pid=\(pid) state=\(state) user=\(user) delta=(\(dx), \(dy)) at=\(event.location)"
+    }
 }
 
 /// Plays the input of a peer that drives this Mac.

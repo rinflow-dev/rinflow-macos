@@ -132,14 +132,11 @@ final class CursorHider {
             .leftMouseDragged, .rightMouseDragged, .otherMouseDragged, .scrollWheel,
         ]
         monitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
-            guard event.cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker else { return }
-            MainActor.assumeIsolated { self?.reveal() }
+            MainActor.assumeIsolated { self?.motion(event) }
         }
         // Global monitors exclude this app's own windows, the cover too.
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
-            if event.cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker {
-                MainActor.assumeIsolated { self?.reveal() }
-            }
+            MainActor.assumeIsolated { self?.motion(event) }
             return event
         }
         guard monitor != nil, localMonitor != nil else {
@@ -149,6 +146,16 @@ final class CursorHider {
         PointerVisibility.hide()
         cover = CursorCover()
     }
+
+    private func motion(_ event: NSEvent) {
+        let cgEvent = event.cgEvent
+        guard cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker else { return }
+        let source = cgEvent.map(SyntheticInput.describe) ?? "type=\(event.type.rawValue)"
+        Self.log.info("revealed by \(source, privacy: .public) window=\(event.windowNumber)")
+        reveal()
+    }
+
+    private static let log = Logger(subsystem: "com.rinflow.mac", category: "cursor")
 
     /// Shows the cursor again: local motion, a peer drives this Mac again,
     /// or this Mac's pointer leaves for a peer (that capture hides it).

@@ -177,6 +177,11 @@ final class InputBridge {
     }
 
     /// The core took this Mac's control of the peer away (`control_revoked`).
+    /// A peer drives this Mac: crossing waits for a real push again.
+    func peerDrives() {
+        crossingGate.handedOver()
+    }
+
     /// With `pointerStays` a peer now drives this Mac and places the cursor
     /// itself; otherwise the cursor comes back as after the release key.
     func controlRevoked(pointerStays: Bool) {
@@ -460,7 +465,11 @@ final class InputBridge {
         pressedModifierUsages.removeAll(keepingCapacity: true)
         CGAssociateMouseAndMouseCursorPosition(1)
         PointerVisibility.show()
-        crossingGate.returned(at: Self.now)
+        if location != nil {
+            crossingGate.returned(at: Self.now)
+        } else {
+            crossingGate.handedOver()
+        }
         if let location {
             // A posted move, not a warp, as when parking: the window server
             // then hands the cursor to whatever is under it (the Dock, on a
@@ -507,6 +516,7 @@ final class InputBridge {
                 crossingGate.reset()
                 return Unmanaged.passUnretained(event)
             }
+            Self.log.info("crossing move \(SyntheticInput.describe(event), privacy: .public)")
             beginCapture(through: portal, at: liveLocation(of: event))
             // The push that crossed the edge is not replayed on the peer.
             return nil
