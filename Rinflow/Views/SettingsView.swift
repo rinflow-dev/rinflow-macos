@@ -71,7 +71,7 @@ struct SettingsView: View {
                     set: { value in model.updateSettings { $0.diagnostics = value } }
                 )) {
                     Text("共享匿名诊断数据")
-                    Text("每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。")
+                    Text("匿名发送断线原因和连接质量统计，不含设备信息或输入内容。")
                 }
             }
             Section {

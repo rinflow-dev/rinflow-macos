@@ -31,7 +31,7 @@ struct PermissionGuide: View {
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("欢迎使用 Rinflow").font(.title2.bold())
-                    Text("开始之前，请先允许 Rinflow 使用下面的权限。")
+                    Text("开始前，请完成下面几项设置。")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -40,15 +40,15 @@ struct PermissionGuide: View {
                 step(
                     symbol: granted ? "checkmark.circle.fill" : "hand.raised.fill",
                     tint: granted ? .green : .orange,
+                    status: granted ? "已允许" : "未允许",
                     title: "辅助功能",
-                    detail: "用来把这台 Mac 的键盘和鼠标共享给其他设备，也让其他设备控制这台 Mac。键入的内容只发给你正在控制的设备，不会被保存。"
+                    detail: "用来共享键盘和鼠标，也让其他设备控制这台 Mac。键入的内容不会被保存。"
                 ) {
-                    if granted {
-                        Text("已允许").foregroundStyle(.green)
-                    } else {
+                    // Granted: the green check says so.
+                    if !granted {
                         Button("打开系统设置", action: model.requestPermission)
                             .buttonStyle(.borderedProminent)
-                        Text("在“隐私与安全性 › 辅助功能”里打开 Rinflow 的开关，这里会自动更新。")
+                        Text("在“隐私与安全性 › 辅助功能”里打开 Rinflow，这里会自动更新。")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -60,7 +60,7 @@ struct PermissionGuide: View {
                         symbol: "network",
                         tint: .accentColor,
                         title: "本地网络",
-                        detail: "用来发现同一网络中的其他设备。macOS 询问时请点“允许”。"
+                        detail: "用来发现局域网中的设备，macOS 询问时请点“允许”。"
                     ) {}
                 }
                 Divider()
@@ -68,7 +68,7 @@ struct PermissionGuide: View {
                     symbol: "chart.bar.xaxis",
                     tint: .accentColor,
                     title: "帮助改进 Rinflow",
-                    detail: "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。可以随时在设置里关闭。"
+                    detail: "匿名发送断线原因和连接质量统计，不含设备信息或输入内容。"
                 ) {
                     Toggle("共享匿名诊断数据", isOn: $shareDiagnostics)
                 }
@@ -98,6 +98,7 @@ struct PermissionGuide: View {
     private func step(
         symbol: String,
         tint: Color,
+        status: LocalizedStringKey? = nil,
         title: LocalizedStringKey,
         detail: LocalizedStringKey,
         @ViewBuilder action: () -> some View
@@ -107,7 +108,9 @@ struct PermissionGuide: View {
                 .font(.title2)
                 .foregroundStyle(tint)
                 .frame(width: 28)
-                .accessibilityHidden(true)
+                // Only a status symbol is read out.
+                .accessibilityLabel(status.map { Text($0) } ?? Text(verbatim: ""))
+                .accessibilityHidden(status == nil)
             VStack(alignment: .leading, spacing: 6) {
                 Text(title).font(.headline)
                 Text(detail)

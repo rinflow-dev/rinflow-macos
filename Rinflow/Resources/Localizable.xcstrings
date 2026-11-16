@@ -786,6 +786,28 @@
         }
       }
     },
+    "匿名发送断线原因和连接质量统计，不含设备信息或输入内容。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anonymously sends why connections dropped and how well they held up. No device details, nothing you type."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切断の理由と接続品質の統計を匿名で送信します。デバイス情報や入力内容は含みません。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匿名发送断线原因和连接质量统计，不含设备信息或输入内容。"
+          }
+        }
+      }
+    },
     "反转滚动方向" : {
       "localizations" : {
         "en" : {
@@ -962,7 +984,7 @@
         }
       }
     },
-    "在“隐私与安全性 › 辅助功能”里打开 Rinflow 的开关，这里会自动更新。" : {
+    "在“隐私与安全性 › 辅助功能”里打开 Rinflow，这里会自动更新。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -979,7 +1001,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在“隐私与安全性 › 辅助功能”里打开 Rinflow 的开关，这里会自动更新。"
+            "value" : "在“隐私与安全性 › 辅助功能”里打开 Rinflow，这里会自动更新。"
           }
         }
       }
@@ -1534,28 +1556,6 @@
         }
       }
     },
-    "开始之前，请先允许 Rinflow 使用下面的权限。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Before you start, allow Rinflow the following."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "はじめる前に、Rinflowに次の許可を与えてください。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开始之前，请先允许 Rinflow 使用下面的权限。"
-          }
-        }
-      }
-    },
     "开始使用" : {
       "localizations" : {
         "en" : {
@@ -1574,6 +1574,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "开始使用"
+          }
+        }
+      }
+    },
+    "开始前，请完成下面几项设置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before you start, set up the following."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はじめる前に、次の設定を済ませてください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始前，请完成下面几项设置。"
           }
         }
       }
@@ -2568,6 +2590,28 @@
         }
       }
     },
+    "未允许" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not allowed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未許可"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未允许"
+          }
+        }
+      }
+    },
     "未连接" : {
       "localizations" : {
         "en" : {
@@ -2920,50 +2964,6 @@
         }
       }
     },
-    "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sends why connections ended and packet-loss and latency figures once an hour, anonymously. No device names, addresses or content."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "接続が切れた理由、パケットロスと遅延の統計を1時間ごとに匿名で送信します。デバイス名、アドレス、内容は含みません。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。"
-          }
-        }
-      }
-    },
-    "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。可以随时在设置里关闭。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sends why connections ended and packet-loss and latency figures once an hour, anonymously. No device names, addresses or content. You can turn it off in Settings at any time."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "接続が切れた理由、パケットロスと遅延の統計を1時間ごとに匿名で送信します。デバイス名、アドレス、内容は含みません。設定でいつでもオフにできます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每小时匿名发送连接断开的原因、丢包和延迟统计，不含设备名称、地址或任何内容。可以随时在设置里关闭。"
-          }
-        }
-      }
-    },
     "没有响应：确认对方已打开 Rinflow，且防火墙允许 UDP 42420–42421" : {
       "localizations" : {
         "en" : {
@@ -3206,46 +3206,46 @@
         }
       }
     },
-    "用来发现同一网络中的其他设备。macOS 询问时请点“允许”。" : {
+    "用来共享键盘和鼠标，也让其他设备控制这台 Mac。键入的内容不会被保存。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finds your other devices on the same network. Choose Allow when macOS asks."
+            "value" : "Shares your keyboard and mouse, and lets other devices control this Mac. What you type is never stored."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "同じネットワーク上のほかのデバイスを見つけるために使います。macOSに確認されたら「許可」を選んでください。"
+            "value" : "キーボードとマウスを共有し、ほかのデバイスからこのMacを操作できるようにします。入力した内容は保存されません。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用来发现同一网络中的其他设备。macOS 询问时请点“允许”。"
+            "value" : "用来共享键盘和鼠标，也让其他设备控制这台 Mac。键入的内容不会被保存。"
           }
         }
       }
     },
-    "用来把这台 Mac 的键盘和鼠标共享给其他设备，也让其他设备控制这台 Mac。键入的内容只发给你正在控制的设备，不会被保存。" : {
+    "用来发现局域网中的设备，macOS 询问时请点“允许”。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lets this Mac share its keyboard and mouse with your other devices, and lets them control this Mac. What you type goes only to the device you are controlling and is never stored."
+            "value" : "Finds devices on your local network. Choose Allow when macOS asks."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このMacのキーボードとマウスをほかのデバイスと共有し、ほかのデバイスからこのMacを操作できるようにします。入力した内容は操作中のデバイスにだけ送られ、保存されません。"
+            "value" : "ローカルネットワーク上のデバイスを見つけます。macOSに確認されたら「許可」を選んでください。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用来把这台 Mac 的键盘和鼠标共享给其他设备，也让其他设备控制这台 Mac。键入的内容只发给你正在控制的设备，不会被保存。"
+            "value" : "用来发现局域网中的设备，macOS 询问时请点“允许”。"
           }
         }
       }
