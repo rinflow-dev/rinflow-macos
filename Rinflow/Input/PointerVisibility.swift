@@ -38,6 +38,14 @@ enum PointerVisibility {
         log.info("show result=\(result.rawValue)")
     }
 
+    /// Hides again what is hidden, for when what owns the cursor changed
+    /// (`CursorCover`): the window server may have ignored the first hide.
+    static func renew() {
+        guard hidden else { return }
+        show()
+        hide()
+    }
+
     /// Moves the cursor with a real (synthetic) mouse-moved event, so the
     /// window server updates hover state along the way, unlike a warp.
     /// Marked, so neither the event tap nor `CursorHider` takes it for this
@@ -89,23 +97,22 @@ enum PointerVisibility {
     private static let connection = symbol("_CGSDefaultConnection", as: Connection.self)
     private static let setProperty = symbol("CGSSetConnectionProperty", as: SetProperty.self)
 
-    private static func symbol<T>(_ name: String, as type: T.Type) -> T? {
+    static func symbol<T>(_ name: String, as type: T.Type) -> T? {
         // RTLD_DEFAULT
         guard let pointer = dlsym(UnsafeMutableRawPointer(bitPattern: -2), name) else { return nil }
         return unsafeBitCast(pointer, to: type)
     }
 }
 
-/// Hides the cursor once a peer's pointer left this Mac, until this Mac's
+/// Hides the cursor where a peer's pointer left this Mac, until this Mac's
 /// own mouse or trackpad moves (setting `hide_cursor_on_leave`): the cursor
 /// shows only on the device the pointer is on, as with Universal Control,
 /// Deskflow and Mouse Without Borders.
 ///
-/// The pointer left through an edge, where the Dock, a hot corner or a
-/// full-screen menu bar may be, and the Dock keeps the cursor visible. So
-/// the cursor is hidden, then moved to the middle of its display, off the
-/// Dock, and comes back there. A peer that drives this Mac again places it
-/// itself.
+/// The pointer left through an edge, often over the Dock, and the Dock keeps
+/// the cursor visible whatever this app hides. So a `CursorCover` goes under
+/// the cursor first and takes it from the Dock, as the Windows agent's
+/// hider window does (oink does the same on macOS).
 ///
 /// `NSCursor.setHiddenUntilMouseMoves` only works while this app is in
 /// front, so the hide uses `PointerVisibility` (which works in the
@@ -114,6 +121,7 @@ enum PointerVisibility {
 final class CursorHider {
     private var monitor: Any?
     private var localMonitor: Any?
+    private var cover: CursorCover?
 
     var isHiding: Bool { monitor != nil }
 
@@ -127,7 +135,7 @@ final class CursorHider {
             guard event.cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker else { return }
             MainActor.assumeIsolated { self?.reveal() }
         }
-        // Global monitors exclude this app's own windows.
+        // Global monitors exclude this app's own windows, the cover too.
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
             if event.cgEvent?.getIntegerValueField(.eventSourceUserData) != SyntheticInput.marker {
                 MainActor.assumeIsolated { self?.reveal() }
@@ -138,11 +146,8 @@ final class CursorHider {
             reveal()
             return
         }
-        // Hidden before it moves, so it is never seen in the middle; the
-        // Dock lets go of it once the move is handled.
         PointerVisibility.hide()
-        let location = CGEvent(source: nil)?.location ?? .zero
-        PointerVisibility.postMove(to: PointerVisibility.centre(ofDisplayAt: location))
+        cover = CursorCover()
     }
 
     /// Shows the cursor again: local motion, a peer drives this Mac again,
@@ -153,6 +158,117 @@ final class CursorHider {
         if let localMonitor { NSEvent.removeMonitor(localMonitor) }
         self.monitor = nil
         self.localMonitor = nil
+        cover?.remove()
+        cover = nil
         PointerVisibility.show()
     }
+}
+
+/// A speck of a window under the cursor, above the Dock, whose cursor is
+/// transparent. Once the window server routes the pointer to it (a posted
+/// move where the cursor already is), the Dock no longer owns the cursor:
+/// the hide, renewed then, holds, and the glyph is blank should it not.
+/// Almost transparent rather than clear: clear windows let the pointer
+/// through. It never takes focus.
+@MainActor
+private final class CursorCover {
+    private let panel: NSPanel
+
+    init() {
+        let at = NSEvent.mouseLocation
+        let size = 16.0
+        panel = CoverPanel(
+            contentRect: NSRect(x: at.x - size / 2, y: at.y - size / 2, width: size, height: size),
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.isOpaque = false
+        panel.backgroundColor = NSColor(white: 0, alpha: 0.01)
+        panel.hasShadow = false
+        panel.ignoresMouseEvents = false
+        panel.hidesOnDeactivate = false
+        panel.canHide = false
+        panel.isReleasedWhenClosed = false
+        panel.level = .popUpMenu
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
+        panel.contentView = CoverView(frame: NSRect(x: 0, y: 0, width: size, height: size))
+        // A background app's window sets the cursor only with this tag.
+        if let connection = Self.connection, let setTags = Self.setTags {
+            let tags: [UInt32] = [1 << 5, 0] // kCGSSetsCursorInBackgroundTagBit
+            let result = setTags(connection(), UInt32(panel.windowNumber), tags, 64)
+            Self.log.info("cover tags result=\(result)")
+        }
+        panel.orderFrontRegardless()
+        take(since: .now())
+    }
+
+    func remove() {
+        panel.orderOut(nil)
+        // Left on our blank glyph, the cursor would stay invisible until an
+        // app under it sets its own.
+        if NSCursor.current === CoverView.blank {
+            NSCursor.arrow.set()
+        }
+    }
+
+    /// Once the window server puts the cover under the cursor, a posted move
+    /// there makes it the cursor's owner; then the hide is renewed.
+    private func take(since start: DispatchTime) {
+        guard panel.isVisible else { return }
+        let hit = NSWindow.windowNumber(at: NSEvent.mouseLocation, belowWindowWithWindowNumber: 0)
+        guard hit == panel.windowNumber else {
+            // Never under it (the cursor moved meanwhile): hidden as it is.
+            guard DispatchTime.now() < start + .milliseconds(250) else {
+                Self.log.info("cover never under the cursor (hit \(hit))")
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2)) { [weak self] in
+                self?.take(since: start)
+            }
+            return
+        }
+        Self.log.info("cover under the cursor after \((DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000) ms")
+        PointerVisibility.postMove(to: CGEvent(source: nil)?.location ?? .zero)
+        DispatchQueue.main.asyncAfter(deadline: .now() + PointerVisibility.settle) { [weak self] in
+            guard let self, self.panel.isVisible else { return }
+            CoverView.blank.set()
+            PointerVisibility.renew()
+        }
+    }
+
+    private static let log = Logger(subsystem: "com.rinflow.mac", category: "cursor")
+    private typealias Connection = @convention(c) () -> Int32
+    private typealias SetTags = @convention(c) (Int32, UInt32, UnsafePointer<UInt32>, Int) -> Int32
+    private static let connection = PointerVisibility.symbol("_CGSDefaultConnection", as: Connection.self)
+    private static let setTags = PointerVisibility.symbol("CGSSetWindowTags", as: SetTags.self)
+}
+
+private final class CoverPanel: NSPanel {
+    override var canBecomeKey: Bool { false }
+    override var canBecomeMain: Bool { false }
+}
+
+private final class CoverView: NSView {
+    static let blank = NSCursor(
+        image: NSImage(size: NSSize(width: 16, height: 16), flipped: false) { _ in true },
+        hotSpot: .zero
+    )
+
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        addTrackingArea(NSTrackingArea(
+            rect: .zero,
+            options: [.mouseEnteredAndExited, .mouseMoved, .cursorUpdate, .activeAlways, .inVisibleRect],
+            owner: self
+        ))
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { nil }
+
+    override func resetCursorRects() { addCursorRect(bounds, cursor: Self.blank) }
+    override func cursorUpdate(with event: NSEvent) { Self.blank.set() }
+    override func mouseEntered(with event: NSEvent) { Self.blank.set() }
+    override func mouseMoved(with event: NSEvent) { Self.blank.set() }
 }
