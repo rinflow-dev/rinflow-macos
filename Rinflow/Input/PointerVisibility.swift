@@ -103,9 +103,9 @@ enum PointerVisibility {
 ///
 /// The pointer left through an edge, where the Dock, a hot corner or a
 /// full-screen menu bar may be, and the Dock keeps the cursor visible. So
-/// the cursor waits hidden in the middle of its display, as while this Mac
-/// drives a peer (`InputBridge.park`), and comes back there. A peer that
-/// drives this Mac again places it itself.
+/// the cursor is hidden, then moved to the middle of its display, off the
+/// Dock, and comes back there. A peer that drives this Mac again places it
+/// itself.
 ///
 /// `NSCursor.setHiddenUntilMouseMoves` only works while this app is in
 /// front, so the hide uses `PointerVisibility` (which works in the
@@ -138,13 +138,11 @@ final class CursorHider {
             reveal()
             return
         }
+        // Hidden before it moves, so it is never seen in the middle; the
+        // Dock lets go of it once the move is handled.
+        PointerVisibility.hide()
         let location = CGEvent(source: nil)?.location ?? .zero
         PointerVisibility.postMove(to: PointerVisibility.centre(ofDisplayAt: location))
-        DispatchQueue.main.asyncAfter(deadline: .now() + PointerVisibility.settle) { [weak self] in
-            // Shown meanwhile: a hide now would outlast it.
-            guard self?.isHiding == true else { return }
-            PointerVisibility.hide()
-        }
     }
 
     /// Shows the cursor again: local motion, a peer drives this Mac again,
