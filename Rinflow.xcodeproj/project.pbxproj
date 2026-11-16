@@ -553,7 +553,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
 				PRODUCT_NAME = Rinflow;
 				SDKROOT = macosx;
-				SPARKLE_PUBLIC_KEY = "";
+				SPARKLE_PUBLIC_KEY = "U/AAXXL5iNc9TETSwFgX0wK9/BVIx3bsq16djMqWek0=";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -636,7 +636,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rinflow.mac;
 				PRODUCT_NAME = Rinflow;
 				SDKROOT = macosx;
-				SPARKLE_PUBLIC_KEY = "";
+				SPARKLE_PUBLIC_KEY = "U/AAXXL5iNc9TETSwFgX0wK9/BVIx3bsq16djMqWek0=";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rinflow/Bridging/Rinflow-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;

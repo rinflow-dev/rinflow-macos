@@ -57,10 +57,10 @@ Updates are signed with an EdDSA key. Create it once, on the Mac that releases:
 
 ```sh
 make build   # fetches Sparkle and its tools
-DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys
+DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys --account rinflow
 ```
 
-It stores the private key in the login keychain and prints the public key: put that in `SPARKLE_PUBLIC_KEY` in `scripts/generate-xcodeproj.rb` and regenerate the project. For CI, export the private key (`generate_keys -x sparkle-private-key`), store the file's contents as the `SPARKLE_PRIVATE_KEY` secret, and delete the file. Back the key up: an app that has it can only be updated by updates it signed. Without the public key the app never checks, and `make release` fails.
+It stores the private key in the login keychain, under its own account so it is not confused with another product's key, and prints the public key: put that in `SPARKLE_PUBLIC_KEY` in `scripts/generate-xcodeproj.rb` and regenerate the project. For CI, export the private key (`generate_keys --account rinflow -x sparkle-private-key`), store the file's contents as the `SPARKLE_PRIVATE_KEY` secret, and delete the file. Back the key up: an app that has it can only be updated by updates it signed. Without the public key the app never checks, and `make release` fails.
 
 Sparkle also installs an update only if it is signed by the same Developer ID, which keeps the Accessibility permission, bound to that signature.
 

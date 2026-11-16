@@ -92,9 +92,10 @@ target.build_configurations.each do |configuration|
   settings['PRODUCT_NAME'] = 'Rinflow'
   settings['MARKETING_VERSION'] = '0.0.1'
   # The public half of the EdDSA key that signs updates (Sparkle's
-  # generate_keys; the private half stays in the release keychain and the
-  # SPARKLE_PRIVATE_KEY secret). Empty: the app never looks for updates.
-  settings['SPARKLE_PUBLIC_KEY'] = ''
+  # `generate_keys --account rinflow`; the private half stays in the release
+  # keychain and the SPARKLE_PRIVATE_KEY secret). Empty: the app never looks
+  # for updates.
+  settings['SPARKLE_PUBLIC_KEY'] = 'U/AAXXL5iNc9TETSwFgX0wK9/BVIx3bsq16djMqWek0='
   settings['CURRENT_PROJECT_VERSION'] = '1'
   settings['INFOPLIST_FILE'] = 'Rinflow/Resources/Info.plist'
   settings['SWIFT_OBJC_BRIDGING_HEADER'] = 'Rinflow/Bridging/Rinflow-Bridging-Header.h'

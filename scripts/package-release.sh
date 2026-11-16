@@ -174,7 +174,8 @@ feed() {
     if [ -n "${SPARKLE_PRIVATE_KEY:-}" ]; then
         printf '%s' "$SPARKLE_PRIVATE_KEY" | "$@" --ed-key-file -
     else
-        "$@"
+        # The keychain may hold other products' keys: only Rinflow's.
+        "$@" --account rinflow
     fi
     rm -rf "$work/feed"
     grep -q 'sparkle:edSignature=' "$feedFile" || fail "$feedFile is not signed"
