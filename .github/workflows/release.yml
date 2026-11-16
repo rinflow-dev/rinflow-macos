@@ -123,7 +123,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      # The whole history and the tags: the notes are the commits since the
+      # previous release.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/download-artifact@v4
         with:
@@ -132,17 +136,7 @@ jobs:
 
       - name: Write the release notes
         run: |
-          version="${GITHUB_REF_NAME#v}"
-          # The version's section of the changelog, without its heading.
-          awk -v v="$version" '
-            index($0, "## [" v "]") == 1 { on = 1; next }
-            on && /^## \[/ { exit }
-            on { print }
-          ' CHANGELOG.md > notes.md
-          if ! grep -q '[^[:space:]]' notes.md; then
-            echo "CHANGELOG.md has no section for $version" >&2
-            exit 1
-          fi
+          scripts/release-notes.sh "$GITHUB_REF_NAME" > notes.md
           {
             echo
             echo '### Downloads'

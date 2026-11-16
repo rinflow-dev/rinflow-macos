@@ -13,7 +13,7 @@ Rinflow は、ローカルネットワーク上の複数のコンピューター
   </picture>
 </p>
 
-**状態：** 開発初期の段階です。既知の問題は[変更履歴](CHANGELOG.md)をご覧ください。
+**状態：** 開発初期の段階です。各バージョンの変更点は[リリースノート](https://github.com/rinflow-dev/rinflow-macos/releases)をご覧ください。
 
 ## ダウンロード
 

@@ -13,7 +13,7 @@ This is the macOS client. It works with the [Windows client](https://github.com/
   </picture>
 </p>
 
-**Status:** early development. Known issues are listed in the [changelog](CHANGELOG.md).
+**Status:** early development. What each version changed is in its [release notes](https://github.com/rinflow-dev/rinflow-macos/releases).
 
 ## Download
 

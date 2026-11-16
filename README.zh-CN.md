@@ -13,7 +13,7 @@ Rinflow 让局域网内的多台电脑共用一套键盘和鼠标：把指针移
   </picture>
 </p>
 
-**状态：** 早期开发阶段。已知问题见[变更日志](CHANGELOG.md)。
+**状态：** 早期开发阶段。每个版本的改动见[发布说明](https://github.com/rinflow-dev/rinflow-macos/releases)。
 
 ## 下载
 

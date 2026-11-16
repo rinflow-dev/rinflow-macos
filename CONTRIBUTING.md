@@ -22,7 +22,7 @@ If `rinflow-core/Cargo.lock` changes, regenerate `Rinflow/Resources/THIRD_PARTY_
 
 - Keep pull requests focused, and open an issue first for larger changes.
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for messages: `feat: ...`, `fix: ...`, `docs: ...`, `refactor: ...`, `test: ...`, `build: ...`, `ci: ...`, `chore: ...`.
-- Add user-visible changes to `CHANGELOG.md`.
+- Describe user-visible changes in the commit subject: the release notes are the commit subjects since the previous release (`scripts/release-notes.sh`).
 
 ## Protocol and ABI changes
 
