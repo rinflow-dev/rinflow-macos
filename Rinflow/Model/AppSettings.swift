@@ -20,7 +20,7 @@ struct AppSettings: Codable, Equatable, Sendable {
     /// `modifier_map`): Mac style by default, Ctrl as ⌘ so Ctrl+C copies.
     var modifierMap = ModifierMap.mac
     /// When a peer that drove this Mac moves its pointer away, the cursor is
-    /// hidden where it was left, until this Mac's own mouse moves.
+    /// hidden (in the middle of its display), until this Mac's own mouse moves.
     var hideCursorOnLeave = true
     /// ⌃⌥⇧ (or ⌃⌥) with an arrow key moves the pointer to the device on that side.
     var switchHotkeys = true

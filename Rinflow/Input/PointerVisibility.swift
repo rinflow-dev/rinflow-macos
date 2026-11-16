@@ -38,6 +38,45 @@ enum PointerVisibility {
         log.info("show result=\(result.rawValue)")
     }
 
+    /// Moves the cursor with a real (synthetic) mouse-moved event, so the
+    /// window server updates hover state along the way, unlike a warp.
+    /// Marked, so neither the event tap nor `CursorHider` takes it for this
+    /// Mac's own mouse.
+    ///
+    /// What lies under the cursor can keep it visible whatever this app
+    /// hides: the Dock does, once the pointer has crossed it (a peer below
+    /// the main display). So a hide goes after a posted move off the edge,
+    /// once the window server has handled it. Measured: warp then hide
+    /// leaves it visible; posted move, `settle`, then hide hides it.
+    static func postMove(to point: CGPoint) {
+        guard
+            let source = CGEventSource(stateID: .hidSystemState),
+            let event = CGEvent(
+                mouseEventSource: source,
+                mouseType: .mouseMoved,
+                mouseCursorPosition: point,
+                mouseButton: .left
+            )
+        else {
+            return
+        }
+        event.setIntegerValueField(.eventSourceUserData, value: SyntheticInput.marker)
+        event.post(tap: .cghidEventTap)
+    }
+
+    /// How long the window server takes to handle a posted move.
+    static let settle = DispatchTimeInterval.milliseconds(50)
+
+    static func centre(ofDisplayAt location: CGPoint) -> CGPoint {
+        var display: CGDirectDisplayID = 0
+        var count: UInt32 = 0
+        guard CGGetDisplaysWithPoint(location, 1, &display, &count) == .success, count > 0 else {
+            return location
+        }
+        let bounds = CGDisplayBounds(display)
+        return CGPoint(x: bounds.midX, y: bounds.midY)
+    }
+
     /// Set before every hide and show, as Deskflow does.
     private static func allowInBackground() -> Bool {
         guard let connection, let setProperty else { return false }
@@ -57,10 +96,16 @@ enum PointerVisibility {
     }
 }
 
-/// Hides the cursor where a peer's pointer left this Mac, until this Mac's
+/// Hides the cursor once a peer's pointer left this Mac, until this Mac's
 /// own mouse or trackpad moves (setting `hide_cursor_on_leave`): the cursor
 /// shows only on the device the pointer is on, as with Universal Control,
 /// Deskflow and Mouse Without Borders.
+///
+/// The pointer left through an edge, where the Dock, a hot corner or a
+/// full-screen menu bar may be, and the Dock keeps the cursor visible. So
+/// the cursor waits hidden in the middle of its display, as while this Mac
+/// drives a peer (`InputBridge.park`), and comes back there. A peer that
+/// drives this Mac again places it itself.
 ///
 /// `NSCursor.setHiddenUntilMouseMoves` only works while this app is in
 /// front, so the hide uses `PointerVisibility` (which works in the
@@ -93,7 +138,13 @@ final class CursorHider {
             reveal()
             return
         }
-        PointerVisibility.hide()
+        let location = CGEvent(source: nil)?.location ?? .zero
+        PointerVisibility.postMove(to: PointerVisibility.centre(ofDisplayAt: location))
+        DispatchQueue.main.asyncAfter(deadline: .now() + PointerVisibility.settle) { [weak self] in
+            // Shown meanwhile: a hide now would outlast it.
+            guard self?.isHiding == true else { return }
+            PointerVisibility.hide()
+        }
     }
 
     /// Shows the cursor again: local motion, a peer drives this Mac again,

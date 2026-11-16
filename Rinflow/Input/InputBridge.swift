@@ -405,23 +405,17 @@ final class InputBridge {
     }
 
     /// Parks the cursor in the middle of its display, out of the way of the
-    /// Dock, hot corners and full-screen menu bars, and hides it.
-    ///
-    /// The cursor is moved with a posted event, not a warp, and hidden only
-    /// once the window server has handled that move. A warp updates no hover
-    /// state: when the pointer left through an edge it crossed the Dock on
-    /// (a peer below the main display), the Dock keeps owning the cursor and
-    /// keeps it visible, whatever this app hides. Measured: warp then hide
-    /// leaves it visible; posted move, 50 ms, then hide hides it.
+    /// Dock, hot corners and full-screen menu bars, and hides it once the
+    /// window server has handled the move (`PointerVisibility.postMove`).
     private func park(from location: CGPoint) {
         guard pointer != nil else { return }
-        let centre = Self.centre(ofDisplayAt: location)
-        Self.postMove(to: centre)
+        let centre = PointerVisibility.centre(ofDisplayAt: location)
+        PointerVisibility.postMove(to: centre)
         pendingWarp = (
             CGVector(dx: centre.x - location.x, dy: centre.y - location.y),
             .now() + .milliseconds(350)
         )
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + PointerVisibility.settle) { [weak self] in
             guard let self, self.pointer != nil else { return }
             PointerVisibility.hide()
             // Dissociating freezes the cursor while it keeps reporting
@@ -473,7 +467,7 @@ final class InputBridge {
             // bottom edge) and shows it. After a warp it sometimes stayed
             // hidden. Posted events keep their order, so a park still in
             // flight lands first.
-            Self.postMove(to: location)
+            PointerVisibility.postMove(to: location)
             Self.log.info("return local=(\(location.x), \(location.y))")
         } else {
             Self.log.info("control taken over; the new controller places the cursor")
@@ -634,37 +628,8 @@ final class InputBridge {
         }
     }
 
-    /// Moves the cursor with a real (synthetic) mouse-moved event, so the
-    /// window server updates hover state along the way, unlike a warp.
-    /// Marked, so this tap lets it through.
-    private static func postMove(to point: CGPoint) {
-        guard
-            let source = CGEventSource(stateID: .hidSystemState),
-            let event = CGEvent(
-                mouseEventSource: source,
-                mouseType: .mouseMoved,
-                mouseCursorPosition: point,
-                mouseButton: .left
-            )
-        else {
-            return
-        }
-        event.setIntegerValueField(.eventSourceUserData, value: SyntheticInput.marker)
-        event.post(tap: .cghidEventTap)
-    }
-
     private static var cursorLocation: CGPoint {
         CGEvent(source: nil)?.location ?? .zero
-    }
-
-    private static func centre(ofDisplayAt location: CGPoint) -> CGPoint {
-        var display: CGDirectDisplayID = 0
-        var count: UInt32 = 0
-        guard CGGetDisplaysWithPoint(location, 1, &display, &count) == .success, count > 0 else {
-            return location
-        }
-        let bounds = CGDisplayBounds(display)
-        return CGPoint(x: bounds.midX, y: bounds.midY)
     }
 
     /// Whether the modifier key of a flagsChanged event is down afterwards,
