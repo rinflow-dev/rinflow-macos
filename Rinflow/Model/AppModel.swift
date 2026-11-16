@@ -19,6 +19,8 @@ final class AppModel: RustCoreDelegate {
     /// The peer this Mac's keyboard and mouse currently drive.
     private(set) var controlledPeerID: String?
     private(set) var hasAccessibilityPermission = false
+    /// Whether peers' files are pasted on demand; off, they are fetched whole first.
+    private(set) var filesExtension: FilesExtension = .unknown
     private(set) var lastError: String?
     /// Files on their way, either way.
     private(set) var transfers: [FileTransfer] = []
@@ -116,6 +118,9 @@ final class AppModel: RustCoreDelegate {
         }
         remoteFiles.confirm = { [weak self] clip, answer in
             self?.askToFetchFiles(clip, answer: answer)
+        }
+        remoteFiles.extensionChanged = { [weak self] state in
+            self?.filesExtension = state
         }
         inputBridge.willEnter = { [weak self] in
             // The cursor a peer left hidden here is this capture's to hide now.
@@ -226,6 +231,7 @@ final class AppModel: RustCoreDelegate {
         }
         remoteFiles.start()
         remoteFiles.setSource(core.leases)
+        remoteFiles.refreshExtension()
         migrateLegacyPlacements()
         dropUnknownPlacements()
         core.setRemoteControlAllowed(settings.sharing && inputBridge.hasAccessibilityPermission)
@@ -445,6 +451,16 @@ final class AppModel: RustCoreDelegate {
     func requestPermission() {
         inputBridge.requestAccessibilityPermission()
         refreshPermission()
+    }
+
+    /// Checks whether the File Provider extension is on (throttled).
+    func refreshFilesExtension() {
+        guard !stopped else { return }
+        remoteFiles.refreshExtension()
+    }
+
+    func enableFilesExtension() {
+        remoteFiles.openExtensionSettings()
     }
 
     func refreshPermission() {
@@ -781,7 +797,9 @@ final class AppModel: RustCoreDelegate {
         pairing.show(
             id: "file-clip-\(clip.id)",
             title: String(localized: "\(name(of: clip.peer)) 复制了 \(count) 个文件"),
-            message: String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。"),
+            message: filesExtension == .disabled
+                ? String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。在设置中启用 Rinflow 文件扩展后，文件会在粘贴时才传输。")
+                : String(localized: "共 \(ByteCountFormatter.string(fromByteCount: Int64(clamping: clip.totalSize), countStyle: .file))，需要先下载到这台 Mac 才能粘贴。"),
             accept: String(localized: "下载")
         ) { [weak self] accepted in
             answer(accepted && self?.settings.clipboard == true)

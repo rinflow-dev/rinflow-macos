@@ -81,11 +81,14 @@ struct ContentView: View {
         }
         .onAppear {
             model.refreshPermission()
+            model.refreshFilesExtension()
             showingPermissionGuide = !model.hasAccessibilityPermission || model.settings.diagnostics == nil
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 model.refreshPermission()
+                // The user may have just turned the extension on.
+                model.refreshFilesExtension()
             }
         }
     }

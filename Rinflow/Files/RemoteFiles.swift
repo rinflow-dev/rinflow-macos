@@ -2,8 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-import Foundation
+import AppKit
 import OSLog
+import ServiceManagement
+
+/// Whether copies can be pasted on demand: the extension is on (the
+/// default), the user turned it off in System Settings, or this build has
+/// no App Group or helper.
+enum FilesExtension: Equatable, Sendable {
+    case unknown, enabled, disabled, unavailable
+}
 
 /// A peer's copied files on this Mac's pasteboard, fetched when pasted.
 ///
@@ -25,6 +33,10 @@ final class RemoteFiles {
     /// Asks the user to fetch a large copy (count, bytes, peer); answers on
     /// the main thread.
     var confirm: ((Clip, @escaping (Bool) -> Void) -> Void)?
+    /// The extension's state, when it is learned or changes.
+    var extensionChanged: ((FilesExtension) -> Void)?
+    private var checking = false
+    private var checked = Date.distantPast
 
     private let clipboard: ClipboardBridge
     private let container = FilesGroup.container
@@ -65,6 +77,40 @@ final class RemoteFiles {
 
     func stop() {
         server?.stop()
+    }
+
+    /// Learns whether the extension is on, at most every few seconds.
+    func refreshExtension() {
+        guard container != nil, server != nil else {
+            extensionChanged?(.unavailable)
+            return
+        }
+        guard !checking, Date().timeIntervalSince(checked) > 3 else { return }
+        checking = true
+        Self.helper(["status"]) { [weak self] status, _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.checking = false
+                self.checked = Date()
+                self.extensionChanged?(status == 0 ? .enabled : status == 3 ? .disabled : .unavailable)
+            }
+        }
+    }
+
+    /// Where the user turns the extension on: its folder in Finder, which
+    /// offers to, or else System Settings › General › Login Items &
+    /// Extensions. Checked again when the user comes back to Rinflow.
+    func openExtensionSettings() {
+        Self.helper(["root"]) { status, output in
+            let path = output.trimmingCharacters(in: .whitespacesAndNewlines)
+            MainActor.assumeIsolated {
+                if status == 0, !path.isEmpty, NSWorkspace.shared.open(URL(filePath: path, directoryHint: .isDirectory)) {
+                    return
+                }
+                SMAppService.openSystemSettingsLoginItems()
+            }
+        }
+        checked = .distantPast
     }
 
     /// The core's `files_available`.
@@ -159,6 +205,7 @@ final class RemoteFiles {
                 guard let self, self.current?.id == clip.id else { return }
                 guard status == 0 else {
                     Self.log.notice("placeholders not made (\(status)), fetching instead")
+                    if status == 3 { self.extensionChanged?(.disabled) }
                     ClipStore.remove(clip.id, in: container)
                     return self.fetchLocally(clip, hold: hold)
                 }

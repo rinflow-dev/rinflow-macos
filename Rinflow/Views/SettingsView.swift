@@ -39,7 +39,10 @@ struct SettingsView: View {
                 .tabItem { Label("锁屏", systemImage: "lock") }
                 .tag(Page.lock)
         }
-        .onAppear(perform: model.refreshPermission)
+        .onAppear {
+            model.refreshPermission()
+            model.refreshFilesExtension()
+        }
     }
 
     private var general: some View {
@@ -56,7 +59,15 @@ struct SettingsView: View {
                 }
                 Toggle(isOn: setting(\.clipboard)) {
                     Text("同步剪贴板与文件")
-                    Text("文字、图片（最大 8 MB）和文件。超过 512 MB 的文件会先询问。")
+                    Text("文字、图片（最大 8 MB）和文件。其他设备复制的文件在粘贴时才传输。")
+                }
+                if model.settings.clipboard, model.filesExtension == .disabled {
+                    LabeledContent {
+                        Button("启用…", action: model.enableFilesExtension)
+                    } label: {
+                        Text("Rinflow 文件扩展已关闭")
+                        Text("其他设备复制的文件要先完整下载才能粘贴，超过 512 MB 会先询问。")
+                    }
                 }
             }
             Section("安全") {

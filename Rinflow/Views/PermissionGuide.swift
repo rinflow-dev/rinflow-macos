@@ -63,6 +63,18 @@ struct PermissionGuide: View {
                         detail: "用来发现局域网中的设备，macOS 询问时请点“允许”。"
                     ) {}
                 }
+                // Only when the user turned it off: on is the default.
+                if model.filesExtension == .disabled {
+                    Divider()
+                    step(
+                        symbol: "doc.on.clipboard",
+                        tint: .orange,
+                        title: "粘贴其他设备的文件",
+                        detail: "启用 Rinflow 文件扩展后，其他设备复制的文件在粘贴时才传输，不必先完整下载。"
+                    ) {
+                        Button("启用…", action: model.enableFilesExtension)
+                    }
+                }
                 Divider()
                 step(
                     symbol: "chart.bar.xaxis",
