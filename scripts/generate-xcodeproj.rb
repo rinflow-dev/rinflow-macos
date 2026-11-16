@@ -152,12 +152,15 @@ test_target.build_configurations.each do |configuration|
   settings['ONLY_ACTIVE_ARCH'] = 'YES'
 end
 
+# IDs derived from each object's place in the project, not random: the
+# same input generates the same file, so regenerating shows only real changes.
+project.predictabilize_uuids
+# After the IDs are settled: the scheme refers to the targets by theirs.
 scheme = Xcodeproj::XCScheme.new
 scheme.add_build_target(target)
 scheme.add_test_target(test_target)
 scheme.set_launch_target(target)
 scheme.save_as(project_path, 'Rinflow', true)
-
 project.save
 # The workspace Xcode and xcodebuild use for the packages; rm_rf took it.
 FileUtils.mkdir_p(File.join(project_path, 'project.xcworkspace'))
