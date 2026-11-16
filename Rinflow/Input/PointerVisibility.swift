@@ -53,9 +53,7 @@ enum PointerVisibility {
     ///
     /// What lies under the cursor can keep it visible whatever this app
     /// hides: the Dock does, once the pointer has crossed it (a peer below
-    /// the main display). So a hide goes after a posted move off the edge,
-    /// once the window server has handled it. Measured: warp then hide
-    /// leaves it visible; posted move, `settle`, then hide hides it.
+    /// the main display). `CursorCover` takes it from there.
     static func postMove(to point: CGPoint) {
         guard
             let source = CGEventSource(stateID: .hidSystemState),
@@ -171,21 +169,30 @@ final class CursorHider {
     }
 }
 
-/// A speck of a window under the cursor, above the Dock, whose cursor is
-/// transparent. Once the window server routes the pointer to it (a posted
-/// move where the cursor already is), the Dock no longer owns the cursor:
-/// the hide, renewed then, holds, and the glyph is blank should it not.
-/// Almost transparent rather than clear: clear windows let the pointer
-/// through. It never takes focus.
+/// A window above the Dock over where the cursor is (and, for a capture,
+/// where it goes next), whose cursor is transparent. Once the window server
+/// routes the pointer to it (a posted move where the cursor already is), the
+/// Dock no longer owns the cursor: the hide, renewed then, holds, and the
+/// glyph is blank should it not. Then `owned` runs: a move within the cover
+/// stays unseen. Almost transparent rather than clear: clear windows let the
+/// pointer through. It never takes focus. Same design as oink's cursor owner.
 @MainActor
-private final class CursorCover {
+final class CursorCover {
     private let panel: NSPanel
+    private let owned: () -> Void
 
-    init() {
-        let at = NSEvent.mouseLocation
-        let size = 16.0
+    /// Over the cursor and `points` (global display coordinates, as CGEvent).
+    init(over points: [CGPoint] = [], owned: @escaping () -> Void = {}) {
+        self.owned = owned
+        // To AppKit's coordinates, which start at the main display's bottom.
+        let height = CGDisplayBounds(CGMainDisplayID()).height
+        let corners = [NSEvent.mouseLocation] + points.map { NSPoint(x: $0.x, y: height - $0.y) }
+        let margin = 8.0
+        let minX = corners.map(\.x).min()! - margin, maxX = corners.map(\.x).max()! + margin
+        let minY = corners.map(\.y).min()! - margin, maxY = corners.map(\.y).max()! + margin
+        let frame = NSRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
         panel = CoverPanel(
-            contentRect: NSRect(x: at.x - size / 2, y: at.y - size / 2, width: size, height: size),
+            contentRect: frame,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -199,12 +206,11 @@ private final class CursorCover {
         panel.isReleasedWhenClosed = false
         panel.level = .popUpMenu
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
-        panel.contentView = CoverView(frame: NSRect(x: 0, y: 0, width: size, height: size))
+        panel.contentView = CoverView(frame: NSRect(origin: .zero, size: frame.size))
         // A background app's window sets the cursor only with this tag.
         if let connection = Self.connection, let setTags = Self.setTags {
             let tags: [UInt32] = [1 << 5, 0] // kCGSSetsCursorInBackgroundTagBit
-            let result = setTags(connection(), UInt32(panel.windowNumber), tags, 64)
-            Self.log.info("cover tags result=\(result)")
+            _ = setTags(connection(), UInt32(panel.windowNumber), tags, 64)
         }
         panel.orderFrontRegardless()
         take(since: .now())
@@ -228,6 +234,7 @@ private final class CursorCover {
             // Never under it (the cursor moved meanwhile): hidden as it is.
             guard DispatchTime.now() < start + .milliseconds(250) else {
                 Self.log.info("cover never under the cursor (hit \(hit))")
+                owned()
                 return
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2)) { [weak self] in
@@ -241,6 +248,7 @@ private final class CursorCover {
             guard let self, self.panel.isVisible else { return }
             CoverView.blank.set()
             PointerVisibility.renew()
+            self.owned()
         }
     }
 

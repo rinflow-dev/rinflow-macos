@@ -77,6 +77,8 @@ final class InputBridge {
     /// carries (SDL's Cocoa backend compensates the same way). Not every
     /// first motion carries it, so it is only taken out of one that does.
     private var pendingWarp: (jump: CGVector, deadline: DispatchTime)?
+    /// Holds the parked cursor while `pointer` is active.
+    private var cover: CursorCover?
     private var hasRequestedAccessibilityPrompt = false
     private var crossingGate = CrossingGate()
     private var switchDelay = 0.15
@@ -410,21 +412,24 @@ final class InputBridge {
     }
 
     /// Parks the cursor in the middle of its display, out of the way of the
-    /// Dock, hot corners and full-screen menu bars, and hides it once the
-    /// window server has handled the move (`PointerVisibility.postMove`).
+    /// Dock, hot corners and full-screen menu bars, unseen: hidden and
+    /// frozen where it crossed, then, once a `CursorCover` over both points
+    /// holds it, moved there with a posted event (a warp updates no hover
+    /// state, and the Dock would keep owning it). It stays frozen there, and
+    /// the motion keeps reporting deltas.
     private func park(from location: CGPoint) {
         guard pointer != nil else { return }
         let centre = PointerVisibility.centre(ofDisplayAt: location)
-        PointerVisibility.postMove(to: centre)
-        pendingWarp = (
-            CGVector(dx: centre.x - location.x, dy: centre.y - location.y),
-            .now() + .milliseconds(350)
-        )
-        DispatchQueue.main.asyncAfter(deadline: .now() + PointerVisibility.settle) { [weak self] in
+        PointerVisibility.hide()
+        // Dissociating must follow a hide, which re-associates.
+        CGAssociateMouseAndMouseCursorPosition(0)
+        cover = CursorCover(over: [centre]) { [weak self] in
             guard let self, self.pointer != nil else { return }
-            PointerVisibility.hide()
-            // Dissociating freezes the cursor while it keeps reporting
-            // deltas; it must follow the hide, which re-associates it.
+            PointerVisibility.postMove(to: centre)
+            self.pendingWarp = (
+                CGVector(dx: centre.x - location.x, dy: centre.y - location.y),
+                .now() + .milliseconds(350)
+            )
             CGAssociateMouseAndMouseCursorPosition(1)
             CGAssociateMouseAndMouseCursorPosition(0)
         }
@@ -464,6 +469,8 @@ final class InputBridge {
         localKeys.removeAll()
         pressedModifierUsages.removeAll(keepingCapacity: true)
         CGAssociateMouseAndMouseCursorPosition(1)
+        cover?.remove()
+        cover = nil
         PointerVisibility.show()
         if location != nil {
             crossingGate.returned(at: Self.now)
