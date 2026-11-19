@@ -15,6 +15,7 @@ final class PairingPrompt: NSObject, NSWindowDelegate {
     }
     private var pending: [Request] = []
     private var active: Request?
+    private var attention = 0
 
     func ask(peerID: String, name: String, code: String, answer: @escaping (Bool) -> Void) {
         show(
@@ -66,10 +67,22 @@ final class PairingPrompt: NSObject, NSWindowDelegate {
         let request = pending.removeFirst()
         active = request
         request.alert.layout()
-        request.alert.window.delegate = self
-        request.alert.window.center()
-        request.alert.window.makeKeyAndOrderFront(nil)
+        let window = request.alert.window
+        window.delegate = self
+        // The request comes from another device, so Rinflow is rarely the
+        // active app, and the system may refuse `activate()`: a normal
+        // window would then open beneath the active app's windows and the
+        // peer would wait for an answer nobody sees. Above other windows,
+        // on every Space and over full-screen apps, it shows regardless.
+        window.level = .modalPanel
+        window.collectionBehavior.formUnion([.canJoinAllSpaces, .fullScreenAuxiliary])
+        window.center()
         NSApp.activate()
+        window.makeKeyAndOrderFront(nil)
+        window.orderFrontRegardless()
+        // The user may be at the other device: bounce the Dock icon until
+        // this Mac gets their attention.
+        attention = NSApp.requestUserAttention(.criticalRequest)
     }
 
     @objc private func answerPrompt(_ button: NSButton) {
@@ -84,6 +97,7 @@ final class PairingPrompt: NSObject, NSWindowDelegate {
     private func finish(answer: Bool?) {
         guard let request = active else { return }
         active = nil
+        NSApp.cancelUserAttentionRequest(attention)
         request.alert.window.delegate = nil
         request.alert.window.orderOut(nil)
         if let answer { request.answer(answer) }

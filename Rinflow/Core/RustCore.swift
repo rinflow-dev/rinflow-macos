@@ -369,9 +369,10 @@ final class RustCore {
             // numbers), or the discovery socket made anew (a reason and the
             // system's error): `make log` shows when and why.
             log.notice("\(event.event, privacy: .public): \(eventJSON, privacy: .public)")
-        case "peer_up", "peer_down", "connected", "disconnected":
-            // When a device came and went, and why: its ID and the reason
-            // code, nothing it sent.
+        case "peer_up", "peer_down", "connected", "disconnected",
+             "pairing_requested", "paired", "pairing_ended", "unpaired":
+            // When a device came and went or paired, and why: its ID and the
+            // reason code, nothing it sent (never the pairing code).
             let peer = event.peer?.id ?? event.peerID ?? ""
             log.notice("\(event.event, privacy: .public) \(peer, privacy: .public) \(event.reasonCode?.rawValue ?? "", privacy: .public)")
         default:
