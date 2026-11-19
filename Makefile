@@ -54,9 +54,13 @@ endif
 # xcodebuild leaves merging them into the catalog to the Xcode app, so do it here.
 STRINGSDATA := $(DERIVED)/Build/Intermediates.noindex/Rinflow.build/$(CONFIG)/Rinflow.build/Objects-normal
 
+# Only lists whose source file exists: DerivedData keeps those of files that
+# another branch built, and their strings do not belong in this catalog.
 i18n: build
 	xcrun xcstringstool sync Rinflow/Resources/Localizable.xcstrings \
-		$$(find "$(STRINGSDATA)" -name '*.stringsdata' | sed 's/^/--stringsdata /')
+		$$(find "$(STRINGSDATA)" -name '*.stringsdata' | while read -r data; do \
+			[ -f "$$(plutil -extract source raw -o - "$$data")" ] && echo "--stringsdata $$data"; \
+		done)
 	scripts/source-strings.py Rinflow/Resources/*.xcstrings
 
 test: i18n

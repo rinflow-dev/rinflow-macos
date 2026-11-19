@@ -1,66 +1,6 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
-    "%@ — %@ · %lld 帧/秒 · %@ Mbit/s" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ — %2$@ · %3$lld 帧/秒 · %4$@ Mbit/s"
-          }
-        }
-      }
-    },
-    "%@ — 无法显示画面：%@" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ — 无法显示画面：%2$@"
-          }
-        }
-      }
-    },
-    "%@ — 正在等待画面…" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ — 正在等待画面…"
-          }
-        }
-      }
-    },
-    "%@ — 正在连接…" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ — 正在连接…"
-          }
-        }
-      }
-    },
-    "%@ — 画面已中断" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ — 画面已中断"
-          }
-        }
-      }
-    },
-    "%@ 在电脑上显示为" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 在电脑上显示为"
-          }
-        }
-      }
-    },
     "%@ 复制了 %lld 个文件" : {
       "localizations" : {
         "en" : {
@@ -462,26 +402,6 @@
         }
       }
     },
-    "产品 ID" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "产品 ID"
-          }
-        }
-      }
-    },
-    "产品名称" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "产品名称"
-          }
-        }
-      }
-    },
     "仅允许已配对的设备" : {
       "localizations" : {
         "en" : {
@@ -856,16 +776,6 @@
         }
       }
     },
-    "共享麦克风" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "共享麦克风"
-          }
-        }
-      }
-    },
     "关闭" : {
       "localizations" : {
         "en" : {
@@ -1016,26 +926,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "匿名发送断线原因和连接质量统计，不含设备信息或输入内容。"
-          }
-        }
-      }
-    },
-    "厂商 ID" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "厂商 ID"
-          }
-        }
-      }
-    },
-    "厂商名称" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "厂商名称"
           }
         }
       }
@@ -1788,16 +1678,6 @@
         }
       }
     },
-    "已静音，点按播放这台电脑的声音" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已静音，点按播放这台电脑的声音"
-          }
-        }
-      }
-    },
     "帮助改进 Rinflow" : {
       "localizations" : {
         "en" : {
@@ -1816,36 +1696,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "帮助改进 Rinflow"
-          }
-        }
-      }
-    },
-    "序列号" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "序列号"
-          }
-        }
-      }
-    },
-    "应用" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "应用"
-          }
-        }
-      }
-    },
-    "应用后，电脑会把这台 KVM 当作重新插入的设备，键盘和鼠标会中断约一秒。" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "应用后，电脑会把这台 KVM 当作重新插入的设备，键盘和鼠标会中断约一秒。"
           }
         }
       }
@@ -1916,16 +1766,6 @@
         }
       }
     },
-    "打开 Rinflow 主窗口" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开 Rinflow 主窗口"
-          }
-        }
-      }
-    },
     "打开主窗口" : {
       "localizations" : {
         "en" : {
@@ -1988,16 +1828,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "把设备拖到屏幕旁边即可切换"
-          }
-        }
-      }
-    },
-    "把麦克风共享给这台电脑" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "把麦克风共享给这台电脑"
           }
         }
       }
@@ -2350,16 +2180,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接收文件失败：%@"
-          }
-        }
-      }
-    },
-    "播放声音" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "播放声音"
           }
         }
       }
@@ -3244,16 +3064,6 @@
         }
       }
     },
-    "正在把麦克风共享给这台电脑，点按停止" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在把麦克风共享给这台电脑，点按停止"
-          }
-        }
-      }
-    },
     "正在控制 %@" : {
       "localizations" : {
         "en" : {
@@ -3272,16 +3082,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在控制 %@"
-          }
-        }
-      }
-    },
-    "正在播放这台电脑的声音，点按静音" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在播放这台电脑的声音，点按静音"
           }
         }
       }
@@ -4342,36 +4142,6 @@
         }
       }
     },
-    "这台 KVM 没有回应" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这台 KVM 没有回应"
-          }
-        }
-      }
-    },
-    "这台 KVM 没有接受这些设置" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这台 KVM 没有接受这些设置"
-          }
-        }
-      }
-    },
-    "这台 KVM 自带的序列号" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这台 KVM 自带的序列号"
-          }
-        }
-      }
-    },
     "这台设备已不在网络上。" : {
       "localizations" : {
         "en" : {
@@ -4874,16 +4644,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "靠近屏幕角落时不切换。"
-          }
-        }
-      }
-    },
-    "预设" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "预设"
           }
         }
       }
