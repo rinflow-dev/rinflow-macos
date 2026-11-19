@@ -8,6 +8,24 @@ import XCTest
 /// The arrangement geometry, against the same cases as the Windows agent's
 /// `arrangement.rs` and the core's `layout.rs`.
 final class LayoutTests: XCTestCase {
+    /// Identify numbers this Mac's displays from 1, then each placed
+    /// device's in turn; an unplaced device gets none.
+    func testIdentifyNumbersPlacedDevicesAfterThisMac() {
+        func device(_ id: String, displays: Int, placed: Bool) -> ArrangedDevice {
+            ArrangedDevice(
+                id: id, name: id, platform: nil,
+                displays: Array(repeating: .fallback, count: displays),
+                offset: placed ? Offset(x: 0, y: 0) : nil, state: .connected
+            )
+        }
+        let numbers = ArrangedDevice.firstDisplayNumbers(localCount: 2, devices: [
+            device("a", displays: 2, placed: true),
+            device("b", displays: 1, placed: false),
+            device("c", displays: 1, placed: true),
+        ])
+        XCTAssertEqual(numbers, ["a": 3, "c": 5])
+    }
+
     func testPointerLockClampsAtTheEdgeUntilUnlocked() throws {
         let world = world()
         let peer = try XCTUnwrap(world.peer("mac"))

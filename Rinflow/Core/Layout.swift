@@ -65,6 +65,19 @@ struct ArrangedDevice: Identifiable, Equatable {
 
     /// Bounding box of its displays, in its own space.
     var bounds: CGRect { Display.bounds(of: displays) }
+
+    /// Identify's numbers, by the number of each placed device's first
+    /// display: this Mac's displays count from 1, then each placed device's
+    /// in turn, each in the order the device gave them.
+    static func firstDisplayNumbers(localCount: Int, devices: [ArrangedDevice]) -> [String: Int] {
+        var next = localCount + 1
+        var numbers: [String: Int] = [:]
+        for device in devices where device.offset != nil {
+            numbers[device.id] = next
+            next += device.displays.count
+        }
+        return numbers
+    }
 }
 
 /// Translation from a peer's desktop space into this Mac's space.

@@ -1150,6 +1150,28 @@
         }
       }
     },
+    "在每台显示器上显示它的编号" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show each display its number"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各ディスプレイにその番号を表示"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在每台显示器上显示它的编号"
+          }
+        }
+      }
+    },
     "在系统设置中允许登录启动" : {
       "localizations" : {
         "en" : {
@@ -3830,6 +3852,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设置…"
+          }
+        }
+      }
+    },
+    "识别" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identify"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "識別"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "识别"
           }
         }
       }

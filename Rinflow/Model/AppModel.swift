@@ -51,6 +51,7 @@ final class AppModel: RustCoreDelegate {
     /// Peers' copied files, fetched when pasted.
     private let remoteFiles: RemoteFiles
     private let pairing = PairingPrompt()
+    private let displayIdentifier = DisplayIdentifier()
     private let hotkeys = SwitchHotkeys()
     private let presence = Presence()
     private let cursorHider = CursorHider()
@@ -439,6 +440,16 @@ final class AppModel: RustCoreDelegate {
         }
     }
 
+    /// Shows every display of the arrangement its number: this Mac's here,
+    /// each connected placed device's on that device.
+    func identifyDisplays() {
+        displayIdentifier.show(first: 1)
+        let numbers = ArrangedDevice.firstDisplayNumbers(localCount: localDisplays.count, devices: arrangedDevices)
+        for (peerID, first) in numbers {
+            core.identifyDisplays(peerID, first: first)
+        }
+    }
+
     /// Proposes a spot for the peer (nil removes its placement). The core
     /// snaps it, syncs it and reports the result as `placement_changed`.
     func place(_ peerID: String, at offset: Offset?) {
@@ -585,6 +596,11 @@ final class AppModel: RustCoreDelegate {
             presence.peerActive()
         case "lock_requested":
             presence.lockRequested()
+        case "identify_displays":
+            // A peer identifies the displays of its arrangement, this Mac's
+            // among them.
+            guard let first = event.first else { break }
+            displayIdentifier.show(first: first)
         case "manual_addresses":
             manualAddressStatus = event.addresses ?? []
         case "peer_displays":
@@ -908,14 +924,11 @@ final class AppModel: RustCoreDelegate {
 
     /// This Mac's displays in the CoreGraphics global space (points, origin
     /// at the top left of the main display, y down), as the core expects.
+    /// Their order numbers them (`DisplayIdentifier`).
     private static func currentDisplays() -> [Display] {
         NSScreen.screens.compactMap { screen in
-            guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")]
-                as? NSNumber
-            else {
-                return nil
-            }
-            let bounds = CGDisplayBounds(CGDirectDisplayID(number.uint32Value))
+            guard let id = screen.displayID else { return nil }
+            let bounds = CGDisplayBounds(id)
             return Display(
                 x: bounds.minX,
                 y: bounds.minY,

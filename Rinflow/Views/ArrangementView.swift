@@ -28,6 +28,8 @@ struct ArrangementView: View {
 
     private static let space = "arrangement"
     private static let trayHeight: CGFloat = 40
+    /// Between displays that touch, so each reads as a screen of its own.
+    static let tileGap: CGFloat = 4
 
     var body: some View {
         GeometryReader { geometry in
@@ -38,6 +40,7 @@ struct ArrangementView: View {
                                 height: geometry.size.height - Self.trayHeight)
             let strip = CGRect(x: 0, y: canvas.maxY, width: geometry.size.width, height: Self.trayHeight)
             let scale = CanvasScale(local: local, devices: devices, in: canvas.insetBy(dx: 16, dy: 14))
+            let numbers = ArrangedDevice.firstDisplayNumbers(localCount: local.count, devices: devices)
 
             ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 10)
@@ -46,12 +49,12 @@ struct ArrangementView: View {
 
                 tray(scale: scale, canvas: canvas, strip: strip)
 
-                ForEach(Array(local.enumerated()), id: \.offset) { _, display in
-                    localTile(display, scale: scale)
+                ForEach(Array(local.enumerated()), id: \.offset) { index, display in
+                    localTile(display, number: index + 1, scale: scale)
                 }
 
                 ForEach(devices.filter { $0.offset != nil }) { device in
-                    placedTile(device, scale: scale, canvas: canvas)
+                    placedTile(device, firstNumber: numbers[device.id], scale: scale, canvas: canvas)
                 }
 
                 if let dragging, let device = devices.first(where: { $0.id == dragging.id }),
@@ -66,12 +69,12 @@ struct ArrangementView: View {
             }
             .coordinateSpace(name: Self.space)
         }
-        .frame(height: 260)
+        .frame(height: 320)
     }
 
-    /// This Mac's displays, plain like a desktop; the main one carries the
-    /// Mac's name.
-    private func localTile(_ display: Display, scale: CanvasScale) -> some View {
+    /// This Mac's displays, plain like a desktop, with the number Identify
+    /// shows on the screen; the main one carries the Mac's name.
+    private func localTile(_ display: Display, number: Int, scale: CanvasScale) -> some View {
         let rect = scale.view(display.rect)
         let isMain = display.x == 0 && display.y == 0
         return RoundedRectangle(cornerRadius: 4)
@@ -79,20 +82,25 @@ struct ArrangementView: View {
             .overlay {
                 RoundedRectangle(cornerRadius: 4).strokeBorder(Color.secondary.opacity(0.35), lineWidth: 1)
             }
+            .overlay(alignment: .bottomTrailing) { DisplayBadge(number: number).foregroundStyle(.secondary) }
             .overlay {
                 if isMain {
                     TileLabel(title: deviceName, detail: Text("本机"))
                 }
             }
-            .frame(width: rect.width, height: rect.height)
+            .frame(width: rect.width - Self.tileGap, height: rect.height - Self.tileGap)
             .position(x: rect.midX, y: rect.midY)
     }
 
-    private func placedTile(_ device: ArrangedDevice, scale: CanvasScale, canvas: CGRect) -> some View {
+    private func placedTile(
+        _ device: ArrangedDevice, firstNumber: Int?, scale: CanvasScale, canvas: CGRect
+    ) -> some View {
         let offset = device.offset ?? Offset(x: 0, y: 0)
         let rect = scale.view(device.bounds.offsetBy(dx: offset.x, dy: offset.y))
         let shift = dragging?.id == device.id ? dragging?.translation ?? .zero : .zero
-        return DeviceTile(device: device, scale: scale.scale, pointerHere: device.id == pointerOn)
+        return DeviceTile(
+            device: device, scale: scale.scale, pointerHere: device.id == pointerOn, firstNumber: firstNumber
+        )
             .position(x: rect.midX + shift.width, y: rect.midY + shift.height)
             .gesture(
                 DragGesture(coordinateSpace: .named(Self.space))
@@ -220,27 +228,36 @@ private struct CanvasScale {
 }
 
 /// A peer's displays at canvas scale: filled where the mouse is, outlined
-/// when connected, dashed when offline.
+/// when connected, dashed when offline; numbered as Identify shows them once
+/// placed.
 private struct DeviceTile: View {
     let device: ArrangedDevice
     let scale: CGFloat
     let pointerHere: Bool
+    var firstNumber: Int?
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         let bounds = device.bounds
         ZStack(alignment: .topLeading) {
-            ForEach(Array(device.displays.enumerated()), id: \.offset) { _, display in
+            ForEach(Array(device.displays.enumerated()), id: \.offset) { index, display in
                 RoundedRectangle(cornerRadius: 4)
                     .fill(pointerHere ? Color.accentColor : scheme == .dark ? Color(white: 0.17) : .white)
                     .overlay {
                         RoundedRectangle(cornerRadius: 4)
                             .strokeBorder(device.state.color, style: device.state.stroke)
                     }
-                    .frame(width: display.width * scale, height: display.height * scale)
+                    .overlay(alignment: .bottomTrailing) {
+                        if let firstNumber {
+                            DisplayBadge(number: firstNumber + index)
+                                .foregroundStyle(pointerHere ? AnyShapeStyle(.white.opacity(0.8)) : AnyShapeStyle(.secondary))
+                        }
+                    }
+                    .frame(width: display.width * scale - ArrangementView.tileGap,
+                           height: display.height * scale - ArrangementView.tileGap)
                     .offset(
-                        x: (display.x - bounds.minX) * scale,
-                        y: (display.y - bounds.minY) * scale
+                        x: (display.x - bounds.minX) * scale + ArrangementView.tileGap / 2,
+                        y: (display.y - bounds.minY) * scale + ArrangementView.tileGap / 2
                     )
             }
             TileLabel(title: device.name, detail: detail, symbol: device.symbol)
@@ -262,6 +279,20 @@ private struct DeviceTile: View {
     }
 }
 
+/// A display's number in its tile's corner, as Identify shows it on the
+/// screen.
+private struct DisplayBadge: View {
+    let number: Int
+
+    var body: some View {
+        Text(verbatim: "\(number)")
+            .font(.caption.weight(.semibold))
+            .monospacedDigit()
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+    }
+}
+
 /// A tile's name and state, shrunk to fit small tiles.
 private struct TileLabel: View {
     let title: String
@@ -270,15 +301,18 @@ private struct TileLabel: View {
     var symbol = "desktopcomputer"
 
     var body: some View {
+        // Clear of the number in the corner; the symbol when the name does
+        // not fit that way.
         ViewThatFits {
-            VStack(spacing: 1) {
+            VStack(spacing: 3) {
                 Text(title).font(.subheadline.weight(.semibold))
                 detail.font(.caption).opacity(0.75)
             }
             .fixedSize()
             Image(systemName: symbol).font(.subheadline)
         }
-        .padding(4)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 6)
         .help(title)
     }
 }

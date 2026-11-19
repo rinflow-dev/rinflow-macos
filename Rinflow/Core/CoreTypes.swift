@@ -167,6 +167,8 @@ struct CoreEventEnvelope: Decodable, Sendable {
     let addresses: [ManualAddressStatus]?
     /// `peer_pointer_lock`
     let locked: Bool?
+    /// `identify_displays`: the number of this Mac's first display.
+    let first: Int?
     /// `pairing_requested`
     let code: String?
     let name: String?
@@ -213,6 +215,7 @@ struct CoreEventEnvelope: Decodable, Sendable {
         case manifest
         case addresses
         case locked
+        case first
         case code
         case name
         case fingerprint

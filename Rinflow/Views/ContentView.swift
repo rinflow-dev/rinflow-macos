@@ -27,6 +27,8 @@ struct ContentView: View {
                     Text("屏幕排列").font(.headline)
                     Text("拖动设备，按实际位置摆放").font(.subheadline).foregroundStyle(.secondary)
                     Spacer()
+                    Button("识别", systemImage: "number.square") { model.identifyDisplays() }
+                        .help("在每台显示器上显示它的编号")
                     Button("添加设备", systemImage: "plus") { addingDevice = true }
                 }
                 .padding(.top, 4)

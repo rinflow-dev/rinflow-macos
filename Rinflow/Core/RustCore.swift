@@ -260,6 +260,13 @@ final class RustCore {
         _ = lc_core_lock_peers(handle)
     }
 
+    /// Shows the peer's displays the numbers `first`, `first + 1`, … for a
+    /// few seconds (Identify). Nothing if it is not connected or too old.
+    func identifyDisplays(_ peerID: String, first: Int) {
+        guard let handle else { return }
+        _ = peerID.withCString { lc_core_identify_displays(handle, $0, UInt32(first)) }
+    }
+
     /// A game here holds the pointer (hidden, relative motion), or let go.
     func setPointerLocked(_ locked: Bool) {
         guard let handle else { return }
