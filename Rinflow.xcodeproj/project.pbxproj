@@ -65,6 +65,7 @@
 		ADCF89B99644779154DF1C590849A600 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3CCBF0FF4DD506BAED646AF0EA3D31 /* ContentView.swift */; };
 		B4A831276755523596E5189F1C8B772C /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E5FD3450DC50A064C213597FFC2C46 /* Layout.swift */; };
 		B54F39D55A5B53B306D1B535E70A9525 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CF629A39AE2D10B4319C2E077C8CF9 /* AppSettings.swift */; };
+		B7198E4C4C24CE9C9CC956E6 /* PlatformIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE6187D4C1FD8C7F8756F55 /* PlatformIcon.swift */; };
 		B9DF710DEF7EABC5B3F23B4B5A0B9A06 /* rinflow-files in Embed rinflow-files */ = {isa = PBXBuildFile; fileRef = 8171E03380A336CC49CE71913F475812 /* rinflow-files */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BB4E9A25A2A280529B565DC354950E4A /* Clip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A04C0A9A18AB8DCDB7E5CFD5B289384 /* Clip.swift */; };
 		BBE9DE5A0BFB6360D3561BCED04393A3 /* InputBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14F3EAC6E6C6FB4B4D030E98EED3C91 /* InputBridge.swift */; };
@@ -168,6 +169,7 @@
 		7315A488D8EAFE0D1C7AC981 /* DisplayIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DisplayIdentifier.swift; sourceTree = "<group>"; };
 		748FA91FE9EB9786E1EC4ECFC3158701 /* PairingPrompt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PairingPrompt.swift; sourceTree = "<group>"; };
 		7A04C0A9A18AB8DCDB7E5CFD5B289384 /* Clip.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Clip.swift; sourceTree = "<group>"; };
+		7FE6187D4C1FD8C7F8756F55 /* PlatformIcon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlatformIcon.swift; sourceTree = "<group>"; };
 		80ACF2BC05A530398277037970F119BB /* CallbackRelayTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallbackRelayTests.swift; sourceTree = "<group>"; };
 		8171E03380A336CC49CE71913F475812 /* rinflow-files */ = {isa = PBXFileReference; includeInIndex = 0; path = "rinflow-files"; sourceTree = BUILT_PRODUCTS_DIR; };
 		832638AD759D5AB54D422B1E7F12EDA9 /* generate-xcodeproj.rb */ = {isa = PBXFileReference; includeInIndex = 1; path = "generate-xcodeproj.rb"; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 				6568933DD7D9D46DDF85FF1310DD4404 /* PermissionGuide.swift */,
 				6FA38FD6E51CD8C7185681A6FDE9BAD7 /* SettingsView.swift */,
 				060BCA5EB1436BB51AFFDB371E5C2661 /* TransfersView.swift */,
+				7FE6187D4C1FD8C7F8756F55 /* PlatformIcon.swift */,
 			);
 			name = Views;
 			path = Views;
@@ -731,6 +734,7 @@
 				28A6FF6EDF8B2F6FC88C1BDCE8743C52 /* Clip.swift in Sources */,
 				D95BA517BFB4BBE8291DC02A1D0EAE60 /* FetchWire.swift in Sources */,
 				5E4F1FDCE694A065958E112F /* DisplayIdentifier.swift in Sources */,
+				B7198E4C4C24CE9C9CC956E6 /* PlatformIcon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

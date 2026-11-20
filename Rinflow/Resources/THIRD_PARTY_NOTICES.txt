@@ -150,6 +150,18 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 ==============================================================================
+Icons
+==============================================================================
+
+The Windows, Linux (Tux) and Android logos that mark a device's operating
+system are from Simple Icons 16.38.0 (https://simpleicons.org), CC0 1.0. The
+logos are trademarks of their owners and only say which system a device runs.
+
+The Android robot is reproduced or modified from work created and shared by
+Google and used according to terms described in the Creative Commons 3.0
+Attribution License (https://creativecommons.org/licenses/by/3.0/).
+
+==============================================================================
 Rust crates
 ==============================================================================
 

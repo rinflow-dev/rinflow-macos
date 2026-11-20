@@ -23,8 +23,7 @@ struct PeerRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Image(systemName: peer.platform == "android" ? "iphone" : "desktopcomputer")
-                .font(.title3)
+            PlatformIcon(platform: peer.platform)
                 .foregroundStyle(.secondary)
                 .frame(width: 24)
 
