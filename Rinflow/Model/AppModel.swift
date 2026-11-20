@@ -851,7 +851,8 @@ final class AppModel: RustCoreDelegate {
             hud.dismiss()
             return
         }
-        hud.show(peerName: name(of: peerID)) { [weak self] in self?.stopControlling() }
+        let platform = sessions[peerID]?.peer?.platform ?? knownPeers[peerID]?.platform
+        hud.show(peerName: name(of: peerID), platform: platform) { [weak self] in self?.stopControlling() }
     }
 
     /// Whether some peer drives this Mac: input is played then.

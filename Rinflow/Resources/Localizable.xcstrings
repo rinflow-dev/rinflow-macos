@@ -600,28 +600,6 @@
         }
       }
     },
-    "停止" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stop"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "停止"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "停止"
-          }
-        }
-      }
-    },
     "全屏时暂停自动切换" : {
       "localizations" : {
         "en" : {
@@ -2052,28 +2030,6 @@
         }
       }
     },
-    "按 ⌃⌥⎋ 随时释放输入" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Press ⌃⌥⎋ to take input back at any time"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌃⌥⎋でいつでも入力を戻せます"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按 ⌃⌥⎋ 随时释放输入"
-          }
-        }
-      }
-    },
     "按键保持原来的位置：Windows 键对应 ⌘，Ctrl 对应 ⌃。" : {
       "localizations" : {
         "en" : {
@@ -3086,24 +3042,24 @@
         }
       }
     },
-    "正在控制 %@" : {
+    "正在控制" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controlling %@"
+            "value" : "Controlling"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を操作中"
+            "value" : "操作中"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在控制 %@"
+            "value" : "正在控制"
           }
         }
       }
@@ -4142,6 +4098,28 @@
         }
       }
     },
+    "返回" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻る"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回"
+          }
+        }
+      }
+    },
     "这个地址上应答的是另一台设备。" : {
       "localizations" : {
         "en" : {
@@ -4468,6 +4446,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "释放控制"
+          }
+        }
+      }
+    },
+    "释放输入，回到这台 Mac" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Release input and come back to this Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力を解放してこの Mac に戻る"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "释放输入，回到这台 Mac"
           }
         }
       }

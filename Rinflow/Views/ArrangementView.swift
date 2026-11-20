@@ -336,8 +336,12 @@ private struct DeviceChip: View {
     }
 }
 
-private extension ArrangedDevice {
-    var symbol: String {
+extension ArrangedDevice {
+    var symbol: String { Self.symbol(for: platform) }
+
+    /// The SF Symbol for a device of this platform (the arrangement, the
+    /// control HUD).
+    static func symbol(for platform: String?) -> String {
         switch platform {
         case "windows": "pc"
         case "android": "smartphone"
