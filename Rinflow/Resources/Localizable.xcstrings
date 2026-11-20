@@ -1810,28 +1810,6 @@
         }
       }
     },
-    "把设备拖到屏幕旁边即可切换" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drag a device beside a screen to switch to it"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスを画面の横にドラッグすると切り替えられます"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "把设备拖到屏幕旁边即可切换"
-          }
-        }
-      }
-    },
     "拖到屏幕旁边" : {
       "localizations" : {
         "en" : {
@@ -1872,28 +1850,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拖到这里可取消放置"
-          }
-        }
-      }
-    },
-    "拖动设备，按实际位置摆放" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drag devices to match where they sit"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "実際の位置に合わせてデバイスをドラッグ"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拖动设备，按实际位置摆放"
           }
         }
       }
@@ -1982,28 +1938,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "指针速度"
-          }
-        }
-      }
-    },
-    "按 ⌃⌥Esc 可随时回到本机。连接已加密。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Press ⌃⌥Esc to come back to this Mac at any time. Connections are encrypted."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌃⌥EscでいつでもこのMacに戻れます。接続は暗号化されています。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按 ⌃⌥Esc 可随时回到本机。连接已加密。"
           }
         }
       }
@@ -3548,28 +3482,6 @@
         }
       }
     },
-    "等待其他设备连接" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waiting for another device to connect"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほかのデバイスの接続を待っています"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "等待其他设备连接"
-          }
-        }
-      }
-    },
     "组合键" : {
       "localizations" : {
         "en" : {
@@ -4692,50 +4604,6 @@
         }
       }
     },
-    "鼠标只在本机移动" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The mouse stays on this Mac"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マウスはこのMacの中だけで動きます"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标只在本机移动"
-          }
-        }
-      }
-    },
-    "鼠标在本机，越过屏幕边缘即可切换" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The mouse is on this Mac; move past a screen edge to switch"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マウスはこのMacにあります。画面の端を越えると切り替わります"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标在本机，越过屏幕边缘即可切换"
-          }
-        }
-      }
-    },
     "鼠标在这里" : {
       "localizations" : {
         "en" : {
@@ -4754,28 +4622,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "鼠标在这里"
-          }
-        }
-      }
-    },
-    "鼠标正在 %@ 上" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The mouse is on %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マウスは%@にあります"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标正在 %@ 上"
           }
         }
       }

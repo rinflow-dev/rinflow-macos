@@ -49,6 +49,9 @@ ifeq ($(TEAM),)
 	@echo "warning: 钥匙串里没有 Apple Development 证书，改用临时签名；每次重新构建后都要重新授予辅助功能权限。"
 endif
 	$(XCODEBUILD) -quiet build
+	@# xcodebuild leaves the bundle's own date alone, and Finder and the Dock
+	@# keep the icon they cached for it until that date changes.
+	@touch "$(APP)"
 
 # The compiler lists the strings each file uses (SWIFT_EMIT_LOC_STRINGS);
 # xcodebuild leaves merging them into the catalog to the Xcode app, so do it here.

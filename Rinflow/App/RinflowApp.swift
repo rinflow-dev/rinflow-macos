@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import OSLog
 import SwiftUI
 
 @main
@@ -31,6 +32,25 @@ struct RinflowApp: App {
     }
 }
 
+@MainActor
+private enum MainWindow {
+    private static let log = Logger(subsystem: "com.rinflow.mac", category: "window")
+
+    /// In front of every app's windows, whether or not the system lets
+    /// Rinflow become the active app.
+    static func bringForward() {
+        NSApp.activate()
+        // SwiftUI names the window after its scene ("main", or with a suffix).
+        guard let window = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true }) else {
+            log.error("main window not found")
+            return
+        }
+        if window.isMiniaturized { window.deminiaturize(nil) }
+        window.makeKeyAndOrderFront(nil)
+        window.orderFrontRegardless()
+        log.notice("main window forward, active: \(NSApp.isActive, privacy: .public)")
+    }
+}
 
 private struct MenuBarContent: View {
     @Environment(\.openWindow) private var openWindow
@@ -40,7 +60,10 @@ private struct MenuBarContent: View {
     var body: some View {
         Button("打开主窗口") {
             openWindow(id: "main")
-            NSApp.activate()
+            // Not yet: the menu is still closing, and activation asked for
+            // now is at times refused, leaving the window behind the app in
+            // front, as if the click did nothing.
+            DispatchQueue.main.async { MainWindow.bringForward() }
         }
 
         Toggle("共享键盘与鼠标", isOn: Binding(

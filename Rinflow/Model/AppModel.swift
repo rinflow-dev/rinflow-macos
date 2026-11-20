@@ -198,6 +198,8 @@ final class AppModel: RustCoreDelegate {
                       port: 42421, displays: [Display(x: 0, y: 0, width: 1920, height: 1080)])
         var settings = AppSettings()
         settings.theme = theme
+        // Answered, so the first-run guide does not cover the window.
+        settings.diagnostics = false
         self.settings = settings
         deviceName = "MacBook Pro"
         peers = [pc]

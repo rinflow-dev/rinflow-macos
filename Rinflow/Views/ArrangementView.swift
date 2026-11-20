@@ -15,6 +15,8 @@ struct ArrangementView: View {
     /// The peer the mouse is on now, if any.
     let pointerOn: String?
     let place: @MainActor (String, Offset?) -> Void
+    /// Shows each display's number on the display itself.
+    let identify: @MainActor () -> Void
 
     @State private var dragging: Dragging?
     @Environment(\.colorScheme) private var scheme
@@ -171,6 +173,10 @@ struct ArrangementView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+                Spacer(minLength: 0)
+                Button("识别", systemImage: "number.square", action: identify)
+                    .controlSize(.small)
+                    .help("在每台显示器上显示它的编号")
             }
             .padding(.horizontal, 10)
         }

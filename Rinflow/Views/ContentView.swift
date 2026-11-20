@@ -19,16 +19,12 @@ struct ContentView: View {
                     sharing: Binding(
                         get: { model.settings.sharing },
                         set: { enabled in model.updateSettings { $0.sharing = enabled } }
-                    ),
-                    detail: sharingDetail
+                    )
                 )
 
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text("屏幕排列").font(.headline)
-                    Text("拖动设备，按实际位置摆放").font(.subheadline).foregroundStyle(.secondary)
                     Spacer()
-                    Button("识别", systemImage: "number.square") { model.identifyDisplays() }
-                        .help("在每台显示器上显示它的编号")
                     Button("添加设备", systemImage: "plus") { addingDevice = true }
                 }
                 .padding(.top, 4)
@@ -38,7 +34,8 @@ struct ContentView: View {
                     local: model.localDisplays,
                     devices: model.arrangedDevices,
                     pointerOn: model.controlledPeerID,
-                    place: { model.place($0, at: $1) }
+                    place: { model.place($0, at: $1) },
+                    identify: model.identifyDisplays
                 )
 
                 if !model.transfers.isEmpty {
@@ -52,11 +49,6 @@ struct ContentView: View {
                 }
 
                 devices
-
-                Text("按 ⌃⌥Esc 可随时回到本机。连接已加密。")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
             }
             .padding(20)
         }
@@ -90,19 +82,6 @@ struct ContentView: View {
                 model.refreshPermission()
             }
         }
-    }
-
-    /// Where the mouse is, in one line.
-    private var sharingDetail: String {
-        guard model.settings.sharing else { return String(localized: "鼠标只在本机移动") }
-        if let id = model.controlledPeerID {
-            let name = model.visiblePeers.first { $0.id == id }?.name ?? String(id.prefix(8))
-            return String(localized: "鼠标正在 \(name) 上")
-        }
-        let connected = model.arrangedDevices.filter { $0.state == .connected }
-        if connected.isEmpty { return String(localized: "等待其他设备连接") }
-        if connected.allSatisfy({ $0.offset == nil }) { return String(localized: "把设备拖到屏幕旁边即可切换") }
-        return String(localized: "鼠标在本机，越过屏幕边缘即可切换")
     }
 
     /// Only what needs the user: a failed start, an error, a lock, a
@@ -164,17 +143,13 @@ struct ContentView: View {
     }
 }
 
-/// The one switch that matters, and where the mouse is.
+/// The one switch that matters.
 private struct SharingCard: View {
     @Binding var sharing: Bool
-    let detail: String
 
     var body: some View {
         HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(sharing ? "键鼠共享" : "键鼠共享已暂停").font(.headline)
-                Text(detail).font(.subheadline).foregroundStyle(.secondary)
-            }
+            Text(sharing ? "键鼠共享" : "键鼠共享已暂停").font(.headline)
             Spacer(minLength: 8)
             Toggle(sharing ? "键鼠共享" : "键鼠共享已暂停", isOn: $sharing)
                 .toggleStyle(.switch)
