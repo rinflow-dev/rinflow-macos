@@ -58,13 +58,13 @@ final class SettingsTests: XCTestCase {
 final class DamagedSettingsTests: XCTestCase {
     func testADamagedSettingFallsBackAloneAndTheOthersLoad() throws {
         let damaged = Data(#"""
-        {"clipboard":"yes","pairedOnly":false,"switchDelay":"slow","manualAddresses":["pc.local",7],
+        {"clipboard":"yes","lockSync":true,"theme":"sepia","manualAddresses":["pc.local",7],
          "peerInput":{"pc":{"pointerSpeed":2},"tv":{"pointerSpeed":"fast"},"mini":42}}
         """#.utf8)
         let settings = try JSONDecoder().decode(AppSettings.self, from: damaged)
         XCTAssertFalse(settings.clipboard)
-        XCTAssertFalse(settings.pairedOnly)
-        XCTAssertEqual(settings.switchDelay, AppSettings().switchDelay)
+        XCTAssertTrue(settings.lockSync)
+        XCTAssertEqual(settings.theme, AppSettings().theme)
         XCTAssertEqual(settings.manualAddresses, ["pc.local"])
         XCTAssertEqual(settings.input(for: "pc").pointerSpeed, 2)
         // A damaged field of a peer keeps that peer's other fields.

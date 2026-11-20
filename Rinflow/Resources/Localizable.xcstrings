@@ -358,28 +358,6 @@
         }
       }
     },
-    "中（300 毫秒）" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Medium (300 ms)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "中（300ミリ秒）"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "中（300 毫秒）"
-          }
-        }
-      }
-    },
     "为 PC 的每个修饰键选择它在这台 Mac 上对应的按键。" : {
       "localizations" : {
         "en" : {
@@ -398,28 +376,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "为 PC 的每个修饰键选择它在这台 Mac 上对应的按键。"
-          }
-        }
-      }
-    },
-    "仅允许已配对的设备" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only paired devices"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ペアリング済みのデバイスのみ許可"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仅允许已配对的设备"
           }
         }
       }
@@ -798,28 +754,6 @@
         }
       }
     },
-    "其他设备的指针离开后隐藏光标" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hide the cursor when another device’s pointer leaves"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほかのデバイスのポインタが離れたらカーソルを隠す"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "其他设备的指针离开后隐藏光标"
-          }
-        }
-      }
-    },
     "出现了意外错误，详情见日志。" : {
       "localizations" : {
         "en" : {
@@ -842,24 +776,46 @@
         }
       }
     },
-    "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。" : {
+    "切换到那一侧的设备" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A switch or lock shortcut is used by another app. Change the combination or close the conflicting app."
+            "value" : "Switch to the device on that side"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切り替えまたはロックのショートカットがほかのアプリで使われています。組み合わせを変更するか、競合しているアプリを終了してください。"
+            "value" : "その方向のデバイスに切り替え"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。"
+            "value" : "切换到那一侧的设备"
+          }
+        }
+      }
+    },
+    "切换或锁定快捷键已被其他程序占用，请关闭冲突的程序。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A switch or lock shortcut is used by another app. Close the conflicting app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切り替えまたはロックのショートカットがほかのアプリで使われています。競合しているアプリを終了してください。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换或锁定快捷键已被其他程序占用，请关闭冲突的程序。"
           }
         }
       }
@@ -1256,28 +1212,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "外观"
-          }
-        }
-      }
-    },
-    "安全" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Security"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セキュリティ"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "安全"
           }
         }
       }
@@ -1744,6 +1678,28 @@
         }
       }
     },
+    "快捷键" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカット"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快捷键"
+          }
+        }
+      }
+    },
     "恢复默认" : {
       "localizations" : {
         "en" : {
@@ -1938,28 +1894,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "指针速度"
-          }
-        }
-      }
-    },
-    "按 ⌃⌥L 锁定或解锁当前屏幕；按 ⌃⌥⎋ 始终可以释放控制。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Press ⌃⌥L to lock or unlock the current screen. ⌃⌥⎋ always releases control."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌃⌥Lで現在の画面をロック／ロック解除します。⌃⌥⎋でいつでも操作を解除できます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按 ⌃⌥L 锁定或解锁当前屏幕；按 ⌃⌥⎋ 始终可以释放控制。"
           }
         }
       }
@@ -2228,28 +2162,6 @@
         }
       }
     },
-    "新设备需要两边核对六位配对码后才能连接。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A new device connects only after both sides confirm a six-digit code."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいデバイスは、双方で6桁のペアリングコードを確認してから接続します。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新设备需要两边核对六位配对码后才能连接。"
-          }
-        }
-      }
-    },
     "方向键" : {
       "localizations" : {
         "en" : {
@@ -2290,28 +2202,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无"
-          }
-        }
-      }
-    },
-    "无延迟" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No delay"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "なし"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无延迟"
           }
         }
       }
@@ -2690,24 +2580,24 @@
         }
       }
     },
-    "未配对的设备已断开（已开启“仅允许已配对的设备”）。" : {
+    "未配对的设备已断开，请先配对。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "An unpaired device was disconnected (“Only paired devices” is on)."
+            "value" : "An unpaired device was disconnected. Pair it first."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ペアリングされていないデバイスを切断しました（「ペアリング済みのデバイスのみ許可」がオン）。"
+            "value" : "ペアリングされていないデバイスを切断しました。先にペアリングしてください。"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未配对的设备已断开（已开启“仅允许已配对的设备”）。"
+            "value" : "未配对的设备已断开，请先配对。"
           }
         }
       }
@@ -3240,28 +3130,6 @@
         }
       }
     },
-    "用快捷键切换设备" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Switch devices with shortcuts"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ショートカットでデバイスを切り替える"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用快捷键切换设备"
-          }
-        }
-      }
-    },
     "用来共享键盘和鼠标，也让其他设备控制这台 Mac。键入的内容不会被保存。" : {
       "localizations" : {
         "en" : {
@@ -3372,28 +3240,6 @@
         }
       }
     },
-    "短（150 毫秒）" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Short (150 ms)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短（150ミリ秒）"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短（150 毫秒）"
-          }
-        }
-      }
-    },
     "离线" : {
       "localizations" : {
         "en" : {
@@ -3412,28 +3258,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "离线"
-          }
-        }
-      }
-    },
-    "移动这台 Mac 的鼠标或触控板后重新显示。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "It comes back when you move this Mac’s mouse or trackpad."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このMacのマウスやトラックパッドを動かすと再表示されます。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "移动这台 Mac 的鼠标或触控板后重新显示。"
           }
         }
       }
@@ -3478,50 +3302,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "稍后设置"
-          }
-        }
-      }
-    },
-    "组合键" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modifiers"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "修飾キー"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "组合键"
-          }
-        }
-      }
-    },
-    "组合键加方向键，把鼠标移到那一侧的设备上。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The modifiers with an arrow key move the mouse to the device on that side."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "修飾キーと矢印キーで、その方向にあるデバイスへマウスを移動します。"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "组合键加方向键，把鼠标移到那一侧的设备上。"
           }
         }
       }
@@ -3988,28 +3768,6 @@
         }
       }
     },
-    "边缘切换延迟" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edge switch delay"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "端での切り替えの遅延"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "边缘切换延迟"
-          }
-        }
-      }
-    },
     "返回" : {
       "localizations" : {
         "en" : {
@@ -4428,6 +4186,28 @@
         }
       }
     },
+    "锁定或解锁当前屏幕" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock or unlock the current screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の画面をロック／ロック解除"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锁定或解锁当前屏幕"
+          }
+        }
+      }
+    },
     "锁屏" : {
       "localizations" : {
         "en" : {
@@ -4512,28 +4292,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "键鼠共享已暂停"
-          }
-        }
-      }
-    },
-    "长（500 毫秒）" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long (500 ms)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "長（500ミリ秒）"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "长（500 毫秒）"
           }
         }
       }

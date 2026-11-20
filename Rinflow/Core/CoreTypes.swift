@@ -426,7 +426,7 @@ enum CoreReason: String, Decodable, Sendable, CaseIterable {
         case .pairingTimedOut:
             String(localized: "配对超时，没有在两分钟内确认。")
         case .pairingRequired:
-            String(localized: "未配对的设备已断开（已开启“仅允许已配对的设备”）。")
+            String(localized: "未配对的设备已断开，请先配对。")
         case .pairingBusy:
             String(localized: "正在和另一台设备配对，请完成后再试。")
         case .pairingOutdated:

@@ -127,7 +127,8 @@ final class RustCore {
             downloadDirectory: Self.downloadDirectory.path,
             identityPath: Self.identityPath.path,
             trustedPeers: trustedPeers,
-            requirePairing: settings.pairedOnly,
+            // Only paired devices connect: others pair first.
+            requirePairing: true,
             modifierMap: settings.modifierMap,
             manualAddresses: settings.manualAddresses
         )
@@ -223,11 +224,6 @@ final class RustCore {
     func networkChanged() {
         guard let handle else { return }
         _ = lc_core_network_changed(handle)
-    }
-
-    func setRequirePairing(_ required: Bool) {
-        guard let handle else { return }
-        _ = lc_core_set_require_pairing(handle, required)
     }
 
     /// What a PC's modifier keys play as here; keys held are released.

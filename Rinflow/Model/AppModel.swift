@@ -256,7 +256,7 @@ final class AppModel: RustCoreDelegate {
         clipboard.stop()
         pairing.dismissAll()
         inputBridge.stop()
-        _ = hotkeys.register(nil)
+        hotkeys.register(false)
         cursorHider.reveal()
         player.releaseAll()
         presence.stop()
@@ -307,8 +307,8 @@ final class AppModel: RustCoreDelegate {
             fullscreen.setEnabled(settings.pauseInFullscreen && settings.sharing)
         }
         if settings.clipboard, previous?.clipboard != true { notifications.start() }
-        if settings.switchDelay != previous?.switchDelay || settings.cornerGuard != previous?.cornerGuard {
-            inputBridge.setCrossingOptions(delay: settings.switchDelay, cornerGuard: settings.cornerGuard)
+        if settings.cornerGuard != previous?.cornerGuard {
+            inputBridge.setCornerGuard(settings.cornerGuard)
         }
         if let previous, settings.clipboard != previous.clipboard {
             if settings.clipboard {
@@ -334,9 +334,6 @@ final class AppModel: RustCoreDelegate {
         }
         if previous != nil {
             // At start-up these go into the core's configuration.
-            if settings.pairedOnly != previous?.pairedOnly {
-                core.setRequirePairing(settings.pairedOnly)
-            }
             if settings.modifierMap != previous?.modifierMap {
                 core.setModifierMap(settings.modifierMap)
             }
@@ -349,16 +346,9 @@ final class AppModel: RustCoreDelegate {
                 settings.language.apply()
             }
         }
-        if settings.switchHotkeys != previous?.switchHotkeys
-            || settings.switchModifiers != previous?.switchModifiers
-            || settings.sharing != previous?.sharing
-        {
-            let modifiers = settings.switchHotkeys && settings.sharing ? settings.switchModifiers : nil
-            switchHotkeysBlocked = !hotkeys.register(modifiers, lockEnabled: settings.sharing)
-            inputBridge.setSwitchShortcuts(modifiers)
-        }
-        if !settings.hideCursorOnLeave {
-            cursorHider.reveal()
+        if settings.sharing != previous?.sharing {
+            switchHotkeysBlocked = !hotkeys.register(settings.sharing)
+            inputBridge.setSwitchShortcuts(settings.sharing)
         }
         presence.keepAwake = settings.keepAwake
         presence.lockSync = settings.lockSync
@@ -578,7 +568,7 @@ final class AppModel: RustCoreDelegate {
             if active {
                 cursorHider.reveal()
                 inputBridge.peerDrives()
-            } else if event.reasonCode == .remoteReset, settings.hideCursorOnLeave,
+            } else if event.reasonCode == .remoteReset,
                       !sessions.values.contains(where: \.remoteControl)
             {
                 // The peer's pointer moved away: the cursor shows only where

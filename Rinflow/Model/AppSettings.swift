@@ -11,20 +11,11 @@ struct AppSettings: Codable, Equatable, Sendable {
     var sharing = true
     /// Explicit opt-in, matching Windows. Includes copied files.
     var clipboard = false
-    var switchDelay = 0.15
     var cornerGuard = true
     var pauseInFullscreen = false
-    /// Only paired devices may connect: others pair first.
-    var pairedOnly = true
     /// What a PC's modifier keys play as when it drives this Mac (the core's
     /// `modifier_map`): Mac style by default, Ctrl as ⌘ so Ctrl+C copies.
     var modifierMap = ModifierMap.mac
-    /// When a peer that drove this Mac moves its pointer away, the cursor is
-    /// hidden where it was left, until this Mac's own mouse moves.
-    var hideCursorOnLeave = true
-    /// ⌃⌥⇧ (or ⌃⌥) with an arrow key moves the pointer to the device on that side.
-    var switchHotkeys = true
-    var switchModifiers: SwitchModifiers = .controlOptionShift
     /// While one of the other devices is in use, this Mac's display stays on
     /// and it does not lock for being idle.
     var keepAwake = true
@@ -51,18 +42,13 @@ struct AppSettings: Codable, Equatable, Sendable {
         let defaults = AppSettings()
         sharing = values.lossy(.sharing) ?? defaults.sharing
         clipboard = values.lossy(.clipboard) ?? defaults.clipboard
-        switchDelay = min(2, max(0, values.lossy(.switchDelay, as: Double.self).flatMap { $0.isFinite ? $0 : nil } ?? defaults.switchDelay))
         cornerGuard = values.lossy(.cornerGuard) ?? defaults.cornerGuard
         pauseInFullscreen = values.lossy(.pauseInFullscreen) ?? defaults.pauseInFullscreen
-        pairedOnly = values.lossy(.pairedOnly) ?? defaults.pairedOnly
         // Before per-key choices, a switch: on was Mac style, off kept keys.
         let legacy = try? decoder.container(keyedBy: LegacyKeys.self)
         modifierMap = values.lossy(.modifierMap)
             ?? legacy?.lossy(.shortcutRemap, as: Bool.self).map { $0 ? .mac : .keep }
             ?? defaults.modifierMap
-        hideCursorOnLeave = values.lossy(.hideCursorOnLeave) ?? defaults.hideCursorOnLeave
-        switchHotkeys = values.lossy(.switchHotkeys) ?? defaults.switchHotkeys
-        switchModifiers = values.lossy(.switchModifiers) ?? defaults.switchModifiers
         keepAwake = values.lossy(.keepAwake) ?? defaults.keepAwake
         lockSync = values.lossy(.lockSync) ?? defaults.lockSync
         manualAddresses = values.lossy(.manualAddresses, as: LossyArray<String>.self)?.elements ?? []
@@ -160,22 +146,6 @@ struct ModifierMap: Codable, Equatable, Sendable {
         case windows = "super"
         case control
         case alt
-    }
-}
-
-/// The modifiers of the switch shortcuts, with the arrow keys.
-enum SwitchModifiers: String, Codable, CaseIterable, Identifiable, Sendable {
-    /// ⌃⌥⇧, which few programs use with the arrow keys.
-    case controlOptionShift
-    case controlOption
-
-    var id: String { rawValue }
-
-    var symbols: String {
-        switch self {
-        case .controlOptionShift: "⌃⌥⇧"
-        case .controlOption: "⌃⌥"
-        }
     }
 }
 

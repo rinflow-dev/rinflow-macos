@@ -5,8 +5,9 @@
 import Carbon.HIToolbox
 import OSLog
 
-/// The switch shortcuts while this Mac has the pointer: ⌃⌥⇧ (or ⌃⌥) with an
-/// arrow key, registered as system hot keys. While a peer is driven the event
+/// The switch shortcuts while this Mac has the pointer: ⌃⌥⇧, which few
+/// programs use with the arrow keys, with an arrow key, and ⌃⌥L, the pointer
+/// lock; registered as system hot keys. While a peer is driven the event
 /// tap takes all keys, so `InputBridge` recognises them itself then.
 @MainActor
 final class SwitchHotkeys {
@@ -29,27 +30,23 @@ final class SwitchHotkeys {
         if let handler { RemoveEventHandler(handler) }
     }
 
-    /// Registers the shortcuts with `modifiers`, or none with nil. False when
+    /// Registers the shortcuts, or none when not `enabled`. False when
     /// another program holds one of the combinations.
     @discardableResult
-    func register(_ modifiers: SwitchModifiers?, lockEnabled: Bool = false) -> Bool {
+    func register(_ enabled: Bool) -> Bool {
         unregister()
-        guard modifiers != nil || lockEnabled else { return true }
+        guard enabled else { return true }
         installHandler()
         var registered = true
-        if lockEnabled {
-            var reference: EventHotKeyRef?
-            let id = EventHotKeyID(signature: Self.signature, id: 4)
-            let status = RegisterEventHotKey(UInt32(kVK_ANSI_L), UInt32(controlKey | optionKey), id,
-                                            GetEventDispatcherTarget(), 0, &reference)
-            if status == noErr, let reference { hotKeys.append(reference) }
-            else { registered = false }
+        var lock: EventHotKeyRef?
+        let lockID = EventHotKeyID(signature: Self.signature, id: 4)
+        if RegisterEventHotKey(UInt32(kVK_ANSI_L), UInt32(controlKey | optionKey), lockID,
+                               GetEventDispatcherTarget(), 0, &lock) == noErr, let lock {
+            hotKeys.append(lock)
+        } else {
+            registered = false
         }
-        guard let modifiers else { return registered }
-        var carbonModifiers = UInt32(controlKey | optionKey)
-        if modifiers == .controlOptionShift {
-            carbonModifiers |= UInt32(shiftKey)
-        }
+        let carbonModifiers = UInt32(controlKey | optionKey | shiftKey)
         for (index, arrow) in Self.arrows.enumerated() {
             var reference: EventHotKeyRef?
             let id = EventHotKeyID(signature: Self.signature, id: UInt32(index))

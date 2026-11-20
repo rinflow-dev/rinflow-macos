@@ -65,8 +65,8 @@ final class InputBridge {
     private var peerInput = PeerInput()
     /// Peers where a game holds the pointer (`peer_pointer_lock`).
     private var heldPointers: Set<String> = []
-    /// The switch shortcuts' modifiers, or nil when they are off.
-    private var switchModifiers: SwitchModifiers?
+    /// Whether the switch shortcuts (⌃⌥⇧ with an arrow key) are on.
+    private var switchShortcuts = false
     /// The arrow key of a switch shortcut, held: its repeats and release go
     /// nowhere.
     private var switchKeyDown: Int64?
@@ -81,15 +81,16 @@ final class InputBridge {
     private var cover: CursorCover?
     private var hasRequestedAccessibilityPrompt = false
     private var crossingGate = CrossingGate()
-    private var switchDelay = 0.15
+    /// How long the pointer pushes against an edge before it crosses: long
+    /// enough that a pass over an edge does not, short enough not to wait.
+    private static let switchDelay = 0.15
     private var cornerGuard = true
     /// Checks for secure input while a peer is driven.
     private var secureInputTimer: Timer?
     private var lastSecureInputNotice: TimeInterval = -.infinity
     private var stalls = TapStalls()
 
-    func setCrossingOptions(delay: TimeInterval, cornerGuard: Bool) {
-        switchDelay = delay
+    func setCornerGuard(_ cornerGuard: Bool) {
         self.cornerGuard = cornerGuard
         crossingGate.reset()
     }
@@ -154,9 +155,9 @@ final class InputBridge {
         return updateEventTap()
     }
 
-    /// The switch shortcuts (nil: off), recognised while a peer is driven.
-    func setSwitchShortcuts(_ modifiers: SwitchModifiers?) {
-        switchModifiers = modifiers
+    /// The switch shortcuts, recognised while a peer is driven.
+    func setSwitchShortcuts(_ enabled: Bool) {
+        switchShortcuts = enabled
     }
 
     /// A game on `peerID` started or stopped holding its pointer. While it
@@ -614,14 +615,11 @@ final class InputBridge {
         return nil
     }
 
-    /// Exactly the switch shortcuts' modifiers are held.
+    /// Exactly the switch shortcuts' modifiers, ⌃⌥⇧, are held.
     private func isSwitchShortcut(_ flags: CGEventFlags) -> Bool {
-        guard let switchModifiers else { return false }
-        let held = flags.intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
-        return switch switchModifiers {
-        case .controlOptionShift: held == [.maskControl, .maskAlternate, .maskShift]
-        case .controlOption: held == [.maskControl, .maskAlternate]
-        }
+        switchShortcuts
+            && flags.intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
+                == [.maskControl, .maskAlternate, .maskShift]
     }
 
     private static let modifierKeyCodes: [CGKeyCode] = [54, 55, 56, 58, 59, 60, 61, 62]
@@ -702,13 +700,13 @@ final class InputBridge {
         }
         let portal = portal(at: liveLocation(of: event))
         let amount = portal?.outward(Self.delta(of: event)) ?? 0
-        switch crossingGate.push(portal, by: amount, at: Self.now, delay: switchDelay) {
+        switch crossingGate.push(portal, by: amount, at: Self.now, delay: Self.switchDelay) {
         case .cross:
             return portal
         case .began:
             // A push that went far enough crosses when the delay is up even
             // if the pointer stops against the edge: no motion may follow.
-            DispatchQueue.main.asyncAfter(deadline: .now() + switchDelay + 0.01) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + Self.switchDelay + 0.01) { [weak self] in
                 MainActor.assumeIsolated { self?.finishPush() }
             }
             return nil
@@ -731,7 +729,7 @@ final class InputBridge {
         guard pointer == nil, !crossingLocked, !fullscreenBlocked,
               NSEvent.pressedMouseButtons == 0,
               let portal = crossingGate.portal,
-              crossingGate.isDue(at: Self.now, delay: switchDelay)
+              crossingGate.isDue(at: Self.now, delay: Self.switchDelay)
         else {
             return
         }

@@ -71,12 +71,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            Section("安全") {
-                Toggle(isOn: setting(\.pairedOnly)) {
-                    Text("仅允许已配对的设备")
-                    Text("新设备需要两边核对六位配对码后才能连接。")
-                }
-            }
             Section("隐私") {
                 Toggle(isOn: Binding(
                     get: { model.settings.diagnostics == true },
@@ -137,25 +131,16 @@ struct SettingsView: View {
                     modifierPicker(Text(verbatim: "Alt"), \.alt)
                 }
             }
-            Section {
-                Toggle(isOn: setting(\.switchHotkeys)) {
-                    Text("用快捷键切换设备")
-                    Text("组合键加方向键，把鼠标移到那一侧的设备上。")
+            Section("快捷键") {
+                LabeledContent("切换到那一侧的设备") {
+                    Text(verbatim: "⌃⌥⇧ + ") + Text("方向键")
                 }
-                Picker("组合键", selection: setting(\.switchModifiers)) {
-                    ForEach(SwitchModifiers.allCases) { modifiers in
-                        (Text(verbatim: "\(modifiers.symbols) + ") + Text("方向键")).tag(modifiers)
-                    }
-                }
-                .disabled(!model.settings.switchHotkeys)
+                LabeledContent("锁定或解锁当前屏幕") { Text(verbatim: "⌃⌥L") }
+                LabeledContent("释放控制") { Text(verbatim: "⌃⌥Esc") }
                 if model.settings.sharing, model.switchHotkeysBlocked {
-                    Label("切换或锁定快捷键已被其他程序占用。请修改组合键或关闭冲突程序。", systemImage: "exclamationmark.triangle.fill")
+                    Label("切换或锁定快捷键已被其他程序占用，请关闭冲突的程序。", systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
                 }
-            } footer: {
-                Text("按 ⌃⌥L 锁定或解锁当前屏幕；按 ⌃⌥⎋ 始终可以释放控制。")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -209,12 +194,6 @@ struct SettingsView: View {
     private var pointer: some View {
         pane {
             Section {
-                Picker("边缘切换延迟", selection: setting(\.switchDelay)) {
-                    Text("无延迟").tag(0.0)
-                    Text("短（150 毫秒）").tag(0.15)
-                    Text("中（300 毫秒）").tag(0.3)
-                    Text("长（500 毫秒）").tag(0.5)
-                }
                 Toggle(isOn: setting(\.cornerGuard)) {
                     Text("保护屏幕角落")
                     Text("靠近屏幕角落时不切换。")
@@ -222,12 +201,6 @@ struct SettingsView: View {
                 Toggle(isOn: setting(\.pauseInFullscreen)) {
                     Text("全屏时暂停自动切换")
                     Text("游戏、视频或演示全屏时不切换。")
-                }
-            }
-            Section {
-                Toggle(isOn: setting(\.hideCursorOnLeave)) {
-                    Text("其他设备的指针离开后隐藏光标")
-                    Text("移动这台 Mac 的鼠标或触控板后重新显示。")
                 }
             }
         }

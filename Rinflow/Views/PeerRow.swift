@@ -23,8 +23,7 @@ struct PeerRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            PlatformIcon(platform: peer.platform)
-                .foregroundStyle(.secondary)
+            PlatformIcon(platform: peer.platform, isOnline: isThere)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 1) {
@@ -77,10 +76,14 @@ struct PeerRow: View {
         }
     }
 
+    /// On the network, or connected (an incoming connection may come from a
+    /// device not seen on the network).
+    private var isThere: Bool { isConnected || isConnecting || isOnline }
+
     /// Where it is, or that it is not there. Whether it is connected is
     /// the button's to say.
     private var detail: String {
-        guard isConnected || isConnecting || isOnline else { return String(localized: "离线") }
+        guard isThere else { return String(localized: "离线") }
         return peer.address == "incoming" ? String(localized: "由对方发起的连接") : peer.address
     }
 }
