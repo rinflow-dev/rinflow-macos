@@ -37,18 +37,24 @@ private enum MainWindow {
     private static let log = Logger(subsystem: "com.rinflow.mac", category: "window")
 
     /// In front of every app's windows, whether or not the system lets
-    /// Rinflow become the active app.
-    static func bringForward() {
-        NSApp.activate()
+    /// Rinflow become the active app. A window that was closed is made anew
+    /// by `openWindow`, not always by the next turn of the run loop: it is
+    /// looked for again for a while.
+    static func bringForward(attempt: Int = 0) {
+        if attempt == 0 { NSApp.activate() }
         // SwiftUI names the window after its scene ("main", or with a suffix).
         guard let window = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true }) else {
-            log.error("main window not found")
+            guard attempt < 20 else {
+                log.error("main window not found")
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { bringForward(attempt: attempt + 1) }
             return
         }
         if window.isMiniaturized { window.deminiaturize(nil) }
         window.makeKeyAndOrderFront(nil)
         window.orderFrontRegardless()
-        log.notice("main window forward, active: \(NSApp.isActive, privacy: .public)")
+        log.notice("main window forward after \(attempt, privacy: .public) retries, active: \(NSApp.isActive, privacy: .public)")
     }
 }
 

@@ -8,20 +8,27 @@ import SwiftUI
 @MainActor
 final class ControlHUDController {
     private var panel: Popup?
-    /// Who the panel shows: the same peer again keeps it as it is.
-    private var shown: String?
+    /// What the panel shows: the same again keeps it as it is. By the
+    /// device's ID, as two devices may have one name.
+    private var shown: Shown?
+    private struct Shown: Equatable {
+        let peerID: String
+        let name: String
+        let platform: String?
+    }
     /// A short message (why the pointer stayed), apart from the control
     /// HUD so that ending the control does not take it away.
     private var noticePanel: Popup?
     private var noticeExpiry: DispatchWorkItem?
 
     /// `platform` picks the device's symbol, as in the arrangement.
-    func show(peerName: String, platform: String?, stop: @escaping @MainActor () -> Void) {
-        guard shown != peerName || panel == nil else { return }
+    func show(peerID: String, name: String, platform: String?, stop: @escaping @MainActor () -> Void) {
+        let next = Shown(peerID: peerID, name: name, platform: platform)
+        guard next != shown || panel == nil else { return }
         dismiss()
-        shown = peerName
+        shown = next
         panel = Popup(ControlHUDView(
-            peerName: peerName, symbol: ArrangedDevice.symbol(for: platform), stop: stop
+            peerName: name, symbol: ArrangedDevice.symbol(for: platform), stop: stop
         ))
     }
 
