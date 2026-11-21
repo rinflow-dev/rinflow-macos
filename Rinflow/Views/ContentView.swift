@@ -131,6 +131,7 @@ struct ContentView: View {
                     isConnected: model.sessions[peer.id]?.peer != nil,
                     isConnecting: model.sessions[peer.id]?.status == .connecting,
                     isOnline: model.peers.contains { $0.id == peer.id },
+                    issue: model.peerIssues[peer.id],
                     connect: { model.connect(to: peer) },
                     disconnect: { model.disconnect(peer) },
                     isPaired: model.isPaired(peer),

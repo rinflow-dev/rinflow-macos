@@ -21,7 +21,11 @@ final class AppModel: RustCoreDelegate {
     private(set) var hasAccessibilityPermission = false
     /// Whether peers' files are pasted on demand; off, they are fetched whole first.
     private(set) var filesExtension: FilesExtension = .unknown
+    /// What went wrong that concerns no one device.
     private(set) var lastError: String?
+    /// Why a device dropped or did not pair, shown on its row until it
+    /// connects again or the user retries.
+    private(set) var peerIssues: [String: String] = [:]
     /// Files on their way, either way.
     private(set) var transfers: [FileTransfer] = []
     /// The addresses the user added, as the core reports them.
@@ -226,6 +230,7 @@ final class AppModel: RustCoreDelegate {
         transfers.removeAll()
         pairing.dismissAll()
         lastError = nil
+        peerIssues.removeAll()
         coreState = .starting
         localDisplays = Self.currentDisplays()
         guard core.start(
@@ -383,12 +388,13 @@ final class AppModel: RustCoreDelegate {
     // MARK: - Devices
 
     func connect(to peer: Peer) {
+        peerIssues[peer.id] = nil
         if sessions[peer.id] == nil {
             sessions[peer.id] = PeerSession(status: .connecting)
         }
         if !core.connect(to: peer.id) {
             sessions[peer.id] = nil
-            lastError = String(localized: "无法向 Rust Core 发送连接请求")
+            peerIssues[peer.id] = String(localized: "无法向 Rust Core 发送连接请求")
         }
     }
 
@@ -541,12 +547,11 @@ final class AppModel: RustCoreDelegate {
             guard let peer = event.peer else { break }
             remember(peer)
             sessions[peer.id, default: PeerSession(status: .connecting)].status = .connected(knownPeers[peer.id] ?? peer)
-            lastError = nil
+            peerIssues[peer.id] = nil
             refreshArrangement()
         case "disconnected":
             // Sessions are per peer; one without a peer ID concerns none.
             guard let peerID = event.peerID else { break }
-            let name = sessions[peerID]?.peer?.name ?? name(of: peerID)
             sessions[peerID] = nil
             // The core does not always end a transfer whose peer went away
             // (as on Windows, `state.rs`, they go with the peer).
@@ -558,7 +563,7 @@ final class AppModel: RustCoreDelegate {
             refreshArrangement()
             updateDriven()
             if let message = message(for: event, in: .session) {
-                lastError = String(localized: "\(name)：\(message)")
+                peerIssues[peerID] = message
             }
         case "remote_control_started", "remote_control_ended":
             guard let peerID = event.peerID else { break }
@@ -642,7 +647,7 @@ final class AppModel: RustCoreDelegate {
             guard let peerID = event.peerID else { break }
             pairing.dismiss(peerID: peerID)
             if let message = message(for: event, in: .session) {
-                lastError = String(localized: "配对未完成：\(message)")
+                peerIssues[peerID] = String(localized: "配对未完成：\(message)")
             }
         case "unpaired":
             guard let peerID = event.peerID else { break }

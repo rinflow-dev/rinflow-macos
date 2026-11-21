@@ -91,28 +91,6 @@
         }
       }
     },
-    "%@：%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@：%2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@：%2$@"
-          }
-        }
-      }
-    },
     "Ctrl+C、Ctrl+V 等按 ⌘ 快捷键执行，Windows 键对应 ⌃。" : {
       "localizations" : {
         "en" : {

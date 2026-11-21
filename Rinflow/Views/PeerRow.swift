@@ -12,6 +12,8 @@ struct PeerRow: View {
     let isConnected: Bool
     let isConnecting: Bool
     let isOnline: Bool
+    /// Why it dropped or did not pair, behind a warning sign by its name.
+    let issue: String?
     let connect: () -> Void
     let disconnect: () -> Void
     let isPaired: Bool
@@ -20,6 +22,7 @@ struct PeerRow: View {
     let setInput: (PeerInput) -> Void
 
     @State private var showsInput = false
+    @State private var showsIssue = false
 
     var body: some View {
         HStack(spacing: 10) {
@@ -27,9 +30,14 @@ struct PeerRow: View {
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(peer.name)
-                    .font(.headline)
-                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    Text(peer.name)
+                        .font(.headline)
+                        .lineLimit(1)
+                    if let issue {
+                        issueButton(issue)
+                    }
+                }
                 Text(detail)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -66,6 +74,26 @@ struct PeerRow: View {
         }
         .card()
         .contextMenu { menuItems }
+    }
+
+    /// A warning sign, as Finder and Mail put by an item; the reason in a
+    /// popover, not a banner over every device.
+    private func issueButton(_ issue: String) -> some View {
+        Button { showsIssue.toggle() } label: {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .symbolRenderingMode(.multicolor)
+                .font(.subheadline)
+        }
+        .buttonStyle(.plain)
+        .help(issue)
+        .accessibilityLabel(Text(verbatim: issue))
+        .popover(isPresented: $showsIssue, arrowEdge: .bottom) {
+            Text(issue)
+                .textSelection(.enabled)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(width: 260, alignment: .leading)
+                .padding(14)
+        }
     }
 
     @ViewBuilder private var menuItems: some View {
